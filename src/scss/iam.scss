@@ -1,0 +1,70 @@
+.user-management-card {
+    padding: 0;
+    border-radius: 16px;
+    height: 100%;
+    background-color: var(--table-pane-background);
+    color: var(--body-color);
+}
+
+.iam_table tbody tr {
+    border-bottom: 1px solid var(--table-pane-border-color);
+    height: 48px;
+}
+
+.iam_table tbody tr:hover {
+    background: var(--table-pane-hover);
+}
+
+
+.tableFixHead {
+    overflow-y: auto;
+    flex-grow: 1;
+    /*  min-height: 350px; */
+}
+
+.tableFixHead .table {
+    position: relative;
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    background: rgb(27, 27, 38);
+    top: 0;
+}
+
+
+.group {
+    cursor: pointer;
+    border-bottom: 1px solid var(--table-pane-border-color);
+    padding: 12px 0 12px 12px;
+}
+
+.group:hover {
+    background-color: var(--table-pane-hover);
+}
+
+.group-safe-entry {
+    display: flex;
+    align-items: center;
+    height: 36px;
+}
+
+.group-safe-entry:hover {
+    background-color: var(--table-pane-hover);
+}
+
+.group-safe-entry-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 13em;
+    text-wrap: nowrap;
+}
+
+
+.groups-pane {
+    border-radius: 25;
+    border: solid 0px grey;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}

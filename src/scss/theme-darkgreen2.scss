@@ -1,0 +1,60 @@
+body.theme-darkgreen2 {
+
+    --body-color: #f1f1f1;
+
+    --body-background-img: url("/img/body_background.jpg"), lightgray 50% / cover no-repeat;
+
+    --body-mask-background: #00BC62;
+    --body-mask-mix-blend-mode: color-burn;
+
+    --safe-pane-background: rgba(27, 27, 38, 1);
+    --safe-pane-scroll-border-color: rgba(27, 27, 38, 1);
+
+
+
+    --table-pane-background: rgba(27, 27, 38, 0.9);
+    --link-color: #00BC62;
+
+    --table-pane-scroll-border-color: #262631;
+
+    --table-pane-color: #ffffff;
+
+    --table-pane-border-color: #474750;
+    /* --table-pane-hover: #474750; */
+    --table-pane-hover: rgba(255, 255, 255, 0.05);
+
+    --modal-shadow: -4px -4px 0px 0px #00DDC140 inset;
+    --modal-background: #00ddc1;
+
+    --edit-item-modal-field: #00ddc1;
+    --edit-item-note-modal-field: #00ddc1;
+
+    --edit-item-modal-field-border: rgba(255, 255, 255, 0.2);
+    --edit-item-modal-field-border-hover: rgba(255, 255, 255, 0.7);
+
+
+    --pmodal-body-background: rgb(27, 27, 38);
+
+
+
+    --account-menu-item-hover: black;
+
+
+
+
+    --item-modal-field-label: white;
+
+    --download-and-view-border: rgba(255, 255, 255, 0.7);
+    --account-block-border: rgba(255, 255, 255, 0.7);
+
+    --contexify-menu-bgColor: #000;
+    --contexify-item-color: rgba(255, 255, 255, 0.7);
+    --contexify-activeItem-color: #fff;
+    --contexify-activeItem-bgColor: rgba(255, 255, 255, 0.2);
+
+    --danger-color: #ff3300;
+    --safe-pane-icon-stroke: white;
+    --icon-stroke: white;
+    --icon-fill: white;
+
+}

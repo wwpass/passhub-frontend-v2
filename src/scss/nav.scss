@@ -1,0 +1,39 @@
+.search_string {
+    padding: 0 30px 0 40px;
+    height: 48px;
+    border: none;
+    padding-right: 2.2em;
+}
+
+@media (min-width: 576px) {
+    .search_string {
+        border-radius: 12px;
+    }
+}
+
+.search_string:active {
+    border: none;
+    outline: none;
+}
+
+.search_string:focus {
+    border: none;
+    outline: none;
+}
+
+.search_clear {
+    margin-left: -1.3em;
+    cursor: pointer;
+}
+
+.account-dropdown-button {
+    width: 40px;
+    height: 40px;
+    padding: 7px 0 0 0;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(40px);
+    overflow: hidden;
+    cursor: pointer;
+    flex: none;
+}

@@ -1,0 +1,105 @@
+.safe_pane {
+    background: var(--safe-pane-background);
+    color: white;
+    height: 100%;
+    /* safari 13.1*/
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+}
+
+@media (min-width: 576px) {
+    .safe_pane {
+        border-radius: 16px 0 0 16px;
+    }
+}
+
+.safe_scroll_control {
+    overflow-y: auto;
+}
+
+.safe_pane_icon {
+    stroke: var(--safe-pane-icon-stroke);
+    opacity: 0.7;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.folder,
+.folders-header {
+    color: white;
+    opacity: 0.7;
+    line-height: 24px;
+}
+
+.folders-header {
+    font-size: 14px;
+    /* margin: 17px 0 6px 0; */
+    letter-spacing: 0.16em;
+    cursor: default;
+    padding: 0 0 7px 24px;
+}
+
+.folder {
+    font-size: 16px;
+    line-height: 20px;
+    /*padding: 7px 0 7px 24px;*/
+    /* padding: 12px 0 12px 24px; */
+    padding: 0 0 0 24px;
+    display: flex;
+    height: 46px;
+    align-items: center;
+}
+
+@media (min-width: 576px) {
+
+    .folder,
+    .folders-header {
+        opacity: 0.5;
+    }
+
+    .folder {
+        height: 46px;
+    }
+}
+
+
+.folder:hover {
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0.7;
+}
+
+.folder.active_folder,
+.folder.active_folder:hover {
+    background: rgba(255, 255, 255, 0.15);
+    opacity: 1;
+}
+
+.menu-dots {
+    cursor: pointer;
+}
+
+.add_safe {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: white;
+    opacity: 0.7;
+    font-size: 16px;
+    line-height: 24px;
+    padding: 7px 0;
+    margin: 16px 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+@media (min-width: 576px) {
+    .add_safe {
+        opacity: 0.6;
+    }
+}
+
+
+.add_safe:hover {
+    opacity: 1;
+}

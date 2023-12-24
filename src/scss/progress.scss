@@ -1,0 +1,30 @@
+.progress-lock {
+    display: block;
+    position: fixed;
+    z-index: 2000;
+    padding-top: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    color: #fff;
+    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.progress-lock--hidden {
+    display: none;
+}
+
+.progress-lock__inner {
+    margin: auto;
+    width: 320px;
+}
+
+.progress-lock__message {
+    font-weight: lighter;
+    font-size: 22px;
+    text-align: center;
+}

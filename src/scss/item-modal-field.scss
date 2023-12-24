@@ -1,0 +1,174 @@
+.itemModalField {
+    background: var(--item-modal-field-background);
+    border-radius: 16px;
+    border: 1px solid var(--item-modal-field-border);
+
+    padding: 8px 9px 8px 20px;
+    overflow: hidden;
+}
+
+.itemNoteModalField {
+    background: var(--item-modal-field-background);
+    border-radius: 16px;
+    border: 1px solid var(--item-modal-field-border);
+    padding: 8px 9px 8px 20px;
+}
+
+.itemModalField:hover {
+    background-color: var(--item-modal-field-hover);
+    border: 1px solid var(--item-modal-field-border-hover);
+}
+
+.itemNoteModalField:hover {
+    background-color: var(--item-modal-field-hover);
+    border: 1px solid var(--item-modal-field-border-hover);
+}
+
+.itemModalField.upper {
+    border-radius: 16px 16px 0 0;
+    //    border-bottom: 1px solid var(--edit-item-modal-field-border);
+}
+
+.itemModalField.lower {
+    border-radius: 0 0 16px 16px;
+    //    border-top: 1px solid var(--edit-item-modal-field-border);
+}
+
+.edit .itemModalField {
+    border: 1px solid var(--edit-item-modal-field-border);
+}
+
+.edit .itemModalField:hover {
+    border: 1px solid var(--edit-item-modal-field-border-hover);
+}
+
+.itemModalField .label {
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--item-modal-field-label);
+    opacity: 0.7;
+}
+
+.itemModalField input {
+    background: transparent;
+    font-size: 18px;
+    line-height: 24px;
+    border: none;
+    outline: none;
+    color: var(--body-color);
+    width: 100%;
+}
+
+.itemModalField input:focus {
+    border: none;
+}
+
+.itemModalField input:active {
+    border: none;
+}
+
+.itemModalField input.lp {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+        monospace;
+}
+
+.itemModalField .copied {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: #b3ebd0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    align-items: center;
+    color: var(--link-color);
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 24px;
+}
+
+.itemModalField .copied div {
+    margin: 0 auto;
+}
+
+.itemModalField .url-span {
+    color: var(--body-color);
+    cursor: pointer;
+}
+
+.itemModalField .url-span:hover {
+    text-decoration: underline;
+}
+
+.itemModalField .iconTitle {
+    color: var(--link-color);
+    opacity: 0;
+    margin-right: 10px;
+    font-size: 14px;
+    line-height: 22px;
+}
+
+.itemModalPlusField {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    cursor: pointer;
+
+    /* identical to box height, or 150% */
+
+    /* Green/70 */
+    color: var(--link-color);
+    margin-bottom: 32px;
+}
+
+.itemModalField svg {
+    stroke: var(--body-color);
+    opacity: 0.5;
+}
+
+.itemModalField:hover svg {
+    stroke: #00bc62;
+    opacity: 1;
+}
+
+.itemModalField:hover .iconTitle {
+    opacity: 1;
+}
+
+
+.itemNoteModalField .label {
+    font-size: 14px;
+    color: var(--body-color);
+    opacity: 0.7;
+}
+
+.edit .itemModalField {
+    background-color: var(--edit-item-modal-field);
+}
+
+
+.edit .itemNoteModalField {
+    background-color: var(--edit-item-note-modal-field);
+    border-radius: 16px;
+    border: 1px solid var(--edit-item-modal-field-border);
+}
+
+.edit .itemNoteModalField:hover {
+    border: 1px solid var(--edit-item-modal-field-border-hover);
+}
+
+.edit .itemNoteModalField textarea {
+    background-color: var(--edit-item-note-modal-field);
+    color: var(--body-color);
+}
+
+.gotowebsite {
+    width: 30px;
+    height: 24px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="24" viewBox="0 0 40 32" fill="none" ><rect opacity="0.5" x="0.5" y="0.5" width="39" height="31" rx="11.5" stroke="%231B1B26"/><g opacity="0.7"><path d="M16.1519 20.0911L25.118 11.125" stroke="%231B1B26" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M25.118 20.2689V11.125H15.9741" stroke="%231B1B26" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>');
+}
+
+.itemModalField:hover .gotowebsite {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"  width="30" height="24" viewBox="0 0 40 32" fill="none" ><rect width="40" height="32" rx="12" fill="%2300BC62"/><path d="M16.1519 20.0911L25.118 11.125" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M25.118 20.2689V11.125H15.9741" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+}
