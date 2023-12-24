@@ -1,0 +1,445 @@
+import React, { useState } from 'react';
+
+import Col from "react-bootstrap/Col";
+
+import Button from "react-bootstrap/Button";
+
+import { Menu, Item } from "react-contexify";
+
+import FolderItem from "./folderItem";
+import PasswordItem from "./passwordItem";
+import NoteItem from "./noteItem";
+import BankCardItem from "./bankCardItem";
+import FileItem from "./fileItem";
+
+import PasswordModal from "./passwordModal";
+import NoteModal from "./noteModal";
+import FileModal from "./fileModal";
+import BankCardModal from './bankCardModal';
+import CreateFileModal from "./createFileModal";
+import DeleteItemModal from "./deleteItemModal";
+import FolderNameModal from "./folderNameModal";
+import FolderMenuMobile from "./folderMenuMobile";
+
+import PathElement from "./pathElement";
+
+import AddDropUp from "./addDropUp";
+
+import { getFolderById } from "../lib/utils";
+
+function isPasswordItem(item) {
+    return !item.note && !item.file && item.version !== 5;
+}
+
+function isFileItem(item) {
+    return item.file ? true : false;
+}
+
+function isBankCardItem(item) {
+    return item.version === 5 && item.cleartext[0] === "card";
+}
+
+function isNoteItem(item) {
+    return item.note ? true : false;
+}
+
+function TablePane(props) {
+
+    const [showModal, setShowModal] = useState(null);
+    const [itemModalArgs, setItemModalArgs] = useState({});
+    const [addButtonRect, setAddButtonRect] = useState({ right: 5, botton: 5 });
+    const [keyCounter, setKeyCounter] = useState(1);
+
+    if (!props.folder) {
+        return null;
+    }
+
+    const { folder } = props;
+    const addButtonRef = React.createRef();
+
+    // let addButtonRect = { right: "16px", bottom: "16px" };
+
+    const handleAddClick = (cmd) => {
+        if (cmd === "Password") {
+            showItemModal("PasswordModal");
+            //        setItemModalArgs({edit: true});
+        }
+        if (cmd === "File") {
+            // this.showCreateFileModal();
+            showItemModal("CreateFileModal");
+            setKeyCounter(keyCounter + 1);
+        }
+        if (cmd === "Note") {
+            showItemModal("NoteModal");
+        }
+        if (cmd === "Bank Card") {
+            showItemModal("BankCardModal");
+        }
+        if (cmd === "Folder") {
+            let safe = folder.safe
+                ? folder.safe
+                : folder;
+            if (props.searchMode && item) {
+                safe = getFolderById(props.safes, item.SafeID);
+            }
+
+            setShowModal("FolderNameModal");
+            setItemModalArgs({ parent: folder });
+        };
+    };
+
+    const showAddMenu = (e) => {
+        setShowModal("addDropUp");
+    };
+
+    const onItemModalClose = (refresh = false) => {
+        setShowModal("");
+        /*        
+                if (refresh === true) {
+                  props.refreshUserData({
+                    safes: [itemModalArgs.safe.id],
+                  });
+                }
+        */
+    };
+
+    const onItemModalCloseSetFolder = (f) => {
+        setShowModal("");
+        if (props.searchMode) {
+            const folderID =
+                itemModalArgs.item.folder != 0 // intentionally: better have it "0"
+                    ? itemModalArgs.item.folder
+                    : itemModalArgs.item.SafeID;
+            props.setActiveFolder(folderID);
+        } else {
+            props.setActiveFolder(f);
+        }
+    };
+
+    const openDeleteItemModal = () => {
+        setShowModal("DeleteItemModal");
+    };
+
+    const showItemModal = (modalName, item) => {
+        let safe = folder.safe
+            ? folder.safe
+            : folder;
+        if (props.searchMode && item) {
+            safe = getFolderById(props.safes, item.SafeID);
+        }
+        const itemModalArgs = {
+            item,
+            safe,
+            folder: folder,
+            edit: !item,
+            openDeleteItemModal: openDeleteItemModal,
+        };
+
+        setShowModal(modalName);
+        setItemModalArgs(itemModalArgs);
+    };
+
+    const handleFolderMenuCmd = (node, cmd) => {
+        props.onFolderMenuCmd(props.folder, cmd);
+    };
+
+
+    let pathString = [];
+    for (let i = 0; i < folder.path.length - 1; i++) {
+        pathString.push(
+            <PathElement
+                name={folder.path[i][0]}
+                folderid={folder.path[i][1]}
+                gt={folder.path.length - i - 1}
+                onClick={(f) => props.setActiveFolder(f)}
+            ></PathElement>
+        );
+    }
+
+
+    const emptyFolder = !(folder.folders.length + folder.items.length > 0);
+    const isSafe = folder.path.length === 1 && !props.searchMode;
+    let EmptyMessage = isSafe ? "Empty safe" : "Empty folder";
+    if (props.searchMode) {
+        EmptyMessage = (
+            <div>
+                <b>
+                    <p>Nothing found</p>
+                    <p>Try another search</p>
+                </b>
+            </div>
+        );
+    }
+
+    return (
+        <Col
+            className="col-xl-9 col-lg-8 col-md-7 col-sm-6 d-none d-sm-block"
+            id="table_pane"
+        >
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                    // marginRight: "0.3em",
+                }}
+            >
+                <div
+                    className="d-sm-none"
+                    style={{ display: "flex", cursor: "pointer", marginBottom: "18px", color: "var(--link-color)" }}
+                    onClick={() => {
+                        if (props.searchMode) {
+                            props.onSearchClear();
+                        }
+
+                        if (props.folder.SafeID) {
+                            props.openParentFolder(props.folder);
+                        } else {
+                            document.querySelector("#safe_pane").classList.remove("d-none");
+                            document.querySelector("#table_pane").classList.add("d-none");
+                        }
+                    }}
+                >
+                    <svg
+                        width="24"
+                        height="24"
+                        style={{
+                            fill: "#009a50",
+                            transform: "rotate(90deg)",
+                        }}
+                    >
+                        <use href="#angle"></use>
+                    </svg>
+                    {folder.path.length === 1
+                        ? "All safes"
+                        : folder.path[folder.path.length - 2][0]}
+
+                </div>
+                <div
+                    className="d-sm-none"
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        position: "relative",
+                    }}
+                >
+                    <div className="h5">{folder.path[folder.path.length - 1][0]}</div>
+                    {!props.searchMode && true && (
+                        <FolderMenuMobile
+                            node={folder}
+                            onMenuCmd={handleFolderMenuCmd}
+                            isSafe={true}
+                        />
+                    )}
+                </div>
+
+                <div
+                    className="d-none d-sm-block"
+                    style={{ color: "var(--body-color)", marginBottom: "28px" }}
+                >
+                    {pathString}
+                    <b>{folder.path[folder.path.length - 1][0]}</b>
+                </div>
+
+                {emptyFolder && (
+                    <div>
+                        <div style={{ textAlign: "center" }}>
+                            <svg
+                                width="260"
+                                height="208"
+                                style={{ margin: "2em auto 1em auto", display: "block" }}
+                            >
+                                <use href={isSafe ? "#f-emptySafe" : "#f-emptyFolder"}></use>
+                            </svg>
+                            {EmptyMessage}
+                        </div>
+                    </div>
+                )}
+
+                {!emptyFolder && (
+                    <div
+                        className="table-pane-scroll-control custom-scroll"
+                        style={{ overflowY: "auto", overflowX: "hidden" }}
+                    >
+                        <table className="item_table">
+                            <thead>
+                                <tr className="d-flex">
+                                    <th className="d-none d-sm-table-cell col-sm-12 col-md-6 col-lg-4 col-xl-3" style={{ paddingLeft: 0 }}>
+                                        Title
+                                    </th>
+                                    <th className="d-none d-xl-table-cell                             col-xl-3"></th>
+                                    <th className="d-none d-md-table-cell           col-md-6 col-lg-4 col-xl-3"></th>
+                                    <th className="d-none d-lg-table-cell                    col-lg-4 col-xl-3 column-modified">
+                                        Modified
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {folder.folders.map((f) => (
+                                    <FolderItem
+                                        item={f}
+                                        key={`folder${f._id}`}
+                                        searchMode={props.searchMode}
+                                        dropItem={props.dropItem}
+                                        onClick={(folder) => { props.setActiveFolder(folder) }}
+                                    />
+                                ))}
+                                {folder.items.map(
+                                    (f) =>
+                                        (isPasswordItem(f) && (
+                                            <PasswordItem
+                                                item={f}
+                                                key={`item${f._id}`}
+                                                searchMode={props.searchMode}
+                                                showModal={(item) =>
+                                                    showItemModal("PasswordModal", item)
+                                                }
+                                            />
+                                        )) ||
+                                        (isNoteItem(f) && (
+                                            <NoteItem
+                                                item={f}
+                                                key={`item${f._id}`}
+                                                searchMode={props.searchMode}
+                                                showModal={(item) =>
+                                                    showItemModal("NoteModal", item)
+                                                }
+                                            />
+                                        )) ||
+                                        (isFileItem(f) && (
+                                            <FileItem
+                                                item={f}
+                                                key={`item${f._id}`}
+                                                searchMode={props.searchMode}
+                                                showModal={(item) =>
+                                                    showItemModal("FileModal", item)
+                                                }
+                                            />
+                                        )) ||
+                                        (isBankCardItem(f) && (
+                                            <BankCardItem
+                                                item={f}
+                                                key={`item${f._id}`}
+                                                searchMode={props.searchMode}
+                                                showModal={(item) =>
+                                                    showItemModal("BankCardModal", item)
+                                                }
+                                            />
+                                        ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+                {/*this.addMenu*/}
+                {!props.searchMode && (
+                    <Button
+                        variant="primary"
+                        type="submit"
+                        ref={addButtonRef}
+                        id="addButtonId"
+                        title="Add record"
+                        style={{
+                            width: "80px",
+                            height: "80px",
+                            position: "absolute",
+                            bottom: "16px",
+                            right: "16px",
+                            minWidth: "0",
+                            padding: "20px",
+                            borderRadius: "14px",
+                        }}
+                        onClick={() => {
+                            //                            addButtonRect = addButtonRef.current.getBoundingClientRect(); 
+                            setAddButtonRect(addButtonRef.current.getBoundingClientRect());
+                            showAddMenu();
+                        }}
+                    >
+                        <svg width="40" height="40" style={{ strokeWidth: 2 }}>
+                            <use href="#f-plus"></use>
+                        </svg>
+                    </Button>
+                )}
+
+
+                <AddDropUp
+                    show={showModal === "addDropUp"}
+                    bottom={window.innerHeight - addButtonRect.bottom - 8}
+                    right={window.innerWidth - addButtonRect.right - 8}
+                    onClose={() => setShowModal("")}
+                    handleAddClick={handleAddClick}
+                ></AddDropUp>
+
+                <PasswordModal
+                    show={showModal === "PasswordModal"}
+                    args={itemModalArgs}
+                    openDeleteItemModal={openDeleteItemModal}
+                    onClose={onItemModalClose}
+                    onCloseSetFolder={onItemModalCloseSetFolder}
+                    key="pwm"
+                ></PasswordModal>
+
+                <FileModal
+                    show={showModal === "FileModal"}
+                    args={itemModalArgs}
+                    openDeleteItemModal={openDeleteItemModal}
+                    onClose={onItemModalClose}
+                    onCloseSetFolder={onItemModalCloseSetFolder}
+                    inMemoryView={(blob, filename) => {
+                        setShowModal("");
+                        props.inMemoryView(blob, filename);
+                    }}
+                ></FileModal>
+
+                <CreateFileModal
+                    show={showModal === "CreateFileModal"}
+                    args={itemModalArgs}
+                    openDeleteItemModal={openDeleteItemModal}
+                    onClose={onItemModalClose}
+                    key={keyCounter}
+                ></CreateFileModal>
+
+                <NoteModal
+                    show={showModal === "NoteModal"}
+                    args={itemModalArgs}
+                    openDeleteItemModal={openDeleteItemModal}
+                    onClose={onItemModalClose}
+                    onCloseSetFolder={onItemModalCloseSetFolder}
+                    onCopyMove={props.onCopyMove}
+                    key="nm"
+                ></NoteModal>
+
+                <BankCardModal
+                    show={showModal === "BankCardModal"}
+                    args={itemModalArgs}
+                    openDeleteItemModal={openDeleteItemModal}
+                    onClose={onItemModalClose}
+                    onCloseSetFolder={onItemModalCloseSetFolder}
+
+                    key="bcm"
+                ></BankCardModal>
+
+                <DeleteItemModal
+                    show={showModal === "DeleteItemModal"}
+                    folder={folder}
+                    args={itemModalArgs}
+                    onClose={onItemModalClose}
+                ></DeleteItemModal>
+
+                <FolderNameModal
+                    show={showModal == "FolderNameModal"}
+                    args={itemModalArgs}
+                    onClose={(refresh = false, newFolderID) => {
+                        setShowModal("");
+                        if (refresh === true) {
+                            props.refreshUserData({ newFolderID });
+                        }
+                    }}
+                ></FolderNameModal>
+            </div>
+        </Col>
+    )
+}
+
+export default TablePane; 

@@ -1,0 +1,174 @@
+#table_pane {
+
+    background: var(--table-pane-background);
+    color: var(--table-pane-color);
+    padding: 24px 0 16px 16px;
+    height: 100%;
+    flex-direction: column;
+    position: relative;
+}
+
+@media (min-width: 576px) {
+    #table_pane {
+        border-radius: 0 16px 16px 0;
+    }
+}
+
+.item_table {
+    border: none;
+    table-layout: fixed;
+}
+
+.item_table th {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0em;
+    text-align: left;
+
+    color: var(--body-color);
+    opacity: 0.7;
+    padding-right: 0.75em;
+    border: none;
+}
+
+.item_table td {
+    border: none;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
+}
+
+@media (min-width: 576px) {
+    .item_table td {
+        padding-right: 0.75em;
+    }
+}
+
+.item_table tr+td {
+    cursor: pointer;
+}
+
+.item_table tbody tr {
+    border-bottom: 1px solid var(--table-pane-border-color);
+    min-height: 46px;
+}
+
+@media (min-width: 576px) {
+    .item_table tbody tr {
+        /*    min-height: 46px; */
+        min-height: 46px;
+    }
+}
+
+.item_table tbody tr:hover {
+    background: var(--table-pane-hover);
+}
+
+.item_table .rightAlign {
+    text-align: right;
+}
+
+.item_table .column-modified {
+    text-align: right;
+    padding-right: 1em;
+}
+
+.item_table .login-item-link {
+    color: var(--link-color);
+}
+
+.item_table .login-item-link:hover {
+    text-decoration: underline;
+}
+
+.add_button {
+    background: linear-gradient(282.86deg, #00ba97 8.08%, #00bc62 68.47%);
+    box-shadow: 0px 3px 7px rgba(1, 189, 98, 0.16),
+        0px 4px 18px rgba(0, 255, 153, 0.5);
+    border-radius: 14px;
+}
+
+.pmodal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    outline: 0;
+}
+
+.pmodal-body {
+
+    border-radius: 12px;
+    position: absolute;
+
+    padding: 24px;
+    background: var(--pmodal-body-background);
+    box-shadow: 0px 4px 34px rgba(126, 126, 143, 0.28);
+}
+
+.pmodal-body.account {
+    min-width: 320px;
+    top: 65px;
+}
+
+.addModalItem {
+    height: 48px;
+    cursor: pointer;
+    background: rgba(27, 27, 38, 0.93);
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 40px;
+}
+
+@media (min-width: 576px) {
+    .addModalItem {
+        height: 40px;
+    }
+}
+
+.addModalItem:hover {
+    background: rgba(0, 0, 0, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+.itemIcon {
+    stroke: var(--icon-stroke);
+    margin-right: 12px;
+}
+
+.h5 {
+    font-family: OpenSans;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 34px;
+    color: var(--body-color);
+}
+
+.search-mode td {
+    height: 60px;
+}
+
+.search-path {
+    font-size: 12px;
+    opacity: 0.7;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 7px 0;
+}
+
+.item-name-td {
+    cursor: pointer;
+}
+
+@media (max-width: 576px) {
+    .item-name-td {
+        width: 100%;
+    }
+}

@@ -1,0 +1,139 @@
+@font-face {
+    font-family: OpenSans;
+    src: url("/fonts/OpenSans-Regular.ttf");
+}
+
+@font-face {
+    font-family: OpenSansBold;
+    src: url("/fonts/OpenSans-Bold.ttf");
+}
+
+html,
+body,
+#root,
+.container {
+    height: 100%;
+}
+
+* {
+    font-family: OpenSans;
+}
+
+@import './scss/theme-light.scss';
+@import './scss/theme-dark2.scss';
+@import './scss/theme-dark5.scss';
+@import './scss/theme-darkgreen.scss';
+// @import './scss/theme-darkgreen2.scss';
+
+body {
+    margin: 0;
+    background: var(--body-background-img);
+    background-size: cover;
+    background-position: center;
+    color: var(--body-color);
+}
+
+.body-mask {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background: var(--body-mask-background);
+    mix-blend-mode: var(--body-mask-mix-blend-mode);
+    z-index: -10;
+}
+
+.mainRow {
+    flex-grow: 1;
+    overflow: hidden;
+    height: 100%;
+}
+
+.react-contexify__item:not(.react-contexify__item--disabled):hover>.react-contexify__item__content,
+.react-contexify__item:not(.react-contexify__item--disabled):focus>.react-contexify__item__content {
+    color: white;
+    background: rgba(27, 27, 38, 0.86);
+}
+
+.edit .react-contexify__item:not(.react-contexify__item--disabled):hover>.react-contexify__item__content,
+.edit .react-contexify__item:not(.react-contexify__item--disabled):focus>.react-contexify__item__content {
+    color: black;
+    background: #f4f4f7;
+}
+
+.rc-slider-mark-text:last-child {
+    transform: translateX(50%) !important;
+    right: 0% !important;
+    left: auto !important;
+}
+
+.rc-slider-dot-active {
+    border-color: var(--link-color);
+}
+
+.top_icon {
+    stroke: white;
+    vertical-align: middle;
+    margin: 0 15px;
+}
+
+.item_icon {
+    stroke: #2277e6;
+    opacity: 0.5;
+    vertical-align: middle;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.img-frame {
+    display: flex;
+    align-items: center;
+    background: white;
+    flex-grow: 1;
+}
+
+
+*::placeholder {
+    color: var(--body-color);
+    opacity: 0.7;
+}
+
+.form-control::placeholder {
+    color: var(--body-color);
+    opacity: 0.7;
+}
+
+input::placeholder {
+    color: var(--body-color);
+    opacity: 0.7;
+}
+
+textarea::placeholder {
+    color: var(--body-color);
+    opacity: 0.7;
+}
+
+
+input.modalTitle::placeholder {
+    color: var(--body-color);
+    opacity: 0.7;
+}
+
+
+@import './scss/account-dropdown.scss';
+@import './scss/bank-card.scss';
+@import './scss/custom-scroll.scss';
+@import './scss/file.scss';
+@import './scss/iam.scss';
+@import './scss/item-modal-field.scss';
+@import './scss/modal.scss';
+@import './scss/nav.scss';
+@import './scss/password.scss';
+@import './scss/progress.scss';
+@import './scss/safe-pane.scss';
+@import './scss/share.scss';
+@import './scss/std-bootstrap.scss';
+@import './scss/table-pane.scss';
+@import './scss/toast.scss';

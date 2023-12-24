@@ -1,0 +1,51 @@
+body {
+    --body-background-img: url("/img/body_background.jpg");
+
+    --body-color: rgb(27, 27, 38);
+    --body-color70: rgba(27, 27, 38, 0.7);
+    --danger-color: #b40020;
+    --warning-color: rgb(222, 95, 0);
+    --link-color: #009a50;
+
+    --safe-pane-background: rgba(27, 27, 38, 0.86);
+    --safe-pane-scroll-border-color: rgba(27, 27, 38, 0.86);
+
+    --table-pane-background: white;
+    --table-pane-scroll-border-color: white;
+    --table-pane-border-color: #e6e6f0;
+    --table-pane-hover: #f8f8fb;
+
+    --modal-background: white;
+
+    --item-modal-field-background: rgba(230, 230, 240, 0.3);
+    --item-modal-field-hover: rgba(0, 188, 98, .1);
+
+    --item-modal-field-hover: rgba(0, 188, 98, .1);
+    --item-modal-field-border: white;
+    --item-modal-field-border-hover: white;
+
+    --totp-circle-bg: rgba(27, 27, 38, 0.1);
+    --totp-circle-fg: rgba(27, 27, 38, 0.235);
+
+    --edit-item-modal-field: white;
+    --edit-item-note-modal-field: white;
+    --edit-item-modal-field-border: rgba(27, 27, 38, 0.2);
+    --edit-item-modal-field-border-hover: rgba(27, 27, 38, 0.7);
+
+    --btn-outline-secondary: rgba(27, 27, 38, 0.2);
+    --btn-outline-secondary-hover: rgba(27, 27, 38, 0.7);
+
+    --pmodal-body-background: white;
+    --account-menu-item-hover: #f8f8fb;
+
+    --download-and-view-border: rgba(27, 27, 38, 0.3);
+    /* check */
+    --account-block-border: rgba(27, 27, 38, 0.3);
+
+    --contexify-activeItem-bgColor: rgba(27, 27, 38, 1);
+    --login-item-link-color: #007b40;
+
+    --safe-pane-icon-stroke: white;
+    --icon-stroke: rgba(27, 27, 38, 0.6);
+    --icon-fill: #1B1B26;
+}
