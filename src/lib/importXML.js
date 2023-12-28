@@ -52,7 +52,7 @@ function importEntry(entry) {
   const options = {};
 
   let cleartext;
-  if('card_num' in result) { // version 5 as of today
+  if ('card_num' in result) { // version 5 as of today
     cleartext = [
       "card",
       (typeof result.Title === 'string') ? result.Title : 'unnamed',
@@ -68,7 +68,7 @@ function importEntry(entry) {
 
   else {
     result.URL = (typeof result.URL === 'string') ? result.URL : '';
-    if(typeof result.KP2A_URL === 'string') {
+    if (typeof result.KP2A_URL === 'string') {
       result.URL = [result.URL, result.KP2A_URL].join('\x01')
     }
 

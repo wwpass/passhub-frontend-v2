@@ -20,7 +20,8 @@ body.theme-dark2 {
     --table-pane-hover: rgba(255, 255, 255, 0.05);
 
     --modal-background: rgb(27, 27, 38);
-    --modal-shadow: -4px -4px 0px 0px #00DDC140 inset;
+    //    --modal-shadow: -4px -4px 0px 0px #00DDC140 inset;
+    --modal-shadow: -4px -4px 4px rgba(0, 221, 193, 0.25) inset;
 
     --item-modal-field-background: transparent;
     --item-modal-field-hover: transparent;

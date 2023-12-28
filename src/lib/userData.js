@@ -12,6 +12,8 @@ import {
 
 import mockData from "../lib/mockdata";
 
+import createUser from "../lib/createUser";
+
 let userData = {};
 let accountData = {};
 
@@ -196,6 +198,11 @@ const downloadUserData = () => {
     })
     .then((result) => {
       // console.log('got user data');
+      if (result.data.status === "create user") {
+        createUser(result.data);
+        return;
+      }
+
       if (result.data.status === "Ok") {
         const data = result.data.data;
 

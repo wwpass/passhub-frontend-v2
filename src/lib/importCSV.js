@@ -3,7 +3,7 @@
 // thanks to Ben Nadel: 
 // https://www.bennadel.com/blog/1504-ask-ben-parsing-csv-strings-with-javascript-exec-regular-expression-command.htm
 
-function CSVToArray( strData, strDelimiter ){
+function CSVToArray(strData, strDelimiter) {
   // Check to see if the delimiter is defined. If not,
   // then default to comma.
   strDelimiter = (strDelimiter || ",");
@@ -21,7 +21,7 @@ function CSVToArray( strData, strDelimiter ){
       "([^\"\\" + strDelimiter + "\\r\\n]*))"
     ),
     "gi"
-    );
+  );
 
 
   // Create an array to hold our data. Give the array
@@ -35,10 +35,10 @@ function CSVToArray( strData, strDelimiter ){
 
   // Keep looping over the regular expression matches
   // until we can no longer find a match.
-  while (arrMatches = objPattern.exec( strData )){
+  while (arrMatches = objPattern.exec(strData)) {
 
     // Get the delimiter that was found.
-    var strMatchedDelimiter = arrMatches[ 1 ];
+    var strMatchedDelimiter = arrMatches[1];
 
     // Check to see if the given delimiter has a length
     // (is not the start of string) and if it matches
@@ -47,11 +47,11 @@ function CSVToArray( strData, strDelimiter ){
     if (
       strMatchedDelimiter.length &&
       (strMatchedDelimiter != strDelimiter)
-      ){
+    ) {
 
       // Since we have reached a new row of data,
       // add an empty row to our data array.
-      arrData.push( [] );
+      arrData.push([]);
 
     }
 
@@ -59,35 +59,35 @@ function CSVToArray( strData, strDelimiter ){
     // Now that we have our delimiter out of the way,
     // let's check to see which kind of value we
     // captured (quoted or unquoted).
-    if (arrMatches[ 2 ]){
+    if (arrMatches[2]) {
 
       // We found a quoted value. When we capture
       // this value, unescape any double quotes.
-      var strMatchedValue = arrMatches[ 2 ].replace(
-        new RegExp( "\"\"", "g" ),
+      var strMatchedValue = arrMatches[2].replace(
+        new RegExp("\"\"", "g"),
         "\""
-        );
+      );
 
     } else {
 
       // We found a non-quoted value.
-      var strMatchedValue = arrMatches[ 3 ];
+      var strMatchedValue = arrMatches[3];
 
     }
 
 
     // Now that we have our value string, let's add
     // it to the data array.
-    arrData[ arrData.length - 1 ].push( strMatchedValue );
+    arrData[arrData.length - 1].push(strMatchedValue);
   }
 
   // Return the parsed data.
-  if(arrData.length > 0) {
-    if( (arrData[arrData.length-1].length === 1) &&(arrData[arrData.length-1] === '')) {
+  if (arrData.length > 0) {
+    if ((arrData[arrData.length - 1].length === 1) && (arrData[arrData.length - 1] === '')) {
       arrData.pop();
     }
   }
-  return( arrData );
+  return (arrData);
 }
 
 function findFolder(folders, path) {
@@ -138,8 +138,8 @@ function addRecord(safes, r, options = {}) {
 }
 
 
-function monthToNumber(aMonth){
-  let month = aMonth.substring(0,3).toLowerCase();
+function monthToNumber(aMonth) {
+  let month = aMonth.substring(0, 3).toLowerCase();
   const translation = {
     "jan": "01",
     "feb": "02",
@@ -163,7 +163,7 @@ function monthToNumber(aMonth){
 
 function importCSV(text) {
 
-  let data  = CSVToArray(text);
+  let data = CSVToArray(text);
 
   const safes = [];
 
@@ -194,16 +194,16 @@ function importCSV(text) {
     && (titles[6] === 'url')
     && (titles[7] === 'category')
     && (titles[8] === 'otpSecret')
-    ) {
-      data.forEach((e) => {
-        if(e.length === 9) {
-          let title = e[3]==''?'unnamed':e[3];
-          let path = e[7] == '' ? 'dashlane':`dashlane/${e[7]}`; 
-          addRecord(safes, [path, title, e[0], e[4], e[6], e[5]]);
-        }
-      });
-      return safes;
-    }
+  ) {
+    data.forEach((e) => {
+      if (e.length === 9) {
+        let title = e[3] == '' ? 'unnamed' : e[3];
+        let path = e[7] == '' ? 'dashlane' : `dashlane/${e[7]}`;
+        addRecord(safes, [path, title, e[0], e[4], e[6], e[5]]);
+      }
+    });
+    return safes;
+  }
 
   // url,username,password,totp, extra,name,grouping,fav -- new lastpass
   if ((titles.length === 8)
@@ -219,50 +219,50 @@ function importCSV(text) {
 
     data.forEach((e) => {
 
-      if(e.length === 8) {
+      if (e.length === 8) {
 
         const extra1 = e[6].replaceAll('\\', '/');
-        const path = extra1 == '' ? 'lastpass':`lastpass/${extra1}`;
-        
+        const path = extra1 == '' ? 'lastpass' : `lastpass/${extra1}`;
+
         let options = {};
 
-        if((e[0] == "http://sn") && (e[1] == "") && (e[2] == "")) {
-          options = {note: 1};
+        if ((e[0] == "http://sn") && (e[1] == "") && (e[2] == "")) {
+          options = { note: 1 };
 
-          if(e[4].startsWith('NoteType:Credit Card\n')) {
+          if (e[4].startsWith('NoteType:Credit Card\n')) {
 
-                  /*
-                  NoteType:Credit Card
-                  Language:en-US
-                  Name on Card:emili bronte
-                  Type:type-credit
-                  Number:4242 4242 4242 4242
-                  Security Code:123
-                  Start Date:March,22
-                  Expiration Date:April,25
-                  Notes:notes for card)
-                  */
+            /*
+            NoteType:Credit Card
+            Language:en-US
+            Name on Card:emili bronte
+            Type:type-credit
+            Number:4242 4242 4242 4242
+            Security Code:123
+            Start Date:March,22
+            Expiration Date:April,25
+            Notes:notes for card)
+            */
 
             let ccFields = e[4].split('\n');
-            let [ccName, ccNumber, ccExpMonth, ccExpYear, ccCsc, notes ] = ["", "", "", "", "", "", ""];
-            for(let ccField of ccFields) {
+            let [ccName, ccNumber, ccExpMonth, ccExpYear, ccCsc, notes] = ["", "", "", "", "", "", ""];
+            for (let ccField of ccFields) {
               let [key, value] = ccField.split(':');
-              if((typeof(key) == 'string') && (typeof(value) == 'string')) {
-                switch(key) {
-                  case "Name on Card": 
+              if ((typeof (key) == 'string') && (typeof (value) == 'string')) {
+                switch (key) {
+                  case "Name on Card":
                     ccName = value;
                     break;
-                  case "Number": 
-                    ccNumber= value;
+                  case "Number":
+                    ccNumber = value;
                     break;
-                  case "Security Code": 
-                    ccCsc= value;
+                  case "Security Code":
+                    ccCsc = value;
                     break;
                   case "Expiration Date":
-                    [ ccExpMonth, ccExpYear ] = value.split(',');
+                    [ccExpMonth, ccExpYear] = value.split(',');
                     ccExpMonth = monthToNumber(ccExpMonth);
                     break;
-                  case "Notes": 
+                  case "Notes":
                     notes = value;
                 }
               }
@@ -279,11 +279,11 @@ function importCSV(text) {
               ccExpYear,
               ccCsc,
             ];
-            addRecord(safes, pData, {version:5});
+            addRecord(safes, pData, { version: 5 });
           } else {
-            addRecord(safes, [path, e[5], e[1], e[2], e[0], e[4]], options);            
+            addRecord(safes, [path, e[5], e[1], e[2], e[0], e[4]], options);
           }
-        } else if(e[3].trim() === "") {
+        } else if (e[3].trim() === "") {
           addRecord(safes, [path, e[5], e[1], e[2], e[0], e[4]], options);
         } else {
           addRecord(safes, [path, e[5], e[1], e[2], e[0], e[4], e[3]], options);
@@ -305,7 +305,7 @@ function importCSV(text) {
 
 
     data.forEach((e) => {
-      if(e.length === 7) {
+      if (e.length === 7) {
         const extra1 = e[5].replaceAll('\\', '/');
 
         addRecord(safes, [extra1, e[4], e[1], e[2], e[0], e[3]]);
@@ -321,7 +321,7 @@ function importCSV(text) {
     && (titles[3] === 'password')) {
     // chrome
     data.forEach((e) => {
-      if(e.length === 4) {
+      if (e.length === 4) {
         const e1 = ['chrome', e[0], e[2], e[3], e[1], ''];
         addRecord(safes, e1);
       }
@@ -329,21 +329,41 @@ function importCSV(text) {
     return safes;
   }
 
+
   if ((titles.length === 5) // chrome (at least 112)
     && (titles[0] === 'name')
     && (titles[1] === 'url')
     && (titles[2] === 'username')
     && (titles[3] === 'password')
     && (titles[4] === 'note')) {
-        // chrome
+    // chrome
     data.forEach((e) => {
-      if(e.length === 5) {
+      if (e.length === 5) {
         const e1 = ['chrome', e[0], e[2], e[3], e[1], e[4]];
         addRecord(safes, e1);
       }
     });
     return safes;
   }
+
+  if ((titles.length === 6) // safari
+    && (titles[0].toLowerCase() === 'title')
+    && (titles[1].toLowerCase() === 'url')
+    && (titles[2].toLowerCase() === 'username')
+    && (titles[3].toLowerCase() === 'password')
+    && (titles[4].toLowerCase() === 'notes')
+    && (titles[5].toLowerCase() === 'otpauth')
+  ) {
+    // safari
+    data.forEach((e) => {
+      if (e.length === 6) {
+        const e1 = ['safari', e[0], e[2], e[3], e[1], e[4]];
+        addRecord(safes, e1);
+      }
+    });
+    return safes;
+  }
+
 
   if ((titles.length === 9) // firefox
     && (titles[0] === 'url')
@@ -355,10 +375,10 @@ function importCSV(text) {
     && (titles[6] === 'timeCreated')
     && (titles[7] === 'timeLastUsed')
     && (titles[8] === 'timePasswordChanged')
-    ) {
+  ) {
     // firefox
     data.forEach((e) => {
-      if(e.length === 9) {
+      if (e.length === 9) {
         const url = new URL(e[0]);
         const hostname = url.hostname;
         const e1 = ['firefox', hostname, e[1], e[2], e[0], ''];
@@ -367,14 +387,14 @@ function importCSV(text) {
     });
     return safes;
   }
-  
+
   if (titles.length !== 6) {
     return 'Unknown file format';
-//    throw new Error('Unknown file format');
+    //    throw new Error('Unknown file format');
   }
   // KeePassX
   data.forEach((e) => {
-    if(e.length === 6) {
+    if (e.length === 6) {
       addRecord(safes, e);
     }
   });

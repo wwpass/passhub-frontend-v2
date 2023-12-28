@@ -19,23 +19,24 @@ import { limits } from "../lib/utils";
 function ItemModal(props) {
 
   if (!props.show) {
-    console.log('ItemModal - hide');
     return null;
   }
 
-  // console.log('ItemModal - show');
-
   let _note = '';
+  let _title = '';
+
   if (props.args.item) {
     if (props.args.item.version == 5) {
+      _title = props.args.item.cleartext[1]
       _note = props.args.item.cleartext[2];
     } else {
+      _title = props.args.item.cleartext[0]
       _note = props.args.item.cleartext[4]
     }
   }
 
   const [edit, setEdit] = useState(props.args.item ? false : true);
-  const [title, setTitle] = useState(props.args.item ? props.args.item.cleartext[0] : '');
+  const [title, setTitle] = useState(_title);
   const [note, setNote] = useState(_note);
   const [errorMsg, setErrorMsg] = useState('');
 
