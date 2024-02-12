@@ -1,0 +1,59 @@
+body.theme-dark {
+
+    --body-color: #f1f1f1;
+    --body-color70: rgba(241, 241, 241, 0.7);
+
+    --danger-color: #ff3300;
+    --warning-color: rgba(224, 90, 0, 1);
+
+    --link-color: #00BC62;
+
+    --body-mask-background: rgba(27, 27, 38, 0.6);
+
+    --safe-pane-background: rgba(38, 38, 49, 1);
+    --safe-pane-scroll-border-color: rgba(27, 27, 38, 1);
+
+    --table-pane-background: rgb(27, 27, 38);
+    --table-pane-scroll-border-color: #262631;
+    --table-pane-color: #ddd;
+    --table-pane-border-color: rgba(255, 255, 255, 0.15);
+    --table-pane-hover: rgba(255, 255, 255, 0.05);
+
+    --modal-background: rgb(27, 27, 38);
+    //    --modal-shadow: -4px -4px 0px 0px #00DDC140 inset;
+    --modal-shadow: -4px -4px 4px rgba(0, 221, 193, 0.25) inset;
+
+    --item-modal-field-background: transparent;
+    --item-modal-field-hover: transparent;
+    --item-modal-field-border: rgba(255, 255, 255, 0.2);
+    --item-modal-field-border-hover: rgba(255, 255, 255, 0.7);
+    --item-modal-field-label: white;
+
+    --totp-circle-bg: rgba(241, 241, 241, 0.1);
+    --totp-circle-fg: rgba(241, 241, 241, 0.3);
+
+    --edit-item-modal-field: rgb(27, 27, 38);
+    --edit-item-modal-field-border: rgba(255, 255, 255, 0.2);
+    --edit-item-modal-field-border-hover: rgba(255, 255, 255, 0.7);
+    --edit-item-note-modal-field: rgb(27, 27, 38);
+
+    --btn-outline-secondary: rgba(255, 255, 255, 0.2);
+    --btn-outline-secondary-hover: rgba(255, 255, 255, 0.7);
+
+    --pmodal-body-background: rgb(27, 27, 38);
+
+    --account-menu-item-hover: black;
+    --account-block-border: rgba(255, 255, 255, 0.7);
+
+    --download-and-view-border: rgba(255, 255, 255, 0.7);
+
+    --contexify-menu-bgColor: #000;
+    --contexify-item-color: rgba(255, 255, 255, 0.7);
+    --contexify-activeItem-color: #fff;
+    --contexify-activeItem-bgColor: rgba(255, 255, 255, 0.2);
+    --contexify-menu-shadow: 0 4px 34px #7e7e8f47;
+
+    --safe-pane-icon-stroke: white;
+    --icon-stroke: white;
+    --icon-fill: white;
+}

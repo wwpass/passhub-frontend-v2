@@ -16,35 +16,35 @@ import CopyMoveToast from './copyMoveToast';
 import WsConnection from "../lib/wsConnection";
 // import * as passhubCrypto from "../lib/crypto";
 import {
-    getFolderById,
-    getApiUrl,
-    getWsUrl,
-    getVerifier,
-    serverLog,
-    enablePaste
-  } from "../lib/utils";
+  getFolderById,
+  getApiUrl,
+  getWsUrl,
+  getVerifier,
+  serverLog,
+  enablePaste
+} from "../lib/utils";
 
 import * as dropAndPaste from "../lib/dropAndPaste";
-import {search, searchFolders} from "../lib/search";
+import { search, searchFolders } from "../lib/search";
 
 import SafePane from "./safePane";
 import TablePane from "./tablePane";
 
-function MainPage (props) {
+function MainPage(props) {
 
-  if(!props) {
+  if (!props) {
     return null;
   }
 
-  if(!props.show) {
+  if (!props.show) {
     return null;
   }
 
-  if(!props.safes) {
+  if (!props.safes) {
     return null;
   }
 
-  if(props.safes.length == 0) {
+  if (props.safes.length == 0) {
     return null;
   }
 
@@ -71,7 +71,7 @@ function MainPage (props) {
   const [messageModalArgs, setMessageModalArgs] = useState(null);
 
 
-//// 
+  //// 
 
   // const [idleTimeoutAlert, setIdleTimerAlert] = useState(false);
 
@@ -79,16 +79,18 @@ function MainPage (props) {
   //const [takeSurvey, setTakeSurvey] = useState(true);
   // const [plan, setPlan] = useState("FREE");
 
-/*
-  useEffect(() => {
-    console.log("MainPage has been mounted");
-    return () => console.log("MainPage has been unmounted")
-    },  []);
-*/
+  /*
+    useEffect(() => {
+      console.log("MainPage has been mounted");
+      return () => console.log("MainPage has been unmounted")
+      },  []);
+  */
 
   useEffect(() => {
+    if (!props.searchString.trim().length) {
       setActiveFolder1(props.currentSafe);
-  },  [props.safes]);
+    }
+  }, [props.safes]);
 
 
   const queryClient = useQueryClient();
@@ -99,13 +101,13 @@ function MainPage (props) {
     queryFn: () => Promise.resolve(2).then(data => {
       return data;
     }),
-   });  
-  
+  });
+
   const cmtData = cmtResult.data;
 
-  useEffect(() =>{
+  useEffect(() => {
 
-    if( (typeof cmtData == "object") && ("item" in cmtData) && ("operation" in cmtData)) {
+    if ((typeof cmtData == "object") && ("item" in cmtData) && ("operation" in cmtData)) {
       setCopyMoveToastOperation(cmtData.operation);
       props.showCopyMoveToast(cmtData.operation);
       enablePaste(true);
@@ -116,7 +118,7 @@ function MainPage (props) {
         console.log(cmtData);
       }
       */
-    } 
+    }
   }, [cmtData])
 
 
@@ -126,12 +128,12 @@ function MainPage (props) {
     mutationFn: (_args) => {
       const { node, pItem, operation } = _args;
       return dropAndPaste.doMove(props.safes, node, pItem, operation);
-    },    
+    },
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries(["userData"], { exact: true })
     },
     onError: (err, variables, context) => {
-      if(err.message == "no dst write") {
+      if (err.message == "no dst write") {
         setShowModal("NoRightsModal");
         setMessageModalArgs({
           message:
@@ -139,7 +141,7 @@ function MainPage (props) {
         })
         return;
       }
-      if(err.message == "no src write") {
+      if (err.message == "no src write") {
         setShowModal("NoRightsModal");
         setMessageModalArgs({
           message:
@@ -151,7 +153,7 @@ function MainPage (props) {
   })
 
   const dropItem = (node, pItem) => {
-    copyMoveMutation.mutate({node, pItem, operation: "move"});
+    copyMoveMutation.mutate({ node, pItem, operation: "move" });
   };
 
   //////////  end of move item processing
@@ -163,15 +165,15 @@ function MainPage (props) {
       setShowModal("FolderNameModal");
       return;
     }
-/*
-    if(node.group) {
-      setShowModal("groupSafeModal");
-      setMessageModalArgs({
-        message:
-          'Sorry, operation forbidden. The safe is owned by company. Consult site administratior.',
-      })
-    }
-*/
+    /*
+        if(node.group) {
+          setShowModal("groupSafeModal");
+          setMessageModalArgs({
+            message:
+              'Sorry, operation forbidden. The safe is owned by company. Consult site administratior.',
+          })
+        }
+    */
 
     if (cmd === "rename") {
       setShowModal("FolderNameModal");
@@ -193,12 +195,12 @@ function MainPage (props) {
     }
 
     if (cmd === "export") {
-      if(node.user_role == "limited view") {
+      if (node.user_role == "limited view") {
         console.log('limited view safe not exported');
         return;
       }
 
-      if(node.safe && (node.safe.user_role == "limited view")) {
+      if (node.safe && (node.safe.user_role == "limited view")) {
         console.log('limited view folder not exported');
         return;
       }
@@ -207,24 +209,24 @@ function MainPage (props) {
       setExportFolderModalArgs(node);
       return;
     }
-    
+
     if (cmd === "Share") {
       setShowModal("ShareModal");
       setShareModalArgs({ folder: node, email: props.email });
     }
     if (cmd === "Paste") {
-     
-      if( (typeof cmtData == "object") && ("item" in cmtData) && ("operation" in cmtData)) {
-        copyMoveMutation.mutate({node, pItem: cmtData.item, operation: copyMoveToastOperation}); 
+
+      if ((typeof cmtData == "object") && ("item" in cmtData) && ("operation" in cmtData)) {
+        copyMoveMutation.mutate({ node, pItem: cmtData.item, operation: copyMoveToastOperation });
       }
       props.hideCopyMoveToast();
-/*      
-      if(showToast == "CopyMoveToast") {
-        setShowToast("");
-        enablePaste(false);
-      }
-*/      
-//      props.paste(node);
+      /*      
+            if(showToast == "CopyMoveToast") {
+              setShowToast("");
+              enablePaste(false);
+            }
+      */
+      //      props.paste(node);
     }
   }
 
@@ -234,7 +236,7 @@ function MainPage (props) {
     if (typeof folder !== "object") {
       folder = getFolderById(props.safes, folder);
     }
-    if(!folder) {
+    if (!folder) {
       folder = props.safes[0];
     }
 
@@ -254,44 +256,44 @@ function MainPage (props) {
       }
       setOpenNodes(openNodesCopy);
     }
-  //  this.userDataJustLoaded = true;
-  
+    //  this.userDataJustLoaded = true;
+
     setActiveFolder(folder);
     axios
-    .post(`${getApiUrl()}folder_ops.php`, {
-      operation: "current_safe",
-      verifier: getVerifier(),
-      id: folder.id,
+      .post(`${getApiUrl()}folder_ops.php`, {
+        operation: "current_safe",
+        verifier: getVerifier(),
+        id: folder.id,
 
-//      id: folder.SafeID ? folder.SafeID : folder.id,
-    })    
+        //      id: folder.SafeID ? folder.SafeID : folder.id,
+      })
   };
 
 
 
-    const handleOpenFolder = (folder) => {
-      const openNodesCopy = new Set(openNodes);
-      if (openNodes.has(folder.id)) {
-        openNodesCopy.delete(folder.id);
-      } else {
-        openNodesCopy.add(folder.id);
-      }
-      setOpenNodes(openNodesCopy);
-    };
+  const handleOpenFolder = (folder) => {
+    const openNodesCopy = new Set(openNodes);
+    if (openNodes.has(folder.id)) {
+      openNodesCopy.delete(folder.id);
+    } else {
+      openNodesCopy.add(folder.id);
+    }
+    setOpenNodes(openNodesCopy);
+  };
 
-    const openParentFolder = (folder) => {
-      if (!folder.SafeID) {
-        return;
-      }
-      if (folder.parent == 0) {
-        setActiveFolder1(folder.safe);
-      } else {
-        const parent = getFolderById(props.safes, folder.parent);
-        setActiveFolder1(parent);
-      }
-    };    
+  const openParentFolder = (folder) => {
+    if (!folder.SafeID) {
+      return;
+    }
+    if (folder.parent == 0) {
+      setActiveFolder1(folder.safe);
+    } else {
+      const parent = getFolderById(props.safes, folder.parent);
+      setActiveFolder1(parent);
+    }
+  };
 
-// search processing    
+  // search processing    
 
   let searchFolder = {
     path: [["Search results", 0]],
@@ -310,168 +312,168 @@ function MainPage (props) {
       document.querySelector("#safe_pane").classList.add("d-none");
       document.querySelector("#table_pane").classList.remove("d-none");
     }
-  }  
+  }
 
   const handleCopyMove = (item, operation) => {
     console.log("Copy Move operation", operation);
   }
 
-///////////////////////////////////////////////
+  ///////////////////////////////////////////////
 
-    return (
-        <React.Fragment>
-            <SafePane 
-                show = {true}
-                safes = {props.safes}
-                openNodes = {openNodes}
-                activeFolder = {activeFolder}
-                setActiveFolder = {setActiveFolder1}
-                onFolderMenuCmd = {folderMenuCmd}
-                handleOpenFolder = {handleOpenFolder}
-                dropItem={dropItem} 
-                />
-            <TablePane
-                safes = {props.safes}
-                inMemoryView = {props.inMemoryView}
-                setActiveFolder={setActiveFolder1}
+  return (
+    <React.Fragment>
+      <SafePane
+        show={true}
+        safes={props.safes}
+        openNodes={openNodes}
+        activeFolder={activeFolder}
+        setActiveFolder={setActiveFolder1}
+        onFolderMenuCmd={folderMenuCmd}
+        handleOpenFolder={handleOpenFolder}
+        dropItem={dropItem}
+      />
+      <TablePane
+        safes={props.safes}
+        inMemoryView={props.inMemoryView}
+        setActiveFolder={setActiveFolder1}
 
-                onFolderMenuCmd = {folderMenuCmd}
-                openParentFolder={openParentFolder}
+        onFolderMenuCmd={folderMenuCmd}
+        openParentFolder={openParentFolder}
 
-                dropItem={dropItem} 
+        dropItem={dropItem}
 
-                folder={ 
-                  searchString.length > 0
-                    ? searchFolder 
-                    : activeFolder
-                  }
-                  searchMode={searchString.length > 0}
-              />
+        folder={
+          searchString.length > 0
+            ? searchFolder
+            : activeFolder
+        }
+        searchMode={searchString.length > 0}
+      />
 
-            <FolderNameModal
-              show={showModal == "FolderNameModal"}
-              args={folderNameModalArgs}
-              onClose={(result = false, newFolderID) => {
+      <FolderNameModal
+        show={showModal == "FolderNameModal"}
+        args={folderNameModalArgs}
+        onClose={(result = false, newFolderID) => {
 
-                if(result == "group safe") {
-                  setMessageModalArgs({
-                    message:
-                      'Sorry, the operation is forbidden. The safe is owned by company. Consult site administratior.',
-                  })
-                  setShowModal("groupSafeModal")
-                  return;
-                }
+          if (result == "group safe") {
+            setMessageModalArgs({
+              message:
+                'Sorry, the operation is forbidden. The safe is owned by the company. Please consult the site administrator.',
+            })
+            setShowModal("groupSafeModal")
+            return;
+          }
 
-                setShowModal("");
-              }}
-            ></FolderNameModal>
+          setShowModal("");
+        }}
+      ></FolderNameModal>
 
-            <ShareModal
-              show={showModal == "ShareModal"}
-              args={shareModalArgs}
-              onClose={(result = false) => {
+      <ShareModal
+        show={showModal == "ShareModal"}
+        args={shareModalArgs}
+        onClose={(result = false) => {
 
-                if(result == "group safe") {
-                  setMessageModalArgs({
-                    message:
-                      'Sorry, the operation is forbidden. The safe is owned by company. Consult site administratior.',
-                  })
-                  setShowModal("groupSafeModal")
-                  return;
-                }
+          if (result == "group safe") {
+            setMessageModalArgs({
+              message:
+                'Sorry, the operation is forbidden. The safe is owned by the company. Please consult the site administrator.',
+            })
+            setShowModal("groupSafeModal")
+            return;
+          }
 
-                if(result == "group safe, siteadmin") {
-                  setMessageModalArgs({
-                    message:
-                      'Sorry, the operation is forbidden. The safe belongs to one or more groups. Please use site admin tools to share the safe',
-                  })
-                  setShowModal("groupSafeModal")
-                  return;
-                }
+          if (result == "group safe, siteadmin") {
+            setMessageModalArgs({
+              message:
+                'Sorry, the operation is forbidden. The safe belongs to one or more groups. Please use site admin tools to share the safe',
+            })
+            setShowModal("groupSafeModal")
+            return;
+          }
 
-                setShowModal("");
-                if (result === true) {
-                  props.refreshUserData();
-                }
-              }}
-            ></ShareModal>
+          setShowModal("");
+          if (result === true) {
+            props.refreshUserData();
+          }
+        }}
+      ></ShareModal>
 
-            <DeleteFolderModal
-              show={showModal == "DeleteFolderModal"}
-              folder={deleteFolderModalArgs}
-              onClose={(result = false) => {
-                if(result=="refresh") {
-                  props.refreshUserData();
-                  return;
-                }
+      <DeleteFolderModal
+        show={showModal == "DeleteFolderModal"}
+        folder={deleteFolderModalArgs}
+        onClose={(result = false) => {
+          if (result == "refresh") {
+            props.refreshUserData();
+            return;
+          }
 
-                if(result == "group safe") {
-                    setMessageModalArgs({
-                      message:
-                        'Sorry, the operation is forbidden. The safe is owned by company. Consult site administratior.',
-                    })
-                  setShowModal("groupSafeModal")
-                  return;
-                }
+          if (result == "group safe") {
+            setMessageModalArgs({
+              message:
+                'Sorry, the operation is forbidden. The safe is owned by the company. Please consult the site administrator.',
+            })
+            setShowModal("groupSafeModal")
+            return;
+          }
 
-                if(result == "group safe, siteadmin") {
-                  setMessageModalArgs({
-                    message:
-                      'Sorry, the operation is forbidden. The safe belongs to one or more groups. Please remove the safe from all the groups first',
-                  })
-                  setShowModal("groupSafeModal")
-                  return;
-                }
+          if (result == "group safe, siteadmin") {
+            setMessageModalArgs({
+              message:
+                'Sorry, the operation is forbidden. The safe belongs to one or more groups. Please remove the safe from all the groups first',
+            })
+            setShowModal("groupSafeModal")
+            return;
+          }
 
-                setShowModal("")
-              }}
-            ></DeleteFolderModal>            
+          setShowModal("")
+        }}
+      ></DeleteFolderModal>
 
-            <ExportFolderModal
-              show={showModal == "ExportFolderModal"}
-              folder={exportFolderModalArgs}
-              onClose={() => {
-                setShowModal("")
-              }}
-            ></ExportFolderModal>
-
-
-            <MessageModal
-              show={showModal == "NoRightsModal"}
-              norights
-              onClose={() => {
-                setShowModal("");
-              }}
-            >
-              {messageModalArgs && messageModalArgs.message}
-            </MessageModal>
-
-            <MessageModal
-              show={showModal == "groupSafeModal"}
-              norights
-              onClose={() => {
-                setShowModal("");
-              }}
-            >
-              {messageModalArgs && messageModalArgs.message}
-            </MessageModal>
+      <ExportFolderModal
+        show={showModal == "ExportFolderModal"}
+        folder={exportFolderModalArgs}
+        onClose={() => {
+          setShowModal("")
+        }}
+      ></ExportFolderModal>
 
 
+      <MessageModal
+        show={showModal == "NoRightsModal"}
+        norights
+        onClose={() => {
+          setShowModal("");
+        }}
+      >
+        {messageModalArgs && messageModalArgs.message}
+      </MessageModal>
+
+      <MessageModal
+        show={showModal == "groupSafeModal"}
+        norights
+        onClose={() => {
+          setShowModal("");
+        }}
+      >
+        {messageModalArgs && messageModalArgs.message}
+      </MessageModal>
 
 
-            <ToastContainer position="bottom-end" style={{bottom:32, right:32}}>
-              <CopyMoveToast
-                show={showToast == "CopyMoveToast"}
-                operation={copyMoveToastOperation}
-                onClose={() => {
-                  setShowToast("");
-                  enablePaste(false);
-                }}
-              >
-              </CopyMoveToast>
-            </ToastContainer>
-        </React.Fragment>
-    );
+
+
+      <ToastContainer position="bottom-end" style={{ bottom: 32, right: 32 }}>
+        <CopyMoveToast
+          show={showToast == "CopyMoveToast"}
+          operation={copyMoveToastOperation}
+          onClose={() => {
+            setShowToast("");
+            enablePaste(false);
+          }}
+        >
+        </CopyMoveToast>
+      </ToastContainer>
+    </React.Fragment>
+  );
 }
 
 export default MainPage;

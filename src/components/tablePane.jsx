@@ -233,10 +233,7 @@ function TablePane(props) {
                     )}
                 </div>
 
-                <div
-                    className="d-none d-sm-block"
-                    style={{ color: "var(--body-color)", marginBottom: "28px" }}
-                >
+                <div className="d-none d-sm-block path">
                     {pathString}
                     <b>{folder.path[folder.path.length - 1][0]}</b>
                 </div>
@@ -264,7 +261,7 @@ function TablePane(props) {
                         <table className="item_table">
                             <thead>
                                 <tr className="d-flex">
-                                    <th className="d-none d-sm-table-cell col-sm-12 col-md-6 col-lg-4 col-xl-3" style={{ paddingLeft: 0 }}>
+                                    <th className="d-none d-sm-table-cell col-sm-12 col-md-6 col-lg-4 col-xl-3">
                                         Title
                                     </th>
                                     <th className="d-none d-xl-table-cell                             col-xl-3"></th>
