@@ -358,7 +358,7 @@ function MainPage(props) {
           if (result == "group safe") {
             setMessageModalArgs({
               message:
-                'Sorry, the operation is forbidden. The safe is owned by company. Consult site administratior.',
+                'Sorry, the operation is forbidden. The safe is owned by the company. Please consult the site administrator.',
             })
             setShowModal("groupSafeModal")
             return;
@@ -376,7 +376,7 @@ function MainPage(props) {
           if (result == "group safe") {
             setMessageModalArgs({
               message:
-                'Sorry, the operation is forbidden. The safe is owned by company. Consult site administratior.',
+                'Sorry, the operation is forbidden. The safe is owned by the company. Please consult the site administrator.',
             })
             setShowModal("groupSafeModal")
             return;
@@ -410,7 +410,7 @@ function MainPage(props) {
           if (result == "group safe") {
             setMessageModalArgs({
               message:
-                'Sorry, the operation is forbidden. The safe is owned by company. Consult site administratior.',
+                'Sorry, the operation is forbidden. The safe is owned by the company. Please consult the site administrator.',
             })
             setShowModal("groupSafeModal")
             return;
