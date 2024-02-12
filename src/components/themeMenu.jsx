@@ -5,7 +5,7 @@ import { getApiUrl, getVerifier, humanReadableFileSize } from "../lib/utils";
 
 
 
-const themes = ["theme-lite", "theme-dark2", "theme-dark5", "theme-darkgreen", /* "theme-darkgreen2" */];
+const themes = ["theme-lite", "theme-dark", "theme-dark2", "theme-dark5", "theme-darkgreen", /* "theme-darkgreen2" */];
 
 
 function switchTheme(theme) {
