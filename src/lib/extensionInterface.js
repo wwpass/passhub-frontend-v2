@@ -1,10 +1,31 @@
 const consoleLog = console.log;
 // const consoleLog = () => {};
 
+
+const isIOS = navigator.userAgent.match(/iPhone|iPod|iPad/i)
+    || (navigator.userAgent.match(/Intel Mac OS X/i) && navigator.maxTouchPoints > 1);
+
+const isAndroid = navigator.userAgent.match(/Android/i) ||
+    (navigator.userAgent.match(/Samsung/i) && navigator.userAgent.match(/Linux/i));
+
+const mobileDevice = isIOS || isAndroid;
+
 const chromeExtensionId = 'bamjbfhfacpdkenilcibkmpdahkgfejh';
 const devChromeExtensionId = 'mjcejgifimlbgmdckhdlopkjhehombpi';
 const edgeExtensionId = 'epmmbjnnghpopnhkilkoomaahpinjpkc';
 const devEdgeExtensionId = 'mpclodkiedkokmddfcooapahedfealjj';
+
+const safarExtensionId = "com.wwpass.PassHub-net.Extension";
+const devSafarExtensionId = "com.wwpass.PassHub-net.Extension (UNSIGNED)";
+
+
+let extension;
+
+if (window.navigator.userAgent.match(/ Chrome\//i)) {
+    extension = chrome;
+} else if (typeof browser != 'undefined') {
+    extension = browser;
+}
 
 let extensionId = chromeExtensionId;
 
@@ -15,7 +36,6 @@ function setRestartIdleTimer(fn) {
 }
 
 let findRecords = null;
-
 
 function sendAdvise(message) {
     consoleLog('sendAdvise');
@@ -31,11 +51,11 @@ function sendAdvise(message) {
             restartIdleTimer();
         }
     }
-    return chrome.runtime.sendMessage(extensionId, findRecords(message))
+    return extension.runtime.sendMessage(extensionId, findRecords(message))
         .then(response => {
             if (!response) {
-                if (chrome.runtime.lastError) {
-                    consoleLog(chrome.runtime.lastError);
+                if (extension.runtime.lastError) {
+                    consoleLog(extension.runtime.lastError);
                 } else {
                     consoleLog('no response');
                 }
@@ -50,8 +70,8 @@ function sendAdvise(message) {
 };
 
 function sendCTS() {
-    if ((typeof chrome != 'undefined') && chrome.runtime && chrome.runtime.sendMessage) {
-        chrome.runtime.sendMessage(extensionId, { id: "clear to send" })
+    if ((typeof extension != 'undefined') && extension.runtime && extension.runtime.sendMessage) {
+        extension.runtime.sendMessage(extensionId, { id: "clear to send" })
             .then(response => {
                 consoleLog('cts response');
                 consoleLog(response);
@@ -72,12 +92,16 @@ function sendCredentials(s) {
     }
     s.url = url;
 
-    if ((typeof chrome != 'undefined') && chrome.runtime && chrome.runtime.sendMessage) {
-        chrome.runtime.sendMessage(extensionId, s)
+    if (!mobileDevice
+        && (typeof extension != 'undefined')
+        && extension.runtime
+        && extension.runtime.sendMessage) {
+
+        extension.runtime.sendMessage(extensionId, s)
             .then(response => {
                 if (!response) {
-                    if (chrome.runtime.lastError) {
-                        consoleLog(chrome.runtime.lastError);
+                    if (extension.runtime.lastError) {
+                        consoleLog(extension.runtime.lastError);
                     } else {
                         consoleLog('no response');
                     }
@@ -172,7 +196,7 @@ function keepAlive() {
 
 function legacyConnect(findCb) {
     console.log('legacyConnect called');
-    if (typeof chrome == 'undefined') {
+    if (typeof extension == 'undefined') {
         return;
     }
 
@@ -182,7 +206,7 @@ function legacyConnect(findCb) {
             extensionPort = null
         }
 
-        extensionPort = chrome.runtime.connect(extensionId);
+        extensionPort = extension.runtime.connect(extensionId);
         consoleLog(logtime() + ' connected');
 
 
@@ -200,10 +224,10 @@ function legacyConnect(findCb) {
             extensionPort = null;
 
             consoleLog(logtime() + ' disConnected');
-            // Chrome 
-            if (chrome.runtime.lastError) {  // does not exist
+
+            if (extension.runtime.lastError) {  // does not exist
                 consoleLog('Connection rintime.error');
-                consoleLog(chrome.runtime.lastError);
+                consoleLog(extension.runtime.lastError);
             } else {
                 setTimeout(legacyConnect, 100, findCb);
             }
@@ -229,13 +253,6 @@ function legacyConnect(findCb) {
 
 
 function connect(findCb) {  // legacy interface, use cb only
-    /*    
-        if (window.location.href.includes("extension")) {
-            extensionId = devChromeExtensionId;
-        }
-    
-        legacyConnect(findCb);
-*/
     findRecords = findCb;
 }
 
@@ -259,6 +276,15 @@ function logExtensionId() {
         case edgeExtensionId:
             consoleLog("edgeExtensionId");
             break
+
+        case devSafarExtensionId:
+            consoleLog("devSafarExtensionId");
+            break;
+
+        case safarExtensionId:
+            consoleLog("safarExtensionId");
+            break
+
         default:
             consoleLog("illegal extensionId", extensionId);
             break;
@@ -266,25 +292,33 @@ function logExtensionId() {
 }
 
 
-if ((typeof chrome != 'undefined') && chrome.runtime && chrome.runtime.sendMessage) {
+if (!mobileDevice
+    && (typeof extension != 'undefined')
+    && extension.runtime
+    && extension.runtime.sendMessage) {
 
 
     let ids = []
 
-    if (window.location.href.includes("extension")) {
-        ids.push(devChromeExtensionId);
-        if (window.navigator.userAgent.match(/ Edg\//i)) {
-            ids.push(devEdgeExtensionId);
+    if (window.navigator.userAgent.match(/ Chrome\//i)) {
+
+        if (window.location.href.includes("extension")) {
+            ids.push(devChromeExtensionId);
+            if (window.navigator.userAgent.match(/ Edg\//i)) {
+                ids.push(devEdgeExtensionId);
+            }
+        } else {
+            ids.push(chromeExtensionId);
+            if (window.navigator.userAgent.match(/ Edg\//i)) {
+                ids.push(edgeExtensionId);
+            }
         }
     } else {
-        ids.push(chromeExtensionId);
-        if (window.navigator.userAgent.match(/ Edg\//i)) {
-            ids.push(edgeExtensionId);
-        }
+        ids.push(devSafarExtensionId);
     }
 
     extensionId = ids.pop();
-    chrome.runtime.sendMessage(extensionId, { id: "remember me" })
+    extension.runtime.sendMessage(extensionId, { id: "remember me" })
         .then(response => {
             if (response) {
                 // extension found
@@ -307,7 +341,7 @@ if ((typeof chrome != 'undefined') && chrome.runtime && chrome.runtime.sendMessa
                 return;
             }
             extensionId = ids.pop();
-            chrome.runtime.sendMessage(extensionId, { id: "remember me" })
+            extension.runtime.sendMessage(extensionId, { id: "remember me" })
                 .then(response => {
                     if (response) {
                         // extension found
@@ -330,4 +364,4 @@ if ((typeof chrome != 'undefined') && chrome.runtime && chrome.runtime.sendMessa
 } else {
     consoleLog("no passhub.net extension installed");
 }
-export { connect, /*sendCredentials, sendAdvise,*/ openInExtension, setRestartIdleTimer }
+export { connect, openInExtension, setRestartIdleTimer }
