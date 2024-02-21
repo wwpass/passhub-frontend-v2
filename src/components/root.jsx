@@ -344,7 +344,7 @@ function Root(props) {
 
   return (
     <Container className="d-flex" style={{ flexDirection: "column" }}>
-      <Header page="Main"
+      <Header page={page}
         onSearchChange={e => setSearchString(e.target.value)}
         onSearchClear={() => setSearchString('')}
         searchString={searchString}
@@ -384,7 +384,7 @@ function Root(props) {
         <div
           style={{
             height: "22px",
-            display: page === "Main" ? "" : "none",
+            display: (page === "Main" || page === "Iam") ? "" : "none",
           }}
         ></div>
       </Row>
