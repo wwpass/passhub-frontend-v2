@@ -46,6 +46,7 @@ function Header(props) {
 
             page={props.page}
             gotoIam={props.gotoIam}
+            gotoMain={props.gotoMain}
           />
         </Col>
 

@@ -162,7 +162,15 @@ function NavSpan(props) {
         </div>
       )}
 
-      {props.page !== "Login" && (
+      {props.page == "Iam" && (
+        <div onClick={props.gotoMain} style={{ cursor: "pointer" }}>
+          <svg width="32" height="32">
+            <use href="#f-cross"></use>
+          </svg>
+        </div>
+      )}
+
+      {props.page !== "Login" && props.page !== "Iam" && (
         <React.Fragment>
           <div style={{ display: "flex" }}>
             <div className="account-dropdown-button"
