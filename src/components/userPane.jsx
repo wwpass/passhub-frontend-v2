@@ -117,9 +117,14 @@ export default function UserPane(props) {
 
     const licensed_users = props.licensed ? `/${props.licensed}` : '';
 
+    function showGroupPane() {
+        document.querySelector('#user-pane').classList.add("d-none");
+        document.querySelector('.group_pane').classList.remove("d-none");
+    }
+
     return (
         <Col
-            className="col-xl-9 col-lg-8 col-md-7 col-sm-6 d-none d-sm-block"
+            className="col-xl-9 col-lg-8 col-md-7 col-sm-7 d-sm-block"
             id="user-pane"
         >
             <div
@@ -130,19 +135,22 @@ export default function UserPane(props) {
                     padding: "0 24px"
                 }}
             >
+                <div className="d-sm-none" onClick={showGroupPane} style={{ textAlign: "right", cursor: "pointer", color: "var(--link-color)" }}>User Groups &gt;</div>
                 <div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <div><b>User management</b></div>
+
                         <div style={{ display: "flex", gap: 32 }}>
-                            <div style={{ cursor: "pointer", color: "var(--link-color)" }}>Audit</div>
-                            <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
+                            <div className="d-none d-sm-block" style={{ cursor: "pointer", color: "var(--link-color)" }}>Audit</div>
+                            <div className="d-none d-sm-block" style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
                         </div>
                     </div>
-                    <div style={{ margin: "16px 0 8px", display: "flex", gap: 16 }}>
+
+                    <div style={{ margin: "16px 0 8px", display: "flex", gap: 16, flexWrap: "wrap" }}>
                         <input
                             type="email"
                             placeholder="Email"
-                            style={{ flexGrow: 1 }}
+                            style={{ flexGrow: 1, minWidth: 310 }}
                             onFocus={inputOnFocus}
                             onChange={inputOnChange}
                             onKeyDown={inputOnKeyDown}
