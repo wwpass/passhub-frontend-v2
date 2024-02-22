@@ -234,6 +234,7 @@ function GroupSafesModal(props) {
           <div style={{ flexGrow: 1 }}>
 
             <Select
+              style={{ height: 48, borderRadius: 12 }}
               options={ownSafes1}
               labelField="label"
               values={[...values]}

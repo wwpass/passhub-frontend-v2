@@ -9,6 +9,13 @@ import Col from "react-bootstrap/Col";
 
 import Button from "react-bootstrap/Button";
 
+import {
+    Menu,
+    Item,
+    contextMenu,
+} from "react-contexify";
+import "react-contexify/dist/ReactContexify.css";
+
 import UserTable from './userTable';
 
 
@@ -97,11 +104,17 @@ export default function UserPane(props) {
         }
     };
 
+    /*
+        const clearInput = () => {
+            setErrorMsg("");
+            setEmail("");
+        };
+    
+    const inputBackground = searchString.trim().length
+        ? "white"
+        : "rgba(255, 255, 255, 0.6)";
 
-    const clearInput = () => {
-        setErrorMsg("");
-        setEmail("");
-    };
+    */
 
     const onSearchChange = (e) => {
         setSearchString(e.target.value);
@@ -110,10 +123,6 @@ export default function UserPane(props) {
     const searchClear = () => {
         setSearchString("");
     }
-
-    const inputBackground = searchString.trim().length
-        ? "white"
-        : "rgba(255, 255, 255, 0.6)";
 
     const licensed_users = props.licensed ? `/${props.licensed}` : '';
 
@@ -135,16 +144,32 @@ export default function UserPane(props) {
                     padding: "0 24px"
                 }}
             >
-                <div className="d-sm-none" onClick={showGroupPane} style={{ textAlign: "right", cursor: "pointer", color: "var(--link-color)" }}>User Groups &gt;</div>
-                <div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <div><b>User management</b></div>
 
-                        <div style={{ display: "flex", gap: 32 }}>
-                            <div className="d-none d-sm-block" style={{ cursor: "pointer", color: "var(--link-color)" }}>Audit</div>
-                            <div className="d-none d-sm-block" style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
+                <div>
+
+                    <div className="d-sm-none" onClick={showGroupPane} style={{ textAlign: "right", cursor: "pointer", color: "var(--link-color)", marginBottom: 16 }}>User Groups &gt;</div>
+                    <div className="d-sm-none" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ fontWeight: 700, fontSize: 24, lineHeight: "34px" }}>User management</div>
+                        <div onClick={(event) => {
+                            contextMenu.show({
+                                id: "user-pane-menu",
+                                event
+                            });
+                        }}>
+                            <svg width="24" height="24" style={{ opacity: 0.5, stroke: "#1b1b26", cursor: "pointer" }}>
+                                <use href="#kebab"></use>
+                            </svg>
                         </div>
                     </div>
+
+                    <div className="d-none d-sm-flex" style={{ justifyContent: "space-between" }}>
+                        <div><b>User management</b></div>
+                        <div style={{ display: "flex", gap: 32 }}>
+                            <div style={{ cursor: "pointer", color: "var(--link-color)" }}>Audit</div>
+                            <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
+                        </div>
+                    </div>
+
 
                     <div style={{ margin: "16px 0 8px", display: "flex", gap: 16, flexWrap: "wrap" }}>
                         <input
@@ -197,6 +222,15 @@ export default function UserPane(props) {
                 >
                 </UserTable>
             </div>
-        </Col>
+
+            <Menu id={"user-pane-menu"}>
+                <Item onClick={() => { }}>
+                    Audit
+                </Item>
+                <Item onClick={onExport}>
+                    Export
+                </Item>
+            </Menu>
+        </Col >
     )
 }

@@ -9,22 +9,7 @@ import "react-contexify/dist/ReactContexify.css";
 
 import Group from "./group";
 
-
 const cmpByName = ((a, b) => a.name.localeCompare(b.name));
-
-const groupMenu1 = (
-    <Menu id={"group-menu1"}>
-        <Item>
-            Item1
-        </Item>
-        <Item>
-            Item2
-        </Item>
-        <Item>
-            Item3
-        </Item>
-    </Menu>
-);
 
 export default function GroupPane(props) {
 
@@ -72,7 +57,6 @@ export default function GroupPane(props) {
             </div>
 
             <Menu id={"group-menu"}>
-
                 {["Users", "Safes", "Rename", "Delete"].map((itemName) => (
                     <Item onClick={(e) => {
                         props.handleGroupMenuClick(itemName, e.props.group);
