@@ -33,9 +33,9 @@ function GroupDeleteModal(props) {
       })
       .catch((err) => {
         console.log(err);
-        setErrorMsg("Server error. Please try again later" );
+        setErrorMsg("Server error. Please try again later");
       });
-  }  
+  }
 
   const queryClient = useQueryClient();
 
@@ -50,50 +50,52 @@ function GroupDeleteModal(props) {
 
   const onSubmit = () => {
 
-    groupMutation.mutate({url: 'group.php', args: {
+    groupMutation.mutate({
+      url: 'group.php', args: {
         verifier: getVerifier(),
         operation: "delete",
         groupId: props.group.GroupID,
-      }});
-    }
+      }
+    });
+  }
 
-    return (
+  return (
 
-      <Modal
-        show={props.show}
-        onHide={onClose}
-        centered
-        animation={false}
-      >
-        <ModalCross onClose={props.onClose}></ModalCross>
+    <Modal
+      show={props.show}
+      onHide={onClose}
+      centered
+      animation={false}
+    >
+      <ModalCross onClose={props.onClose}></ModalCross>
 
-        <div className="modalTitle" style={{ alignItems: "center" }}>
+      <div className="modalTitle" style={{ alignItems: "center" }}>
 
-          <div className="h2">Delete User Group</div>
-        </div>
+        <div className="h2">Delete User Group</div>
+      </div>
 
-        <Modal.Body className="edit">  
+      <Modal.Body className="edit">
         <p>
-        Do you really want to delete group{" "}
-              <span style={{ fontSize: "larger", fontWeight: "bold" }}>
-                {props.group.name}
-              </span>{" "}
-              ?        </p>
-          {errorMsg.length > 0 && (
-            <div style={{ color: "red" }}>{errorMsg}</div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="outline-secondary" onClick={onClose}>
-            Cancel
-          </Button>
+          Do you really want to delete group{" "}
+          <span style={{ fontSize: "larger", fontWeight: "bold" }}>
+            {props.group.name}
+          </span>{" "}
+          ?        </p>
+        {errorMsg.length > 0 && (
+          <div style={{ color: "red" }}>{errorMsg}</div>
+        )}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="outline-secondary" onClick={onClose}>
+          Cancel
+        </Button>
 
-          <Button variant="danger" type="submit" onClick={onSubmit}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
+        <Button variant="danger" type="submit" onClick={onSubmit}>
+          Delete
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 }
 
 export default GroupDeleteModal;

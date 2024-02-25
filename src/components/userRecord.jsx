@@ -120,26 +120,10 @@ function UserRecord(props) {
 
   return (
     <tr>
-      {/*        
-        <td
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            props.showDelDialog({ email: user.email, id: user._id });
-          }}
-        >
-          <svg
-            style={{
-              strokeWidth: "0",
-              fill: "red",
-              width: "1em",
-              height: "1em",
-            }}
-          >
-            <use href="#cross"></use>
-          </svg>
-        </td>
-          */}
-      <td className="email">{props.user.email}</td>
+      <td className="email" style={{ cursor: "pointer" }} onClick={() => {
+        console.log('the click', props.user.email)
+        props.showUserModal(props.user)
+      }}>{props.user.email}</td>
       <td>
         <Dropdown
           onSelect={(newRole) => {

@@ -28,6 +28,14 @@ function GroupUsersModal(props) {
 
   //  const selection = useRef([]);
 
+
+
+  const onClose = () => {
+    props.onClose();
+  };
+
+  // copypasted to userModal )
+
   const groupAction = (args) => {
     console.log('group Action: url', args.url, 'args', args.args);
     return axios
@@ -59,10 +67,6 @@ function GroupUsersModal(props) {
       queryClient.invalidateQueries(["userList"], { exact: true })
     },
   })
-
-  const onClose = () => {
-    props.onClose();
-  };
 
   function addUserToGroup(email) {
 
@@ -154,21 +158,23 @@ function GroupUsersModal(props) {
       <ModalCross onClose={props.onClose}></ModalCross>
 
       <div className="modalTitle" style={{ alignItems: "center" }}>
+        {/*
         <div>
           <svg width="32" height="32" style={{ marginRight: "14px" }}>
             <use href={icon}></use>
           </svg>
         </div>
+  */}
 
         <div className="h2">{title}</div>
       </div>
 
       <Modal.Body className="edit">
 
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
           <div style={{ flexGrow: 1 }}>
             <Select
-              style={{ height: 48, borderRadius: 12 }}
+              style={{ height: 48, borderRadius: 12, minWidth: 354 }}
               options={selectorUsers}
               labelField="label"
               values={[...values]}
@@ -180,7 +186,7 @@ function GroupUsersModal(props) {
             />
           </div>
 
-          <Button variant="primary" onClick={onAdd}>
+          <Button variant="primary" onClick={onAdd} style={{ marginLeft: "auto" }}>
             Add
           </Button>
 
