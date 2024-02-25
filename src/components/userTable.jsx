@@ -43,6 +43,7 @@ function UserTable(props) {
                 user={u}
                 me={me}
                 showDelDialog={props.showDelDialog}
+                showUserModal={props.showUserModal}
                 userStatusCB={props.userStatusCB}
               />
             );

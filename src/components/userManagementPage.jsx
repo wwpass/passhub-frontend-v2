@@ -12,15 +12,12 @@ import GroupUsersModal from "./groupUsersModal";
 import GroupDeleteModal from "./groupDeleteModal";
 import GroupNameModal from "./groupNameModal";
 import GroupSafesModal from "./groupSafesModal";
+import UserModal from "./userModal";
 
 import { decryptGroups } from "../lib/userData";
 
-
-// import "react-contexify/dist/ReactContexify.css";
-
 import UserPane from "./userPane";
 import GroupPane from "./groupPane";
-
 
 function downloadUserList() {
   return axios
@@ -55,13 +52,12 @@ function userListQuery() {
 
 export default function UserManagementPage(props) {
 
-  const queryClient = new QueryClient();
-
   if (!props.show) {
     return null;
   }
 
   const currentGroupRef = useRef(null);
+  const currentUserRef = useRef(null);
 
   const [showModal, setShowModal] = useState("");
   //  const [groupModalArgs, setGroupModalArgs] = useState({});
@@ -93,9 +89,14 @@ export default function UserManagementPage(props) {
     setDelDialogData({ email: data.email, id: data.id, show: true });
   };
 
+  const showUserModal = (user) => {
+    currentUserRef.current = user;
+    setShowModal("UserModal");
+  }
 
   const handleGroupMenuClick = (cmd, group) => {
     currentGroupRef.current = group;
+
     if (cmd == "Users") {
       setShowModal("GroupUsersModal");
       return;
@@ -114,7 +115,7 @@ export default function UserManagementPage(props) {
     }
   }
 
-  if ((showModal != "") && (showModal != "GroupCreateModal")) {
+  if ((showModal != "") && (showModal != "GroupCreateModal") && (showModal != "UserModal")) {
 
     for (const group of groups) {
       if (group.GroupID === currentGroupRef.current.GroupID) {
@@ -127,6 +128,8 @@ export default function UserManagementPage(props) {
     }
   }
 
+
+
   return (
     <>
       <UserPane
@@ -134,6 +137,7 @@ export default function UserManagementPage(props) {
         licensed={licensedUsers}
         me={me}
         showDelDialog={showDelDialog}
+        showUserModal={showUserModal}
       >
 
       </UserPane>
@@ -183,6 +187,17 @@ export default function UserManagementPage(props) {
           setShowModal("");
         }}
       />
+      <UserModal
+        show={showModal == "UserModal"}
+        user={currentUserRef.current}
+        groups={groups}
+
+        onClose={() => {
+          setShowModal("");
+        }}
+      >
+      </UserModal>
+
       <DelUserModal
         data={delDialogData}
         onClose={() => {
