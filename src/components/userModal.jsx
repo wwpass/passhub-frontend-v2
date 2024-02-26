@@ -237,6 +237,8 @@ function UserModal(props) {
                         </Dropdown>
                     </div>
 
+                    <a href="#" onClick={onClose} style={{ color: "var(--danger-color)" }}>Delete account</a>
+
                 </div>
                 <div style={{
                     marginTop: "24px",

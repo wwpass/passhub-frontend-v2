@@ -128,6 +128,18 @@ export default function UserManagementPage(props) {
     }
   }
 
+  if (showModal == "UserModal") {
+    for (const user of users) {
+      if (user._id === currentUserRef.current._id) {
+        if (user != currentUserRef.current) {
+          console.log('updateUserRef');
+          currentUserRef.current = user;
+        }
+        break;
+      }
+    }
+  }
+
 
 
   return (

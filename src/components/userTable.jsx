@@ -16,7 +16,7 @@ function UserTable(props) {
         <thead>
           <tr style={{ color: "rgba(27,27,38,0.5)", fontSize: "14px" }}>
             <th style={{ width: "40%" }}>Email</th>
-            <th style={{ minWidth: "8em", paddingRight: "12px", textAlign: "right", }}>Status</th>
+            <th className="d-none d-sm-block" style={{ minWidth: "8em", paddingRight: "12px", textAlign: "right", }}>Status</th>
 
             <th
               className="d-none d-lg-table-cell col-lg-4 col-xl-3"
