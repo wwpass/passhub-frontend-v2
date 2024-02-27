@@ -79,7 +79,7 @@ function UserRecord(props) {
         <td style={{ textAlign: "right", paddingRight: "1em" }}>
           <b>{role}</b>
         </td>
-        <td className="d-none d-lg-table-cell" style={{ textAlign: "right", paddingRight: "0.5em" }}>
+        <td className="d-none d-sm-table-cell" style={{ textAlign: "right", paddingRight: "0.5em" }}>
           <b>That's you</b>
         </td>
       </tr>
@@ -88,30 +88,37 @@ function UserRecord(props) {
   if (role === "invited") {
     return (
       <tr>
-        <td className="email">{props.user.email}</td>
-        <Dropdown
-          onSelect={(newRole) => {
-            changeRole(newRole, role);
-          }}
-          style={{ float: "right" }}
-        >
-          <Dropdown.Toggle
-            id={id}
-            variant="secondary"
-            style={{
-              background: "transparent",
-              color: "var(--body-color)",
-              border: "none",
-              boxShadow: "none",
-              margin: 0,
+        <td className="email" style={{ cursor: "pointer" }} onClick={() => {
+          console.log('the click', props.user.email)
+          props.showUserModal(props.user)
+        }}>{props.user.email}</td>
+        <div className="d-none d-sm-block">
+
+          <Dropdown
+            onSelect={(newRole) => {
+              changeRole(newRole, role);
             }}
+            style={{ float: "right" }}
           >
-            authorized
-          </Dropdown.Toggle>
-          <Dropdown.Menu align="left">
-            <Dropdown.Item eventKey="remove" style={{ color: "red" }}>remove</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+
+            <Dropdown.Toggle
+              id={id}
+              variant="secondary"
+              style={{
+                background: "transparent",
+                color: "var(--body-color)",
+                border: "none",
+                boxShadow: "none",
+                margin: 0,
+              }}
+            >
+              authorized
+            </Dropdown.Toggle>
+            <Dropdown.Menu align="left">
+              <Dropdown.Item eventKey="remove" style={{ color: "red" }}>remove</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
 
         <td className="d-none d-lg-table-cell"></td>
       </tr>

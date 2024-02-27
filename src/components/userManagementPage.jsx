@@ -130,7 +130,7 @@ export default function UserManagementPage(props) {
 
   if (showModal == "UserModal") {
     for (const user of users) {
-      if (user._id === currentUserRef.current._id) {
+      if (user.email === currentUserRef.email) {
         if (user != currentUserRef.current) {
           console.log('updateUserRef');
           currentUserRef.current = user;
@@ -204,8 +204,11 @@ export default function UserManagementPage(props) {
         user={currentUserRef.current}
         groups={groups}
 
-        onClose={() => {
+        onClose={(result = false) => {
           setShowModal("");
+          if (result) {
+            setDelDialogData({ email: result, show: true });
+          }
         }}
       >
       </UserModal>

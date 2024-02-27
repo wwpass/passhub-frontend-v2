@@ -209,94 +209,104 @@ function UserModal(props) {
 
             <Modal.Body className="edit">
                 <div style={{ display: "flex", alignItems: "center", maxWidth: 354, justifyContent: "space-between" }}>
-                    <div>Status</div>
-                    <div>
-                        <Dropdown
-                            onSelect={(newRole) => {
-                                changeRole(newRole, role);
-                            }}
-                            style={{ float: "right" }}
-                        >
-                            <Dropdown.Toggle
-                                variant="secondary"
-                                style={{
-                                    background: "transparent",
-                                    color: "var(--body-color)",
-                                    border: "none",
-                                    boxShadow: "none",
-                                    margin: 0,
-                                }}
-                            >
-                                {role}
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu align="left">
-                                <Dropdown.Item eventKey="active">active</Dropdown.Item>
-                                <Dropdown.Item eventKey="disabled">disabled</Dropdown.Item>
-                                <Dropdown.Item eventKey="admin">admin</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </div>
-
-                    <a href="#" onClick={onClose} style={{ color: "var(--danger-color)" }}>Delete account</a>
-
-                </div>
-                <div style={{
-                    marginTop: "24px",
-                    marginBottom: "16px",
-                    fontSize: "18px",
-                    fontWeight: 700
-                }}>
-                    Groups
-                </div>
-                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
-                    <div style={{ flexGrow: 1 }}>
-                        <Select
-                            style={{ height: 48, borderRadius: 12, minWidth: 354 }}
-                            options={selectorGroups}
-                            labelField="label"
-                            values={[...values]}
-                            onChange={(values) => {
-                                console.log(values);
-                                setValues(values);
-                            }}
-                            placeholder="Select group to add.."
-                        />
-                    </div>
-
-                    <Button variant="primary" onClick={onAdd} style={{ marginLeft: "auto" }}>
-                        Add
-                    </Button>
-
-                </div>
-
-                <div style={{ marginLeft: "1em", maxHeight: "calc(100vh - 500px)", overflowY: "auto" }}>
-                    {userGroups.map(group => {
-                        return (
-                            <div style={{ display: "flex", alignItems: "center", height: "36px", }} >
-                                <span style={{ cursor: "pointer", padding: "0 0.5em 0 1em" }}
-                                    onClick={() => {
-                                        removeUser(group.value, props.user._id)
-                                    }
-                                    }
-                                    title="remove"
+                    {props.user.status == "invited" ? (<div>Status: <b>invited</b></div>) : (
+                        <>
+                            <div>Status</div>
+                            <div>
+                                <Dropdown
+                                    onSelect={(newRole) => {
+                                        changeRole(newRole, role);
+                                    }}
+                                    style={{ float: "right" }}
                                 >
-                                    <svg
+                                    <Dropdown.Toggle
+                                        variant="secondary"
                                         style={{
-                                            strokeWidth: "0",
-                                            fill: "red",
-                                            width: "1em",
-                                            height: "1em",
+                                            background: "transparent",
+                                            color: "var(--body-color)",
+                                            border: "none",
+                                            boxShadow: "none",
+                                            margin: 0,
                                         }}
                                     >
-                                        <use href="#cross"></use>
-                                    </svg>
-                                </span>
-                                {group.label}
-                            </div>)
-                    })
-                    }
+                                        {role}
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu align="left">
+                                        <Dropdown.Item eventKey="active">active</Dropdown.Item>
+                                        <Dropdown.Item eventKey="disabled">disabled</Dropdown.Item>
+                                        <Dropdown.Item eventKey="admin">admin</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </div>
+                        </>
+                    )}
+
+                    <a href="#" onClick={() => props.onClose(props.user.email)} style={{ color: "var(--danger-color)" }}>Delete account</a>
 
                 </div>
+
+                {(props.user.status != "invited") && (
+                    <>
+                        <div style={{
+                            marginTop: "24px",
+                            marginBottom: "16px",
+                            fontSize: "18px",
+                            fontWeight: 700
+                        }}>
+                            Groups
+                        </div>
+
+                        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
+                            <div style={{ flexGrow: 1 }}>
+                                <Select
+                                    style={{ height: 48, borderRadius: 12, minWidth: 354 }}
+                                    options={selectorGroups}
+                                    labelField="label"
+                                    values={[...values]}
+                                    onChange={(values) => {
+                                        console.log(values);
+                                        setValues(values);
+                                    }}
+                                    placeholder="Select group to add.."
+                                />
+                            </div>
+
+                            <Button variant="primary" onClick={onAdd} style={{ marginLeft: "auto" }}>
+                                Add group
+                            </Button>
+
+                        </div>
+
+                        <div style={{ marginLeft: "1em", maxHeight: "calc(100vh - 500px)", overflowY: "auto" }}>
+                            {userGroups.map(group => {
+                                return (
+                                    <div style={{ display: "flex", alignItems: "center", height: "36px", }} >
+                                        <span style={{ cursor: "pointer", padding: "0 0.5em 0 1em" }}
+                                            onClick={() => {
+                                                removeUser(group.value, props.user._id)
+                                            }
+                                            }
+                                            title="remove"
+                                        >
+                                            <svg
+                                                style={{
+                                                    strokeWidth: "0",
+                                                    fill: "red",
+                                                    width: "1em",
+                                                    height: "1em",
+                                                }}
+                                            >
+                                                <use href="#cross"></use>
+                                            </svg>
+                                        </span>
+                                        {group.label}
+                                    </div>)
+                            })
+                            }
+
+                        </div>
+                    </>
+                )}
 
                 {errorMsg.length > 0 && (
                     <div style={{ color: "red" }}>{errorMsg}</div>
