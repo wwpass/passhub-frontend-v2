@@ -130,17 +130,15 @@ export default function UserManagementPage(props) {
 
   if (showModal == "UserModal") {
     for (const user of users) {
-      if (user.email === currentUserRef.email) {
+      if (user.email === currentUserRef.current.email) {
         if (user != currentUserRef.current) {
-          console.log('updateUserRef');
+          console.log('updateUserRef', user.email);
           currentUserRef.current = user;
         }
         break;
       }
     }
   }
-
-
 
   return (
     <>

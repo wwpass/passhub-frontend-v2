@@ -25,6 +25,7 @@ function UserModal(props) {
         props.onClose();
     };
 
+    const queryClient = useQueryClient();
 
     // copypasted from userRecord
 
@@ -40,6 +41,7 @@ function UserModal(props) {
             .then((result) => {
                 console.log('changeRole result', result)
                 if (result.data.status === "Ok") {
+                    queryClient.invalidateQueries(["userList"], { exact: true });
                     return "Ok";
                 }
                 if (result.data.status === "login") {
@@ -56,7 +58,7 @@ function UserModal(props) {
     const changeRoleMutation = useMutation({
         mutationFn: changeRoleAction,
         onSuccess: data => {
-            queryClient.invalidateQueries(["userList"], { exact: true });
+            //            queryClient.invalidateQueries(["userList"], { exact: true });
         },
     })
 
@@ -68,7 +70,6 @@ function UserModal(props) {
 
 
     // copypasted from groupUserModal
-    const queryClient = useQueryClient();
 
     const groupAction = (args) => {
         console.log('group Action: url', args.url, 'args', args.args);
