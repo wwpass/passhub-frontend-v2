@@ -169,8 +169,10 @@
 }
 
 .itemIcon {
-    /*    stroke: var(--icon-stroke); */
-    stroke: var(--table-pane-color);
+    stroke: var(--icon-stroke);
+
+    /*    stroke: var(--table-pane-color); */
+
     margin-right: 12px;
 }
 
