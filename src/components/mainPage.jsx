@@ -1,9 +1,6 @@
-// import React from "react";
 import React, { useState, useEffect, useRef } from 'react'
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ToastContainer from 'react-bootstrap/ToastContainer'
-
-import axios from "axios";
 
 import FolderNameModal from "./folderNameModal";
 import DeleteFolderModal from "./deleteFolderModal";
@@ -29,6 +26,7 @@ import { search, searchFolders } from "../lib/search";
 
 import SafePane from "./safePane";
 import TablePane from "./tablePane";
+import InviteToShareMailModal from './inviteToShareMailModal';
 
 function MainPage(props) {
 
@@ -48,16 +46,7 @@ function MainPage(props) {
     return null;
   }
 
-  let _activeFolder = getFolderById(props.safes, props.currentSafe);
-
-  if (_activeFolder === null) {
-    console.log("recommended activesafe not found");
-    _activeFolder = props.safes[0];
-  }
-
   const [openNodes, setOpenNodes] = useState(new Set());
-  const [activeFolder, setActiveFolder] = useState(_activeFolder);
-
   const [showModal, setShowModal] = useState("");
   const [showToast, setShowToast] = useState("");
   const [copyMoveToastOperation, setCopyMoveToastOperation] = useState("nop");
@@ -68,7 +57,41 @@ function MainPage(props) {
   const [deleteFolderModalArgs, setDeleteFolderModalArgs] = useState({});
   const [exportFolderModalArgs, setExportFolderModalArgs] = useState({});
   const [shareModalArgs, setShareModalArgs] = useState(null);
+  const [InviteToShareMailModalArgs, setInviteToShareMailModalArgs] = useState({});
+
   const [messageModalArgs, setMessageModalArgs] = useState(null);
+
+
+  let activeFolder = getFolderById(props.safes, props.activeFolderId);
+
+  if (activeFolder === null) {
+    console.log("recommended activeFolder not found");
+    activeFolder = props.safes[0];
+  }
+
+  let modifyOpenNodes = false;
+
+  if (activeFolder.SafeID) {
+    // isFolder
+    const openNodesCopy = new Set(openNodes);
+    let parentID = activeFolder.parent;
+    while (parentID != 0) {
+      if (!openNodes.has(parentID)) {
+        openNodesCopy.add(parentID);
+        modifyOpenNodes = true;
+      }
+      let parentFolder = getFolderById(props.safes, parentID);
+      parentID = parentFolder.parent;
+    }
+    if (!openNodes.has(activeFolder.SafeID)) {
+      openNodesCopy.add(activeFolder.SafeID);
+      modifyOpenNodes = true;
+    }
+    if (modifyOpenNodes) {
+      setOpenNodes(openNodesCopy);
+    }
+  }
+
 
 
   //// 
@@ -85,12 +108,6 @@ function MainPage(props) {
       return () => console.log("MainPage has been unmounted")
       },  []);
   */
-
-  useEffect(() => {
-    if (!props.searchString.trim().length) {
-      setActiveFolder1(props.currentSafe);
-    }
-  }, [props.safes]);
 
 
   const queryClient = useQueryClient();
@@ -230,47 +247,6 @@ function MainPage(props) {
     }
   }
 
-  const setActiveFolder1 = (folder) => {
-    props.onSearchClear();
-
-    if (typeof folder !== "object") {
-      folder = getFolderById(props.safes, folder);
-    }
-    if (!folder) {
-      folder = props.safes[0];
-    }
-
-    if (folder.SafeID) {
-      // isFolder
-      const openNodesCopy = new Set(openNodes);
-      let parentID = folder.parent;
-      while (parentID != 0) {
-        if (!openNodes.has(parentID)) {
-          openNodesCopy.add(parentID);
-        }
-        let parentFolder = getFolderById(props.safes, parentID);
-        parentID = parentFolder.parent;
-      }
-      if (!openNodes.has(folder.SafeID)) {
-        openNodesCopy.add(folder.SafeID);
-      }
-      setOpenNodes(openNodesCopy);
-    }
-    //  this.userDataJustLoaded = true;
-
-    setActiveFolder(folder);
-    axios
-      .post(`${getApiUrl()}folder_ops.php`, {
-        operation: "current_safe",
-        verifier: getVerifier(),
-        id: folder.id,
-
-        //      id: folder.SafeID ? folder.SafeID : folder.id,
-      })
-  };
-
-
-
   const handleOpenFolder = (folder) => {
     const openNodesCopy = new Set(openNodes);
     if (openNodes.has(folder.id)) {
@@ -286,10 +262,10 @@ function MainPage(props) {
       return;
     }
     if (folder.parent == 0) {
-      setActiveFolder1(folder.safe);
+      props.setActiveFolder(folder.safe);
     } else {
       const parent = getFolderById(props.safes, folder.parent);
-      setActiveFolder1(parent);
+      props.setActiveFolder(parent);
     }
   };
 
@@ -327,7 +303,7 @@ function MainPage(props) {
         safes={props.safes}
         openNodes={openNodes}
         activeFolder={activeFolder}
-        setActiveFolder={setActiveFolder1}
+        setActiveFolder={props.setActiveFolder}
         onFolderMenuCmd={folderMenuCmd}
         handleOpenFolder={handleOpenFolder}
         dropItem={dropItem}
@@ -335,7 +311,7 @@ function MainPage(props) {
       <TablePane
         safes={props.safes}
         inMemoryView={props.inMemoryView}
-        setActiveFolder={setActiveFolder1}
+        setActiveFolder={props.setActiveFolder}
 
         onFolderMenuCmd={folderMenuCmd}
         openParentFolder={openParentFolder}
@@ -371,6 +347,10 @@ function MainPage(props) {
       <ShareModal
         show={showModal == "ShareModal"}
         args={shareModalArgs}
+        sendInvitationMessage={(to) => {
+          setInviteToShareMailModalArgs({ to })
+          setShowModal("InviteToShareMailModal")
+        }}
         onClose={(result = false) => {
 
           if (result == "group safe") {
@@ -397,6 +377,15 @@ function MainPage(props) {
           }
         }}
       ></ShareModal>
+      <InviteToShareMailModal
+        show={showModal == "InviteToShareMailModal"}
+        args={InviteToShareMailModalArgs}
+        onClose={() => {
+          setShowModal("")
+        }}
+
+      />
+
 
       <DeleteFolderModal
         show={showModal == "DeleteFolderModal"}

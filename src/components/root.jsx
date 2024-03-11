@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import axios from "axios";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -25,7 +26,7 @@ import { downloadUserData } from "../lib/userData";
 
 import { advise } from "../lib/search";
 import * as extensionInterface from "../lib/extensionInterface";
-import { keepTicketAlive, enablePaste, serverLog } from "../lib/utils";
+import { keepTicketAlive, enablePaste, serverLog, getApiUrl, getVerifier, getFolderById } from "../lib/utils";
 
 let firstTime = true;
 let idleM = null;
@@ -116,6 +117,7 @@ function Root(props) {
   const [searchString, setSearchString] = useState('');
   const [page, setPage] = useState('Main');
   const [udata, setUData] = useState({})
+  const [activeFolderId, setActiveFolderId] = useState(null)
   const [filename, setFilename] = useState("");
   const [blob, setBlob] = useState(null);
   const [showToast, setShowToast] = useState("");
@@ -140,6 +142,7 @@ function Root(props) {
     queryKey: ["userData"],
     queryFn: () => userDataQuery().then(data => {
       setUData(data);
+      setActiveFolderId(data.currentSafe);
       if (firstTime) {
         firstTime = false;
         listenToPaymentMessage(gotPaymentMessage);
@@ -310,6 +313,26 @@ function Root(props) {
   extensionInterface.setRestartIdleTimer(restartIdleTimer);
 
 
+
+  const setActiveFolder = (folder) => {
+    setSearchString('');
+
+    if (typeof folder !== "object") {
+      folder = getFolderById(udata.safes, folder);
+    }
+
+    if (!folder) {
+      folder = udata.safes[0];
+    }
+    setActiveFolderId(folder.id)
+    axios
+      .post(`${getApiUrl()}folder_ops.php`, {
+        operation: "current_safe",
+        verifier: getVerifier(),
+        id: folder.id,
+      })
+  };
+
   // -----------------------
 
   const showCopyMoveToast = (operation) => {
@@ -344,7 +367,7 @@ function Root(props) {
 
   return (
     <Container className="d-flex" style={{ flexDirection: "column" }}>
-      <Header page="Main"
+      <Header page={page}
         onSearchChange={e => setSearchString(e.target.value)}
         onSearchClear={() => setSearchString('')}
         searchString={searchString}
@@ -365,7 +388,8 @@ function Root(props) {
         <MainPage
           show={page === "Main"}
           safes={udata.safes}
-          currentSafe={udata.currentSafe}
+          activeFolderId={activeFolderId}
+          setActiveFolder={setActiveFolder}
           searchString={searchString}
           onSearchClear={() => setSearchString('')}
           showCopyMoveToast={showCopyMoveToast}
@@ -384,7 +408,7 @@ function Root(props) {
         <div
           style={{
             height: "22px",
-            display: page === "Main" ? "" : "none",
+            display: (page === "Main" || page === "Iam") ? "" : "none",
           }}
         ></div>
       </Row>

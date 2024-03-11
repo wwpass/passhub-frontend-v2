@@ -201,11 +201,13 @@ function GroupSafesModal(props) {
       <ModalCross onClose={props.onClose}></ModalCross>
 
       <div className="modalTitle" style={{ alignItems: "center" }}>
+        {/*
         <div>
           <svg width="32" height="32" style={{ marginRight: "14px" }}>
             <use href={icon}></use>
           </svg>
         </div>
+  */}
 
         <div className="h2">{title}</div>
       </div>
@@ -230,10 +232,11 @@ function GroupSafesModal(props) {
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "baseline" }}>
+        <div style={{ display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: 24 }}>
           <div style={{ flexGrow: 1 }}>
 
             <Select
+              style={{ height: 48, borderRadius: 12, minWidth: 354 }}
               options={ownSafes1}
               labelField="label"
               values={[...values]}
@@ -243,62 +246,62 @@ function GroupSafesModal(props) {
               }}
               placeholder="Select safe to add.."
             />
-            <div style={{
-              marginTop: "36px",
-              marginBottom: "16px",
-              fontSize: "18px",
-              fontWeight: 700
-            }}>
-              Group safes
-            </div>
-            <div style={{ maxHeight: "calc(100vh - 500px)", overflowY: "auto" }}>
-              {sortedFolders.map(folder => {
-                let groupRole = folder.role ? folder.role : "can view";
-                return (
-                  <div className="group-safe-entry" >
-                    <span style={{ cursor: "pointer", padding: "0 0.5em 0 1em" }} onClick={() => removeSafe(folder)} title="remove">
-                      <svg
-                        style={{
-                          strokeWidth: "0",
-                          fill: "red",
-                          width: "1em",
-                          height: "1em",
-                        }}
-                      >
-                        <use href="#cross"></use>
-                      </svg>
-                    </span>
-                    <div style={{ flexGrow: 1 }}>
-                      <div className="group-safe-entry-name">{folder.name}</div>
-                    </div>
-
-                    <div className="roleChanger" onClick={(e) => showRightsMenu(e, folder)}>
-                      {groupRole}
-
-                      <svg
-                        width="24"
-                        height="24"
-                        style={{
-                          verticalAlign: "top",
-                          fill: "#009A50",
-                        }}
-                      >
-                        <use href="#angle"></use>
-                      </svg>
-                    </div>
-
-                  </div>
-                )
-              })}
-            </div>
-
           </div>
-
-          <Button variant="primary" onClick={onAdd}>
+          <Button variant="primary" onClick={onAdd} style={{ marginLeft: "auto" }}>
             Add
           </Button>
-
         </div>
+
+        <div style={{
+          marginTop: "36px",
+          marginBottom: "16px",
+          fontSize: "18px",
+          fontWeight: 700
+        }}>
+          Group safes
+        </div>
+        <div style={{ maxHeight: "calc(100vh - 500px)", overflowY: "auto" }}>
+          {sortedFolders.map(folder => {
+            let groupRole = folder.role ? folder.role : "can view";
+            return (
+              <div className="group-safe-entry" >
+                <span style={{ cursor: "pointer", padding: "0 0.5em 0 1em" }} onClick={() => removeSafe(folder)} title="remove">
+                  <svg
+                    style={{
+                      strokeWidth: "0",
+                      fill: "red",
+                      width: "1em",
+                      height: "1em",
+                    }}
+                  >
+                    <use href="#cross"></use>
+                  </svg>
+                </span>
+                <div style={{ flexGrow: 1 }}>
+                  <div className="group-safe-entry-name">{folder.name}</div>
+                </div>
+
+                <div className="roleChanger" onClick={(e) => showRightsMenu(e, folder)}>
+                  {groupRole}
+
+                  <svg
+                    width="24"
+                    height="24"
+                    style={{
+                      verticalAlign: "top",
+                      fill: "#009A50",
+                    }}
+                  >
+                    <use href="#angle"></use>
+                  </svg>
+                </div>
+
+              </div>
+            )
+          })}
+        </div>
+
+
 
 
         {errorMsg.length > 0 && (

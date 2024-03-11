@@ -1,4 +1,5 @@
-#table_pane {
+#table_pane,
+#user-pane {
 
     background: var(--table-pane-background);
     color: var(--table-pane-color);
@@ -11,6 +12,11 @@
 @media (min-width: 576px) {
     #table_pane {
         border-radius: 0 16px 16px 0;
+    }
+
+    #user-pane {
+        border-radius: 16px 0 0 16px;
+        border-right: 1px solid var(--table-pane-border-color);
     }
 }
 
@@ -163,8 +169,10 @@
 }
 
 .itemIcon {
-    /*    stroke: var(--icon-stroke); */
-    stroke: var(--table-pane-color);
+    stroke: var(--icon-stroke);
+
+    /*    stroke: var(--table-pane-color); */
+
     margin-right: 12px;
 }
 

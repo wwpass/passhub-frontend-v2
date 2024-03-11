@@ -19,6 +19,7 @@ function ShareModal(props) {
   const [email, setEmail] = useState("");
   const [invitedUserRights, setInvitedUserRights] = useState("can view");
   const [errorMsg, setErrorMsg] = useState("");
+  const [showInvitationLink, setShowInvitationLink] = useState(false);
   const [isAdmin, setAdmin] = useState(false);
 
   const getSafeUsers = () => {
@@ -65,7 +66,7 @@ function ShareModal(props) {
 
     } else {
       setUserList([]);
-      setErrorMsg("");
+      setEmail("");
       setInvitedUserRights("can view");
       setErrorMsg("")
     }
@@ -87,6 +88,10 @@ function ShareModal(props) {
     props.onClose(refresh || refreshOnClose);
   };
 
+
+  const sendInvitationMessage = () => {
+    props.sendInvitationMessage(email)
+  }
 
   const userData = getUserData();
   let hiddenPasswordEnabled = false;
@@ -257,6 +262,10 @@ function ShareModal(props) {
             shareByMailFinal(peer, hexPeerEncryptedAesKey);
           });
           return;
+        }
+        if (result.status.match(/User .* is not registered/)) {
+          console.log('Hello')
+          setShowInvitationLink(true);
         }
         setErrorMsg(result.status);
         return;
@@ -514,7 +523,16 @@ function ShareModal(props) {
         )}
         {recipientField}
         {errorMsg.length > 0 && (
-          <div style={{ color: "red" }}>{errorMsg}</div>
+          <div style={{ marginBottom: 12 }}>
+            <span style={{ color: "red" }}>{errorMsg} </span>
+            {showInvitationLink && (
+              <div>
+                <a href="#" style={{ color: "var(--link-color)" }} onClick={sendInvitationMessage}>Send an invitation message</a>
+              </div>
+
+            )}
+
+          </div>
         )}
         {isAdmin && (
           <div

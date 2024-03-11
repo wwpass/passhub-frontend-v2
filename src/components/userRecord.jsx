@@ -8,130 +8,136 @@ import axios from "axios";
 
 function UserRecord(props) {
 
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    const changeRoleAction = (newRole) => {
-      axios
-        .post(`${getApiUrl()}iam.php`, {
-          verifier: getVerifier(),
-          operation: newRole,
-          id: props.user._id,
-          email: props.user.email,
-        })
-        .then((result) => {
-          console.log('changeRole result', result)
-          if (result.data.status === "Ok") {
-            return "Ok";
-          }
-          if (result.data.status === "login") {
-            window.location.href = "expired.php";
-            return;
-          }
-          self.setState({ errorMsg: result.data.status });
-        })
-        .catch((error) => {
-          setErrorMsg("Server error. Please try again later");
-        });
-    };
+  const changeRoleAction = (newRole) => {
+    if (newRole == "remove") {
+      props.showDelDialog({ email: user.email, id: user._id });
+      return;
+    }
 
-    const changeRoleMutation = useMutation({
-      mutationFn: changeRoleAction,
-      onSuccess: data => {
-        queryClient.invalidateQueries(["userList"], { exact: true });
-      },
-    })  
+    axios
+      .post(`${getApiUrl()}iam.php`, {
+        verifier: getVerifier(),
+        operation: newRole,
+        id: props.user._id,
+        email: props.user.email,
+      })
+      .then((result) => {
+        console.log('changeRole result', result)
+        if (result.data.status === "Ok") {
+          return "Ok";
+        }
+        if (result.data.status === "login") {
+          window.location.href = "expired.php";
+          return;
+        }
+        self.setState({ errorMsg: result.data.status });
+      })
+      .catch((error) => {
+        setErrorMsg("Server error. Please try again later");
+      });
+  };
 
-    const changeRole = (newRole, oldRole) => {
+  const changeRoleMutation = useMutation({
+    mutationFn: changeRoleAction,
+    onSuccess: data => {
+      queryClient.invalidateQueries(["userList"], { exact: true });
+    },
+  })
+
+  const changeRole = (newRole, oldRole) => {
     if (newRole !== oldRole) {
       changeRoleMutation.mutate(newRole);
     }
   };
 
-    let user = props.user;
+  let user = props.user;
 
-    let role = "active";
-    if (user.disabled) {
-      role = "disabled";
-    } else if (user.site_admin) {
-      role = "admin";
-    } else if (!user._id) {
-      role = "invited";
-    }
+  let role = "active";
+  if (user.disabled) {
+    role = "disabled";
+  } else if (user.site_admin) {
+    role = "admin";
+  } else if (!user._id) {
+    role = "invited";
+  }
 
-    const id = btoa(user.mail).replace(/=/g, "");
+  const id = btoa(user.mail).replace(/=/g, "");
 
-    let seen = "";
-    if (props.user.status !== "invited") {
-      seen = new Date(props.user.lastSeen).toLocaleString();
-    }
+  let seen = "";
+  if (props.user.status !== "invited") {
+    seen = new Date(props.user.lastSeen).toLocaleString();
+  }
 
-    if (props.me) {
-      return (
-        <tr>
-          <td></td>
-          <td style={{ paddingLeft: "1em" }}>
-            <b>{role}</b>
-          </td>
-          <td className="email">
-            <b>{user.email}</b>
-          </td>
-          <td className="d-none d-lg-table-cell" style={{ textAlign: "right", paddingRight:"0.5em"}}>
-            <b>That's you</b>
-          </td>
-        </tr>
-      );
-    }
-    if (role === "invited") {
-      return (
-        <tr>
-          <td
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              props.showDelDialog({ email: user.email, id: user.id });
-            }}
-          >
-            <svg
-              style={{
-                strokeWidth: "0",
-                fill: "red",
-                width: "1em",
-                height: "1em",
-              }}
-            >
-              <use href="#cross"></use>
-            </svg>
-          </td>
-          <td style={{ paddingLeft: "1em" }}>authorized</td>
-          <td className="email">{props.user.email}</td>
-          <td className="d-none d-lg-table-cell"></td>
-        </tr>
-      );
-    }
-
+  if (props.me) {
     return (
       <tr>
-        <td
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            props.showDelDialog({ email: user.email, id: user._id });
-          }}
-        >
-          <svg
-            style={{
-              strokeWidth: "0",
-              fill: "red",
-              width: "1em",
-              height: "1em",
-            }}
-          >
-            <use href="#cross"></use>
-          </svg>
+        <td className="email">
+          <b>{user.email}</b>
         </td>
-        <td>
+        <td style={{ textAlign: "right", paddingRight: "1em" }}>
+          <b>{role}</b>
+        </td>
+        <td className="d-none d-sm-table-cell" style={{ textAlign: "right", paddingRight: "0.5em" }}>
+          <b>That's you</b>
+        </td>
+      </tr>
+    );
+  }
+  if (role === "invited") {
+    return (
+      <tr>
+        <td className="email" style={{ cursor: "pointer" }} onClick={() => {
+          console.log('the click', props.user.email)
+          props.showUserModal(props.user)
+        }}>{props.user.email}</td>
+        <div className="d-none d-sm-block">
+
           <Dropdown
             onSelect={(newRole) => {
               changeRole(newRole, role);
             }}
+            style={{ float: "right" }}
+          >
+
+            <Dropdown.Toggle
+              id={id}
+              variant="secondary"
+              style={{
+                background: "transparent",
+                color: "var(--body-color)",
+                border: "none",
+                boxShadow: "none",
+                margin: 0,
+              }}
+            >
+              authorized
+            </Dropdown.Toggle>
+            <Dropdown.Menu align="left">
+              <Dropdown.Item eventKey="remove" style={{ color: "red" }}>remove</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+
+        <td className="d-none d-lg-table-cell"></td>
+      </tr>
+    );
+  }
+
+  return (
+    <tr>
+      <td className="email" style={{ cursor: "pointer" }} onClick={() => {
+        console.log('the click', props.user.email)
+        props.showUserModal(props.user)
+      }}>{props.user.email}</td>
+      <td>
+        <div className="d-none d-sm-block">
+          <Dropdown
+            onSelect={(newRole) => {
+              changeRole(newRole, role);
+            }}
+            style={{ float: "right" }}
           >
             <Dropdown.Toggle
               id={id}
@@ -150,21 +156,22 @@ function UserRecord(props) {
               <Dropdown.Item eventKey="active">active</Dropdown.Item>
               <Dropdown.Item eventKey="disabled">disabled</Dropdown.Item>
               <Dropdown.Item eventKey="admin">admin</Dropdown.Item>
+              <Dropdown.Item eventKey="remove" style={{ color: "red" }}>remove</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-        </td>
-        <td className="email">{props.user.email}</td>
-        <td className="d-none d-lg-table-cell" style={{ textAlign: "right", paddingRight: "0.5em" }}>
-            {new Date(props.user.lastSeen).toLocaleString([], {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-        </td>
-      </tr>
-    );
+        </div>
+      </td>
+      <td className="d-none d-lg-table-cell col-lg-4 col-xl-3" style={{ textAlign: "right", paddingRight: "0.5em" }}>
+        {new Date(props.user.lastSeen).toLocaleString([], {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </td>
+    </tr>
+  );
 }
 
 export default UserRecord;

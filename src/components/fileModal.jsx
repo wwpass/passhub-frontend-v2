@@ -23,7 +23,7 @@ import DownloadAndViewButtons from "./downloadAndViewButtons";
 // import PlanStorageLimitsReachedModal from "./planStorageLimitsReachedModal";
 
 import ItemModal from "./itemModal";
-import ViewFile from "./viewFile";
+// import ViewFile from "./viewFile";
 
 import progress from "../lib/progress";
 
@@ -100,7 +100,7 @@ function FileModal(props) {
 
   const [errorMsg, setErrorMsg] = useState("");
   const [theFile, setFile] = useState(null);
-  const [page, setPage] = useState("");
+  // const [page, setPage] = useState("");
   const [title, setTitle] = useState(props.args.item ? props.args.item.cleartext[0] : "");
   const [edit, setEdit] = useState(props.args.item ? false : true);
 
@@ -311,11 +311,11 @@ function FileModal(props) {
 
     };
   };
-
-  const gotoMain = () => {
-    setPage("");
-  };
-
+  /*
+    const gotoMain = () => {
+      setPage("");
+    };
+  */
   //   render() {
 
   //     if (typeof this.props.args.item == "undefined") {
@@ -431,12 +431,15 @@ function FileModal(props) {
           </div>
         )}
       </ItemModal>
+      {/*      
       <ViewFile
         show={page === "ViewFile"}
         gotoMain={gotoMain}
         filename={filename}
         blob={blob}
       />
+            */}
+
     </React.Fragment>
   );
 }
