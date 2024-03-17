@@ -15,8 +15,8 @@ const devChromeExtensionId = 'mjcejgifimlbgmdckhdlopkjhehombpi';
 const edgeExtensionId = 'epmmbjnnghpopnhkilkoomaahpinjpkc';
 const devEdgeExtensionId = 'mpclodkiedkokmddfcooapahedfealjj';
 
-const safarExtensionId = "com.wwpass.PassHub-net.Extension";
-const devSafarExtensionId = "com.wwpass.PassHub-net.Extension (UNSIGNED)";
+const safariExtensionId = "com.wwpass.passhub.Extension (7U4QXAP4SL)";
+const devSafariExtensionId = "com.wwpass.PassHub-net.Extension (UNSIGNED)";
 
 
 let extension;
@@ -277,12 +277,12 @@ function logExtensionId() {
             consoleLog("edgeExtensionId");
             break
 
-        case devSafarExtensionId:
-            consoleLog("devSafarExtensionId");
+        case devSafariExtensionId:
+            consoleLog("devSafariExtensionId");
             break;
 
-        case safarExtensionId:
-            consoleLog("safarExtensionId");
+        case safariExtensionId:
+            consoleLog("safariExtensionId");
             break
 
         default:
@@ -291,12 +291,47 @@ function logExtensionId() {
     }
 }
 
+function sendMessageWithRepetitions1(extensionId, message, options, ms = 300, repetitions = 5) {
+    return new Promise(function (resolve, reject) {
+        (function messageRepetition(repetition = 0) {
+            extension.runtime.sendMessage(extensionId, message, options)
+                .then(response => {
+                    if (response) {
+                        return resolve(response);
+                    } else {
+                        repetition += 1;
+                        if (repetition == repetitions) return reject();
+                        setTimeout(messageRepetition, ms, repetition);
+                    }
+                })
+                .catch(err => reject(err))
+        })()
+    })
+}
+
+function sendMessageWithRepetitions(extensionId, message, options, ms = 300, repetitions = 5) {
+    return new Promise(function (resolve, reject) {
+        const messageRepetition = (repetition = 0) => {
+            extension.runtime.sendMessage(extensionId, message, options)
+                .then(response => {
+                    if (response) {
+                        return resolve(response);
+                    } else {
+                        repetition += 1;
+                        if (repetition == repetitions) return reject();
+                        setTimeout(messageRepetition, ms, repetition);
+                    }
+                })
+                .catch(err => reject(err))
+        }
+        messageRepetition()
+    })
+}
 
 if (!mobileDevice
     && (typeof extension != 'undefined')
     && extension.runtime
     && extension.runtime.sendMessage) {
-
 
     let ids = []
 
@@ -313,12 +348,17 @@ if (!mobileDevice
                 ids.push(edgeExtensionId);
             }
         }
-    } else {
-        ids.push(devSafarExtensionId);
+    } else { // safari = true
+        if (window.location.href.includes("extension")) {
+            ids.push(devSafariExtensionId);
+        } else {
+            ids.push(safariExtensionId);
+        }
     }
 
     extensionId = ids.pop();
-    extension.runtime.sendMessage(extensionId, { id: "remember me" })
+    //extension.runtime.sendMessage(extensionId, { id: "remember me" })
+    sendMessageWithRepetitions(extensionId, { id: "remember me" })
         .then(response => {
             if (response) {
                 // extension found
@@ -334,14 +374,15 @@ if (!mobileDevice
             }
         })
         .catch(err => {
-
+            consoleLog("257 no response");
             if (!ids.length) {
                 consoleLog('catch extensionInterface 261');
                 consoleLog(err);
                 return;
             }
             extensionId = ids.pop();
-            extension.runtime.sendMessage(extensionId, { id: "remember me" })
+            //extension.runtime.sendMessage(extensionId, { id: "remember me" })
+            sendMessageWithRepetitions(extensionId, { id: "remember me" })
                 .then(response => {
                     if (response) {
                         // extension found
@@ -355,7 +396,7 @@ if (!mobileDevice
                     } else {
                         consoleLog('285 should not happen');
                     }
-                })
+                }, () => { consoleLog("399 no response") })
                 .catch(err1 => {
                     consoleLog('catch extensionInterface 282');
                     consoleLog(err1);
