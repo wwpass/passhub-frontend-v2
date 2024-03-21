@@ -92,33 +92,36 @@ function UserRecord(props) {
           console.log('the click', props.user.email)
           props.showUserModal(props.user)
         }}>{props.user.email}</td>
-        <div className="d-none d-sm-block">
+        <td>
+          <div className="d-none d-sm-block">
+            {props.LDAP ? (<span style={{ float: "right", paddingRight: "1em" }}>authorized</span>) : (
+              <Dropdown
+                onSelect={(newRole) => {
+                  changeRole(newRole, role);
+                }}
+                style={{ float: "right" }}
+              >
 
-          <Dropdown
-            onSelect={(newRole) => {
-              changeRole(newRole, role);
-            }}
-            style={{ float: "right" }}
-          >
-
-            <Dropdown.Toggle
-              id={id}
-              variant="secondary"
-              style={{
-                background: "transparent",
-                color: "var(--body-color)",
-                border: "none",
-                boxShadow: "none",
-                margin: 0,
-              }}
-            >
-              authorized
-            </Dropdown.Toggle>
-            <Dropdown.Menu align="left">
-              <Dropdown.Item eventKey="remove" style={{ color: "red" }}>remove</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
+                <Dropdown.Toggle
+                  id={id}
+                  variant="secondary"
+                  style={{
+                    background: "transparent",
+                    color: "var(--body-color)",
+                    border: "none",
+                    boxShadow: "none",
+                    margin: 0,
+                  }}
+                >
+                  authorized
+                </Dropdown.Toggle>
+                <Dropdown.Menu align="left">
+                  <Dropdown.Item eventKey="remove" style={{ color: "red" }}>remove</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            )}
+          </div>
+        </td>
 
         <td className="d-none d-lg-table-cell"></td>
       </tr>
@@ -133,32 +136,35 @@ function UserRecord(props) {
       }}>{props.user.email}</td>
       <td>
         <div className="d-none d-sm-block">
-          <Dropdown
-            onSelect={(newRole) => {
-              changeRole(newRole, role);
-            }}
-            style={{ float: "right" }}
-          >
-            <Dropdown.Toggle
-              id={id}
-              variant="secondary"
-              style={{
-                background: "transparent",
-                color: "var(--body-color)",
-                border: "none",
-                boxShadow: "none",
-                margin: 0,
+          {props.LDAP ? (<span style={{ float: "right", paddingRight: "1em" }}>{role}</span>) : (
+
+            <Dropdown
+              onSelect={(newRole) => {
+                changeRole(newRole, role);
               }}
+              style={{ float: "right" }}
             >
-              {role}
-            </Dropdown.Toggle>
-            <Dropdown.Menu align="left">
-              <Dropdown.Item eventKey="active">active</Dropdown.Item>
-              <Dropdown.Item eventKey="disabled">disabled</Dropdown.Item>
-              <Dropdown.Item eventKey="admin">admin</Dropdown.Item>
-              <Dropdown.Item eventKey="remove" style={{ color: "red" }}>remove</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+              <Dropdown.Toggle
+                id={id}
+                variant="secondary"
+                style={{
+                  background: "transparent",
+                  color: "var(--body-color)",
+                  border: "none",
+                  boxShadow: "none",
+                  margin: 0,
+                }}
+              >
+                {role}
+              </Dropdown.Toggle>
+              <Dropdown.Menu align="left">
+                <Dropdown.Item eventKey="active">active</Dropdown.Item>
+                <Dropdown.Item eventKey="disabled">disabled</Dropdown.Item>
+                <Dropdown.Item eventKey="admin">admin</Dropdown.Item>
+                <Dropdown.Item eventKey="remove" style={{ color: "red" }}>remove</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </div>
       </td>
       <td className="d-none d-lg-table-cell col-lg-4 col-xl-3" style={{ textAlign: "right", paddingRight: "0.5em" }}>

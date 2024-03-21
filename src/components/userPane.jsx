@@ -169,18 +169,23 @@ export default function UserPane(props) {
                             <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
                         </div>
                     </div>
-
-                    <div style={{ margin: "16px 0 8px", display: "flex", gap: 16, flexWrap: "wrap" }}>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            style={{ flexGrow: 1 }}
-                            onFocus={inputOnFocus}
-                            onChange={inputOnChange}
-                            onKeyDown={inputOnKeyDown}
-                            value={email}
-                        />
-                        <Button className="d-none d-lg-block" style={{ margin: 0 }} onClick={submitEmail}>Add User</Button>
+                    <div style={{ margin: "16px 0 8px", display: "flex", gap: 16, alignItems: "baseline", flexWrap: "wrap" }}>
+                        {props.LDAP ? (
+                            <div style={{ flexGrow: 1 }}>LDAP</div>
+                        ) : (
+                            <>
+                                <input
+                                    type="email"
+                                    placeholder="Email"
+                                    style={{ flexGrow: 1 }}
+                                    onFocus={inputOnFocus}
+                                    onChange={inputOnChange}
+                                    onKeyDown={inputOnKeyDown}
+                                    value={email}
+                                />
+                                <Button className="d-none d-lg-block" style={{ margin: 0 }} onClick={submitEmail}>Add User</Button>
+                            </>
+                        )}
                         <span className="d-none d-lg-block" style={{ padding: "12px 16px", borderRadius: 12, background: "#E6E6F04D", color: "#1B1B26" }}>
                             Users {props.users.length}{licensed_users}
                         </span>
@@ -222,6 +227,7 @@ export default function UserPane(props) {
                 <UserTable
                     users={props.users}
                     me={props.me}
+                    LDAP={props.LDAP}
                     searchString={searchString}
                     showDelDialog={props.showDelDialog}
                     showUserModal={props.showUserModal}

@@ -42,6 +42,7 @@ function UserTable(props) {
                 key={u.email}
                 user={u}
                 me={me}
+                LDAP={props.LDAP}
                 showDelDialog={props.showDelDialog}
                 showUserModal={props.showUserModal}
                 userStatusCB={props.userStatusCB}

@@ -75,7 +75,7 @@ export default function UserManagementPage(props) {
     return null;
   }
 
-  const { me, users, groups, LICENSED_USERS: licensedUsers } = datax;
+  const { me, users, groups, LICENSED_USERS: licensedUsers, LDAP } = datax;
 
   const userEmail = {}
 
@@ -146,6 +146,7 @@ export default function UserManagementPage(props) {
         users={users}
         licensed={licensedUsers}
         me={me}
+        LDAP={LDAP}
         showDelDialog={showDelDialog}
         showUserModal={showUserModal}
       >
@@ -201,6 +202,7 @@ export default function UserManagementPage(props) {
         show={showModal == "UserModal"}
         user={currentUserRef.current}
         groups={groups}
+        LDAP={LDAP}
 
         onClose={(result = false) => {
           setShowModal("");
