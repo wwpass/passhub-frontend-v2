@@ -201,7 +201,7 @@ function UserModal(props) {
             animation={false}
             centered
         >
-            <ModalCross onClose={props.onClose}></ModalCross>
+            <ModalCross onClose={onClose}></ModalCross>
 
             <div className="modalTitle" style={{ alignItems: "center" }}>
 
