@@ -171,7 +171,7 @@ export default function UserPane(props) {
                     </div>
                     <div style={{ margin: "16px 0 8px", display: "flex", gap: 16, alignItems: "baseline", flexWrap: "wrap" }}>
                         {props.LDAP ? (
-                            <div style={{ flexGrow: 1 }}>LDAP</div>
+                            <div style={{ flexGrow: 1 }}>ACTIVE DIRECTORY</div>
                         ) : (
                             <>
                                 <input

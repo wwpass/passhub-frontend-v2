@@ -210,40 +210,41 @@ function UserModal(props) {
 
             <Modal.Body className="edit">
                 <div style={{ display: "flex", alignItems: "center", maxWidth: 354, justifyContent: "space-between" }}>
-                    {props.user.status == "invited" ? (<div>Status: <b>invited</b></div>) : (
-                        <>
-                            <div>Status</div>
-                            <div>
-                                <Dropdown
-                                    onSelect={(newRole) => {
-                                        changeRole(newRole, role);
-                                    }}
-                                    style={{ float: "right" }}
-                                >
-                                    <Dropdown.Toggle
-                                        variant="secondary"
-                                        style={{
-                                            background: "transparent",
-                                            color: "var(--body-color)",
-                                            border: "none",
-                                            boxShadow: "none",
-                                            margin: 0,
+                    {props.LDAP ? (<div>Status: <span style={{ fontWeight: "bold", marginLeft: "0.3em" }}>{role}</span></div>) :
+
+                        props.user.status == "invited" ? (<div>Status: <span style={{ fontWeight: "bold", marginLeft: "0.3em" }}>invited</span></div>) : (
+                            <>
+                                <div>Status</div>
+                                <div>
+                                    <Dropdown
+                                        onSelect={(newRole) => {
+                                            changeRole(newRole, role);
                                         }}
+                                        style={{ float: "right" }}
                                     >
-                                        {role}
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu align="left">
-                                        <Dropdown.Item eventKey="active">active</Dropdown.Item>
-                                        <Dropdown.Item eventKey="disabled">disabled</Dropdown.Item>
-                                        <Dropdown.Item eventKey="admin">admin</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </div>
-                        </>
-                    )}
+                                        <Dropdown.Toggle
+                                            variant="secondary"
+                                            style={{
+                                                background: "transparent",
+                                                color: "var(--body-color)",
+                                                border: "none",
+                                                boxShadow: "none",
+                                                margin: 0,
+                                            }}
+                                        >
+                                            {role}
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu align="left">
+                                            <Dropdown.Item eventKey="active">active</Dropdown.Item>
+                                            <Dropdown.Item eventKey="disabled">disabled</Dropdown.Item>
+                                            <Dropdown.Item eventKey="admin">admin</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </div>
+                            </>
+                        )}
 
-                    <a href="#" onClick={() => props.onClose(props.user.email)} style={{ color: "var(--danger-color)" }}>Delete account</a>
-
+                    {!props.LDAP && (<a href="#" onClick={() => props.onClose(props.user.email)} style={{ color: "var(--danger-color)" }}>Delete account</a>)}
                 </div>
 
                 {(props.user.status != "invited") && (
@@ -257,7 +258,7 @@ function UserModal(props) {
                             Groups
                         </div>
 
-                        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
+                        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 24, marginBottom: 16 }}>
                             <div style={{ flexGrow: 1 }}>
                                 <Select
                                     style={{ height: 48, borderRadius: 12, minWidth: 354 }}
