@@ -183,7 +183,7 @@ function Root(props) {
 
 
   /*
-  
+   
         const userQuery = useQuery({
           queryKey: ["userData"],
   //         queryFn: userDataQuery,
@@ -192,11 +192,11 @@ function Root(props) {
             setUData(data);
             return data;
           }),
-  
+   
           onSuccess: (data) => {
             console.log('onSuccess', data)
             setUData(data);
-  
+   
             if(firstTime) {
               firstTime = false;
               keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);
@@ -210,7 +210,7 @@ function Root(props) {
           onError: (err) => {console.log('onError', err)},
           onSettled: (settled) => {console.log('onSettled', settled)},
         });   
-  
+   
     */
 
   //  -----------------------
