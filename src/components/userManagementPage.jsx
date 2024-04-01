@@ -207,7 +207,11 @@ export default function UserManagementPage(props) {
         onClose={(result = false) => {
           setShowModal("");
           if (result) {
-            setDelDialogData({ email: result, show: true });
+            if (result._id) {
+              setDelDialogData({ email: result.email, id: result._id, show: true });
+            } else {
+              setDelDialogData({ email: result.email, show: true });
+            }
           }
         }}
       >
