@@ -429,9 +429,6 @@ function TablePane(props) {
                     args={itemModalArgs}
                     onClose={(refresh = false, newFolderID) => {
                         setShowModal("");
-                        if (refresh === true) {
-                            props.refreshUserData({ newFolderID });
-                        }
                     }}
                 ></FolderNameModal>
             </div>

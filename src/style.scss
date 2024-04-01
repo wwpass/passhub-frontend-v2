@@ -122,6 +122,9 @@ input.modalTitle::placeholder {
     opacity: 0.7;
 }
 
+.react-dropdown-select-dropdown span {
+    color: rgb(27, 27, 38);
+}
 
 @import './scss/account-dropdown.scss';
 @import './scss/bank-card.scss';

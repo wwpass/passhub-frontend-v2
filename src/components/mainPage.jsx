@@ -372,9 +372,9 @@ function MainPage(props) {
           }
 
           setShowModal("");
-          if (result === true) {
-            props.refreshUserData();
-          }
+          //          if (result === true) {
+          queryClient.invalidateQueries(["userData"], { exact: true })
+          // }
         }}
       ></ShareModal>
       <InviteToShareMailModal
@@ -391,10 +391,6 @@ function MainPage(props) {
         show={showModal == "DeleteFolderModal"}
         folder={deleteFolderModalArgs}
         onClose={(result = false) => {
-          if (result == "refresh") {
-            props.refreshUserData();
-            return;
-          }
 
           if (result == "group safe") {
             setMessageModalArgs({
