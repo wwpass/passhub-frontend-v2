@@ -244,7 +244,7 @@ function UserModal(props) {
                             </>
                         )}
 
-                    {!props.LDAP && (<a href="#" onClick={() => props.onClose(props.user.email)} style={{ color: "var(--danger-color)" }}>Delete account</a>)}
+                    {(props.user.status !== "invited") && (<a href="#" onClick={() => props.onClose(props.user)} style={{ color: "var(--danger-color)" }}>Delete account</a>)}
                 </div>
 
                 {(props.user.status != "invited") && (
