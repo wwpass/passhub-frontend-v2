@@ -178,40 +178,6 @@ function Root(props) {
 
   });
 
-  //  console.log('userQuery isLoading', userQuery.isLoading);
-  //   console.log('userQuery data', userQuery.data);
-
-
-  /*
-   
-        const userQuery = useQuery({
-          queryKey: ["userData"],
-  //         queryFn: userDataQuery,
-        queryFn: () => userDataQuery().then(data => {
-            conmsole.log(113);
-            setUData(data);
-            return data;
-          }),
-   
-          onSuccess: (data) => {
-            console.log('onSuccess', data)
-            setUData(data);
-   
-            if(firstTime) {
-              firstTime = false;
-              keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);
-    
-              if ("takeSurvey" in data && data.takeSurvey == true) {
-                setShowToast("takeSurveyToast");
-               }          
-    
-            }
-          },
-          onError: (err) => {console.log('onError', err)},
-          onSettled: (settled) => {console.log('onSettled', settled)},
-        });   
-   
-    */
 
   //  -----------------------
 
