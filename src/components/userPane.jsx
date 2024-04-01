@@ -65,6 +65,11 @@ export default function UserPane(props) {
         },
     })
 
+    const refresh = () => {
+        queryClient.invalidateQueries(["userList"], { exact: true })
+    }
+
+
 
     const onExport = () => {
         let csv = 'email, role, lastSeen\r\n';
@@ -164,11 +169,24 @@ export default function UserPane(props) {
 
                     <div className="d-none d-sm-flex" style={{ justifyContent: "space-between" }}>
                         <div><b>User management</b></div>
+
                         <div style={{ display: "flex", gap: 32 }}>
-                            <div style={{ cursor: "pointer", color: "var(--link-color)" }}>Audit</div>
-                            <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
+                            {props.LDAP ? (
+                                <div title="Refresh" onClick={refresh} style={{ cursor: "pointer" }}>
+                                    <svg width="24" height="24">
+                                        <use href="#arrow-clockwise"></use>
+                                    </svg>
+                                </div>
+                            ) : (
+                                <>
+                                    <div style={{ cursor: "pointer", color: "var(--link-color)" }}>Audit</div>
+                                    <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
+                                </>
+                            )}
                         </div>
                     </div>
+
+
                     <div style={{ margin: "16px 0 8px", display: "flex", gap: 16, alignItems: "baseline", flexWrap: "wrap" }}>
                         {props.LDAP ? (
                             <div style={{ flexGrow: 1 }}>ACTIVE DIRECTORY</div>
@@ -194,7 +212,9 @@ export default function UserPane(props) {
                         <span style={{ padding: "12px 16px", borderRadius: 12, background: "#E6E6F04D", color: "#1B1B26", display: "inline-block", flexGrow: 1 }}>
                             Users {props.users.length}{licensed_users}
                         </span>
-                        <Button style={{ margin: 0 }} onClick={submitEmail}>Add User</Button>
+                        {!props.LDAP && (
+                            <Button style={{ margin: 0 }} onClick={submitEmail}>Add User</Button>
+                        )}
                     </div>
                     <div id="add-user-error" style={{ height: 16, paddingLeft: 12, lineHeight: "16px", color: "red" }}>{errorMsg}</div>
                     <div style={{ display: "flex", position: "relative", margin: "8px 0 16px 0" }}>
