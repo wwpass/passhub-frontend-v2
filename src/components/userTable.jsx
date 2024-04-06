@@ -11,7 +11,7 @@ function UserTable(props) {
 
   return (
 
-    <div className="table-pane-scroll-control custom-scroll" style={{ overflow: "hidden auto" }}>
+    <div className="table-pane-scroll-control custom-scroll" style={{ overflow: "hidden auto", minHeight: 350 }}>
       <table className="iam_table">
         <thead>
           <tr style={{ color: "rgba(27,27,38,0.5)", fontSize: "14px" }}>
