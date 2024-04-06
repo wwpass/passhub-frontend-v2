@@ -68,7 +68,6 @@ function UserModal(props) {
         }
     };
 
-
     // copypasted from groupUserModal
 
     const groupAction = (args) => {
@@ -244,7 +243,7 @@ function UserModal(props) {
                             </>
                         )}
 
-                    {(props.user.status !== "invited") && (<a href="#" onClick={() => props.onClose(props.user)} style={{ color: "var(--danger-color)" }}>Delete account</a>)}
+                    {((props.user.status !== "invited") || !props.LDAP) && (<a href="#" onClick={() => props.onClose(props.user)} style={{ color: "var(--danger-color)" }}>Delete account</a>)}
                 </div>
 
                 {(props.user.status != "invited") && (
