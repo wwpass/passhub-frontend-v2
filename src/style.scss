@@ -126,6 +126,36 @@ input.modalTitle::placeholder {
     color: rgb(27, 27, 38);
 }
 
+
+.table-fixed-head {
+    overflow: auto;
+    max-height: calc(100vh - 350px);
+}
+
+.table-fixed-head tr:hover {
+    background: var(--audit-table-tr-hover-background);
+}
+
+.table-fixed-head thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--audit-table-th-background);
+    padding: 8px 0;
+}
+
+.wide-dialog {
+    max-width: 100%;
+}
+
+
+@media (min-width: 768px) {
+    .wide-dialog {
+        max-width: calc(100% - 128px);
+    }
+}
+
+
 @import './scss/account-dropdown.scss';
 @import './scss/bank-card.scss';
 @import './scss/custom-scroll.scss';

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 
-
 import { QueryClient, useQuery } from '@tanstack/react-query';
 
 import axios from "axios";
@@ -13,6 +12,7 @@ import GroupDeleteModal from "./groupDeleteModal";
 import GroupNameModal from "./groupNameModal";
 import GroupSafesModal from "./groupSafesModal";
 import UserModal from "./userModal";
+import AuditModal from "./auditModal";
 
 import { decryptGroups } from "../lib/userData";
 
@@ -149,6 +149,7 @@ export default function UserManagementPage(props) {
         LDAP={LDAP}
         showDelDialog={showDelDialog}
         showUserModal={showUserModal}
+        showAuditModal={() => setShowModal("AuditModal")}
       >
 
       </UserPane>
@@ -222,6 +223,11 @@ export default function UserManagementPage(props) {
         onClose={() => {
           setDelDialogData({ email: "", id: "", show: false });
         }}
+      />
+
+      <AuditModal
+        show={showModal == "AuditModal"}
+        onClose={() => setShowModal("")}
       />
     </>
   );

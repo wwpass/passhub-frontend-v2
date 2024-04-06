@@ -18,8 +18,6 @@ import "react-contexify/dist/ReactContexify.css";
 
 import UserTable from './userTable';
 
-
-
 export default function UserPane(props) {
     const [searchString, setSearchString] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
@@ -179,7 +177,7 @@ export default function UserPane(props) {
                                 </div>
                             ) : (
                                 <>
-                                    <div style={{ cursor: "pointer", color: "var(--link-color)" }}>Audit</div>
+                                    <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={props.showAuditModal}>Audit</div>
                                     <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
                                 </>
                             )}
@@ -255,7 +253,7 @@ export default function UserPane(props) {
             </div>
 
             <Menu id={"user-pane-menu"}>
-                <Item onClick={() => { }}>
+                <Item onClick={props.showAuditModal}>
                     Audit
                 </Item>
                 <Item onClick={onExport}>
