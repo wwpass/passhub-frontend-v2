@@ -16,6 +16,9 @@ function downloadAudit() {
         });
 }
 
+const x = new Date();
+const tzo = x.getTimezoneOffset();
+
 function auditQuery() {
     console.log("audit called");
 
@@ -36,53 +39,6 @@ function auditQuery() {
         });
 };
 
-/*
-const audit = (props) => {
-
-
-    const { data: datax, isLoading } = useQuery({
-        queryKey: ["audit"],
-        queryFn: () => auditQuery().then(data => {
-            return data;
-        }),
-    });
-
-
-    if (isLoading) {
-        console.log('isLoading');
-        return null;
-    }
-
-    console.log(data);
-
-    return axios
-        .post(`${getApiUrl()}iam.php`, {
-            verifier: getVerifier(),
-            operation: "audit",
-        })
-        .then((response) => {
-            const result = response.data;
-            console.log(result);
-
-            if (result.status === "Ok") {
-                const auditRecords = JSON.parse(result.data);
-                console.log(auditRecords);
-                return "Ok";
-            }
-            if (result.status === "login") {
-                window.location.href = "expired.php";
-                return;
-            }
-            // setErrorMsg(result.status);
-            return;
-        })
-        .catch((err) => {
-            console.log(err);
-            // setErrorMsg("Server error. Please try again later");
-        });
-}
-
-*/
 
 function AuditModal(props) {
 
@@ -90,6 +46,8 @@ function AuditModal(props) {
         return null;
     }
     const [errorMsg, setErrorMsg] = useState("");
+    const [firstDate, setFirstDate] = useState();
+    const [lastDate, setLastDate] = useState();
 
     const onClose = () => {
         props.onClose();
@@ -101,7 +59,6 @@ function AuditModal(props) {
             return data;
         }),
     });
-
 
     if (isLoading) {
         console.log('isLoading');
@@ -116,6 +73,71 @@ function AuditModal(props) {
     console.log('auditRecords');
     console.log(auditRecords);
 
+    /*
+    function elogInput(e) {
+        let value = e.target.value;
+        console.log('onInput ', value);
+
+        const x = new Date(value);
+        const t = new Date(x.getTime() + tzo * 1000 * 60);
+        console.log(t);
+
+        const u = t.toISOString();
+        console.log(u);
+    }
+*/
+
+    function elogChange(e) {
+        let value = e.target.value;
+        console.log('onChange ', value);
+
+        const x = new Date(value);
+        const t = new Date(x.getTime() + tzo * 1000 * 60);
+        const u = t.toISOString();
+        console.log(u);
+    }
+
+    function onFirstDate(e) {
+        let value = e.target.value;
+        console.log('onInput ', value);
+
+        const x = new Date(value);
+        const t = new Date(x.getTime() + tzo * 1000 * 60);
+        console.log(t);
+
+        const u = t.toISOString();
+        setFirstDate(u);
+        console.log(u);
+    }
+
+
+    function onLastDate(e) {
+        let value = e.target.value;
+        console.log('onInput ', value);
+
+        const x = new Date(value);
+        const t = new Date(x.getTime() + tzo * 1000 * 60 + 24 * 60 * 60 * 1000);
+        console.log(t);
+
+        const u = t.toISOString();
+        setLastDate(u);
+        console.log(u);
+    }
+
+    function passFilter(record) {
+        if (firstDate && (record.timestamp < firstDate)) {
+            return false;
+        }
+        if (lastDate && (record.timestamp > lastDate)) {
+            return false;
+        }
+        return true;
+    }
+
+    const today = new Date();
+    const now = today.toISOString().split('T')[0];
+
+
 
     return (
         <Modal
@@ -129,6 +151,15 @@ function AuditModal(props) {
 
             <div className="modalTitle" style={{ alignItems: "center", justifyContent: "space-between" }}>
                 <div className="h2">Audit</div>
+
+                <div>
+                    <input class="datapicker" aria-label="Date from" type="date" max={now} min={"2020-01-01"}
+                        onInput={onFirstDate}
+                        onСhange={elogChange} /><span> &mdash; </span>
+                    <input class="datapicker" aria-label="Date to" type="date" max={now}
+                        onInput={onLastDate}
+                        onСhange={elogChange} />
+                </div>
                 <div>
                     <svg width="24" height="24" style={{ cursor: "pointer", marginRight: 16 }}>
                         <use href="#sliders"></use>
@@ -137,24 +168,27 @@ function AuditModal(props) {
                     <svg width="24" height="24" style={{ cursor: "pointer" }}>
                         <use href="#arrow-clockwise"></use>
                     </svg>
-
                 </div>
-
             </div>
 
             <Modal.Body>
                 <div class="table-fixed-head">
                     <table>
                         <thead>
-                            <th style={{ paddingLeft: 8 }}>Timestamp</th><th>User</th><th>Operation</th><th>args</th>
+                            <th style={{ paddingLeft: 8 }}>Timestamp</th>
+                            <th style={{ paddingLeft: 8 }}>User</th>
+                            <th style={{ paddingLeft: 8 }}>Operation</th>
+                            <th style={{ paddingLeft: 8 }}>args</th>
                         </thead>
                         <tbody>
-                            {auditRecords.map(r => (
+                            {auditRecords.map(r => passFilter(r) ? (
                                 <tr>
-                                    <td style={{ paddingLeft: 8 }}>{new Date(r.timestamp).toLocaleString()}</td><td>{r.actor}</td><td>{r.operation}</td>
-                                    <td>{r.user ? r.user : ""}</td>
+                                    <td style={{ paddingLeft: 8, textWrap: "nowrap" }}>{new Date(r.timestamp).toLocaleString()}</td>
+                                    <td style={{ paddingLeft: 8 }}>{r.actor}</td>
+                                    <td style={{ paddingLeft: 8 }}>{r.operation}</td>
+                                    <td style={{ paddingLeft: 8 }}>{r.user ? r.user : ""}</td>
                                 </tr>
-                            )
+                            ) : ""
                             )}
 
                         </tbody>
