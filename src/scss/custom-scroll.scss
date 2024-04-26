@@ -1,10 +1,3 @@
-/*
-.custom-scroll {
-    scrollbar-color: grey rgba(0, 0, 0, 0);
-    scrollbar-width: thin;
-}
-*/
-
 .custom-scroll::-webkit-scrollbar {
     width: 18px;
 }
@@ -19,14 +12,25 @@
     border: 6px solid white;
 }
 
+
+.fixed-head-table-wrapper::-webkit-scrollbar-thumb {
+    border: 6px solid var(--table-pane-scroll-border-color);
+    /*    background-color: rgb(127, 127, 127);
+    border-radius: 20px; */
+}
+
+
+
+/*
 .table-pane-scroll-control.custom-scroll::-webkit-scrollbar-thumb {
     background-color: rgb(127, 127, 127);
     border-radius: 20px;
     border: 6px solid var(--table-pane-scroll-border-color);
 }
+*/
 
 .safe_scroll_control.custom-scroll::-webkit-scrollbar-thumb {
-    background-color: rgb(127, 127, 127);
-    border-radius: 20px;
     border: 6px solid var(--safe-pane-scroll-border-color);
+    /*    background-color: rgb(127, 127, 127);
+    border-radius: 20px; */
 }

@@ -6,15 +6,6 @@
     color: var(--body-color);
 }
 
-.iam_table tbody tr {
-    border-bottom: 1px solid var(--table-pane-border-color);
-    height: 48px;
-}
-
-.iam_table tbody tr:hover {
-    background: var(--table-pane-hover);
-}
-
 
 .tableFixHead {
     overflow-y: auto;

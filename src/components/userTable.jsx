@@ -11,13 +11,12 @@ function UserTable(props) {
 
   return (
 
-    <div className="table-pane-scroll-control custom-scroll" style={{ overflow: "hidden auto", minHeight: 350 }}>
-      <table className="iam_table">
+    <div className="custom-scroll fixed-head-table-wrapper" style={{ minHeight: 350 }}>
+      <table>
         <thead>
           <tr style={{ color: "rgba(27,27,38,0.5)", fontSize: "14px" }}>
             <th style={{ width: "40%" }}>Email</th>
-            <th className="d-none d-sm-block" style={{ minWidth: "8em", paddingRight: "12px", textAlign: "right", }}>Status</th>
-
+            <th className="d-none d-sm-table-cell" style={{ minWidth: "8em", paddingRight: "12px", textAlign: "right", }}>Status</th>
             <th
               className="d-none d-lg-table-cell col-lg-4 col-xl-3"
               style={{
@@ -33,7 +32,8 @@ function UserTable(props) {
         </thead>
         <tbody>
           {users.map((u) => {
-            const me = u._id === props.me;
+            // props.me is undefined for msp; u_id is undefined for invited users
+            const me = u._id && props.me && (u._id === props.me);
             if (!u.email.includes(props.searchString)) {
               return null;
             }

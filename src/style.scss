@@ -126,23 +126,54 @@ input.modalTitle::placeholder {
     color: rgb(27, 27, 38);
 }
 
+/*------------------------------------------*/
 
-.table-fixed-head {
-    overflow: auto;
-    max-height: calc(100vh - 350px);
+.fixed-head-table-wrapper {
+    /* also with custom scroll?*/
+    overflow: hidden auto;
+    position: relative;
 }
 
-.table-fixed-head tr:hover {
-    background: var(--audit-table-tr-hover-background);
-}
-
-.table-fixed-head thead th {
+.fixed-head-table-wrapper th {
     position: sticky;
-    top: 0;
     z-index: 1;
-    background: var(--audit-table-th-background);
-    padding: 8px 0;
+
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0em;
+    text-align: left;
+
+    color: var(--body-color70);
+    background: var(--table-pane-background);
+    border: none;
+    top: 0;
+
+    padding: 8px 0.75em 0 0;
 }
+
+.fixed-head-table-wrapper tbody tr {
+    border-bottom: 1px solid var(--table-pane-border-color);
+    height: 46px;
+}
+
+.fixed-head-table-wrapper tbody tr:hover {
+    background: var(--table-pane-hover);
+}
+
+
+.fixed-head-table-wrapper td {
+    border: none;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
+}
+
+/*------------------------------------*/
+
 
 .wide-dialog {
     max-width: 100%;
@@ -151,7 +182,7 @@ input.modalTitle::placeholder {
 
 @media (min-width: 768px) {
     .wide-dialog {
-        max-width: calc(100% - 128px);
+        max-width: min(calc(100% - 128px), 1260px);
     }
 }
 
