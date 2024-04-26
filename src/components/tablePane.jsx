@@ -49,6 +49,10 @@ function TablePane(props) {
     const [itemModalArgs, setItemModalArgs] = useState({});
     const [addButtonRect, setAddButtonRect] = useState({ right: 5, botton: 5 });
     const [keyCounter, setKeyCounter] = useState(1);
+    const [reverseSortTitle, setReverseSortTitle] = useState(false);
+    const [reverseSortModified, setReverseSortModified] = useState(false);
+    const [sortBy, setSortBy] = useState("title");
+
 
     if (!props.folder) {
         return null;
@@ -171,6 +175,57 @@ function TablePane(props) {
         );
     }
 
+
+    const sortByTitle = () => {
+        if (sortBy != "title") {
+            setSortBy("title");
+        } else {
+            setReverseSortTitle(!reverseSortTitle);
+        }
+    }
+
+    const sortByModified = () => {
+        if (sortBy != "modified") {
+            setSortBy("modified");
+        } else {
+            setReverseSortModified(!reverseSortModified);
+        }
+    }
+
+    const sortFunction = (a, b) => {
+        if (sortBy == 'title') {
+            if (!reverseSortTitle) return a.name.localeCompare(b.name); else return b.name.localeCompare(a.name);
+        }
+        if (!reverseSortModified) return a.lastModified > b.lastModified ? -1 : 1; else return a.lastModified < b.lastModified ? -1 : 1;
+    }
+
+    const itemName = (item) => {
+        if (isPasswordItem(item)) return item.cleartext[0];
+        if (isNoteItem(item)) return item.cleartext[0];
+        if (isFileItem(item)) return item.cleartext[0];
+        if (isBankCardItem(item)) return item.cleartext[1];
+    }
+    const sortItemsFunction = (a, b) => {
+
+        if (sortBy == 'title') {
+            if (!reverseSortTitle) return itemName(a).localeCompare(itemName(b)); else return itemName(b).localeCompare(itemName(a));
+        }
+
+        if (!reverseSortModified) return a.lastModified > b.lastModified ? -1 : 1; else return a.lastModified < b.lastModified ? -1 : 1;
+    }
+
+    const sortedFolders = folder.folders.toSorted(sortFunction);
+
+    const sortedItems = folder.items.toSorted(sortItemsFunction);
+
+    const reverseSort = sortBy == "title" ? reverseSortTitle : reverseSortModified;
+
+    const sortArrow = reverseSort ? (
+        <svg width="24" height="24" style={{ fill: "var(--body-color)", transform: "rotate(180deg)" }}><use href="#angle"></use></svg>
+    ) : (
+        <svg width="24" height="24" style={{ fill: "var(--body-color)" }}><use href="#angle"></use></svg>
+    )
+
     return (
         <Col
             className="col-xl-9 col-lg-8 col-md-7 col-sm-6 d-none d-sm-block"
@@ -255,24 +310,23 @@ function TablePane(props) {
 
                 {!emptyFolder && (
                     <div
-                        className="table-pane-scroll-control custom-scroll"
-                        style={{ overflowY: "auto", overflowX: "hidden" }}
+                        className="custom-scroll fixed-head-table-wrapper"
                     >
                         <table className="item_table">
                             <thead>
-                                <tr className="d-flex">
-                                    <th className="d-none d-sm-table-cell col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                                        Title
+                                <tr>
+                                    <th className="d-none d-sm-table-cell col-sm-12 col-md-6 col-lg-4 col-xl-3" onClick={sortByTitle}>
+                                        Title {sortBy === "title" && sortArrow}
                                     </th>
                                     <th className="d-none d-xl-table-cell                             col-xl-3"></th>
                                     <th className="d-none d-md-table-cell           col-md-6 col-lg-4 col-xl-3"></th>
-                                    <th className="d-none d-lg-table-cell                    col-lg-4 col-xl-3 column-modified">
-                                        Modified
+                                    <th className="d-none d-lg-table-cell                    col-lg-4 col-xl-3 column-modified" onClick={sortByModified}>
+                                        {sortBy === "modified" && sortArrow} Modified
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {folder.folders.map((f) => (
+                                {sortedFolders.map((f) => (
                                     <FolderItem
                                         item={f}
                                         key={`folder${f._id}`}
@@ -281,7 +335,7 @@ function TablePane(props) {
                                         onClick={(folder) => { props.setActiveFolder(folder) }}
                                     />
                                 ))}
-                                {folder.items.map(
+                                {sortedItems.map(
                                     (f) =>
                                         (isPasswordItem(f) && (
                                             <PasswordItem
