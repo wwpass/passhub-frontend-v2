@@ -29,12 +29,17 @@ export default function UserPane(props) {
         if (email.trim() == "") {
             return;
         }
+        const args = {
+            verifier: getVerifier(),
+            operation: "newuser",
+            email: email.trim(),
+        };
+        if (props.company) {
+            args.company = props.company._id;
+        }
+
         return axios
-            .post(`${getApiUrl()}iam.php`, {
-                verifier: getVerifier(),
-                operation: "newuser",
-                email: email.trim(),
-            })
+            .post(`${getApiUrl()}iam.php`, args)
             .then((response) => {
                 const result = response.data;
 
@@ -169,15 +174,17 @@ export default function UserPane(props) {
                         <div><b>User management</b></div>
 
                         <div style={{ display: "flex", gap: 32 }}>
+                            {props.company && <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={props.showCompanyModal}>Settins</div>}
+
+                            <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={props.showAuditModal}>Audit</div>
                             {props.LDAP ? (
-                                <div title="Refresh" onClick={refresh} style={{ cursor: "pointer" }}>
+                                <div onClick={refresh} title="Refresh" style={{ cursor: "pointer" }}>
                                     <svg width="24" height="24">
                                         <use href="#arrow-clockwise"></use>
                                     </svg>
                                 </div>
                             ) : (
                                 <>
-                                    <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={props.showAuditModal}>Audit</div>
                                     <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
                                 </>
                             )}
