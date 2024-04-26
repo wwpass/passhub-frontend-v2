@@ -42,12 +42,14 @@ function PasswordItem(props) {
     ev.effectAllowed = "copyMove";
   }
 
-  let trClass = props.searchMode ? "search-mode d-flex" : "d-flex";
+  // let trClass = props.searchMode ? "search-mode d-flex" : "d-flex";
+  let trClass = props.searchMode ? "search-mode" : "";
+
 
   return (
     <tr className={trClass} style={{ alignItems: "center" }}>
       <td
-        className="col-sm-12 col-md-6 col-lg-4 col-xl-3 item-name-td"
+        className="item-name-td"
         onClick={showModal}
         style={{ cursor: "pointer" }}
       >
@@ -73,11 +75,11 @@ function PasswordItem(props) {
           </div>
         )}
       </td>
-      <td className="d-none d-xl-table-cell                  col-xl-3">
+      <td className="d-none d-xl-table-cell">
         {item.cleartext[1]}
       </td>
       <td
-        className="d-none d-md-table-cell                    col-md-6 col-lg-4 col-xl-3 login-item-link "
+        className="d-none d-md-table-cell login-item-link "
         onClick={() => {
           openInExtension(props.item, url);
         }}
@@ -87,7 +89,7 @@ function PasswordItem(props) {
       >
         {link_text}
       </td>
-      <td className="d-none d-lg-table-cell                 col-lg-4 col-xl-3 column-modified">
+      <td className="d-none d-lg-table-cell column-modified">
         {lastModified(item)}
       </td>
     </tr>

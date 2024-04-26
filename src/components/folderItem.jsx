@@ -55,43 +55,66 @@ function FolderItem(props) {
     </svg>
   );
 
-  return (
-    <tr className="d-flex" style={{ alignItems: "center" }}>
-      <td
-        colSpan="3"
-        className="col-md-12 col-lg-8 col-xl-9 item-name-td"
-        onClick={onClick}
-        draggable
-        onDragStart={dragStart}
-      >
-        <div className="d-none d-sm-block" onDrop={onDrop} onDragOver={onDragOver} onDragLeave={onDragLeave}>
+  const td1 = (
+    <>
+      <div className="d-none d-sm-block" onDrop={onDrop} onDragOver={onDragOver} onDragLeave={onDragLeave}>
+        <svg width="24" height="24" className="itemIcon" style={{ cursor: "move" }}>
+          <use href="#i-folder"></use>
+        </svg>
+        {props.item.cleartext[0]}
+        {angleIcon}
+      </div>
+
+      <div className="d-sm-none" onDrop={onDrop} onDragOver={onDragOver} onDragLeave={onDragLeave} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 8 }}>
+
+        <div>
           <svg width="24" height="24" className="itemIcon" style={{ cursor: "move" }}>
             <use href="#i-folder"></use>
           </svg>
           {props.item.cleartext[0]}
-          {angleIcon}
         </div>
-
-        <div className="d-sm-none" onDrop={onDrop} onDragOver={onDragOver} onDragLeave={onDragLeave} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 8 }}>
-
-          <div>
-            <svg width="24" height="24" className="itemIcon" style={{ cursor: "move" }}>
-              <use href="#i-folder"></use>
-            </svg>
-            {props.item.cleartext[0]}
-          </div>
-          {angleIcon}
-        </div>
+        {angleIcon}
+      </div>
 
 
-        {props.searchMode && (
+      {
+        props.searchMode && (
           <div className="search-path">
             {props.item.path.map((e) => e[0]).join(" > ")}
           </div>
-        )}
+        )
+      }
 
+    </>
+  )
+
+  return (
+    <tr style={{ alignItems: "center" }}>
+      <td
+        colSpan="3"
+        className="d-none d-xl-table-cell item-name-td"
+        onClick={onClick}
+        draggable
+        onDragStart={dragStart}
+      >
+        {td1}
       </td>
-      <td className="d-none d-lg-table-cell                 col-lg-4 col-xl-3 column-modified">
+
+      <td
+        colSpan="2"
+        className="d-xl-none item-name-td"
+        onClick={onClick}
+        draggable
+        onDragStart={dragStart}
+      >
+        {td1}
+      </td>
+
+
+
+
+
+      <td className="d-none d-lg-table-cell column-modified">
         {lastModified(props.item)}
       </td>
     </tr>
