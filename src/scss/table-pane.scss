@@ -10,8 +10,6 @@
     position: relative;
 }
 
-
-
 @media (min-width: 576px) {
     #table_pane {
         border-radius: 0 16px 16px 0;
@@ -48,29 +46,6 @@
     padding: 1 0.75em 0 1;
 }
 
-/*
-
-.item_table th {
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 22px;
-    letter-spacing: 0em;
-    text-align: left;
-
-    color: var(--body-color70);
-    background: var(--table-pane-background);
-    padding-right: 0.75em;
-    border: none;
-
-
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
-
-*/
-
 .item_table thead th:first-child {
     padding-left: 24px;
 }
@@ -81,17 +56,6 @@
     }
 }
 
-/*
-
-.item_table td {
-    border: none;
-    text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 0;
-}
-*/
 
 @media (min-width: 576px) {
     .item_table td {
@@ -103,24 +67,6 @@
     cursor: pointer;
 }
 
-/*
-.item_table tbody tr {
-    border-bottom: 1px solid var(--table-pane-border-color);
-    height: 46px;
-}
-*/
-/*
-@media (min-width: 576px) {
-    .item_table tbody tr {
-        min-height: 46px;
-    }
-}
-*/
-/*
-.item_table tbody tr:hover {
-    background: var(--table-pane-hover);
-}
-*/
 
 .item_table .rightAlign {
     /*file size column*/
