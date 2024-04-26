@@ -109,6 +109,10 @@ function NavSpan(props) {
     if (cmd === "Iam") {
       props.gotoIam();
     }
+    if (cmd === "Msp") {
+      props.gotoMsp();
+    }
+
 
     //    props.onMenuCommand(cmd);
   };
@@ -162,7 +166,7 @@ function NavSpan(props) {
         </div>
       )}
 
-      {props.page == "Iam" && (
+      {((props.page == "Iam") || (props.page == "Msp")) && (
         <div onClick={props.gotoMain} style={{ cursor: "pointer" }}>
           <svg width="32" height="32">
             <use href="#f-cross"></use>
@@ -170,7 +174,7 @@ function NavSpan(props) {
         </div>
       )}
 
-      {props.page !== "Login" && props.page !== "Iam" && (
+      {props.page !== "Login" && props.page !== "Iam" && props.page !== "Msp" && (
         <React.Fragment>
           <div style={{ display: "flex" }}>
             <div className="account-dropdown-button"
