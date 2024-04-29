@@ -265,7 +265,10 @@ function ShareModal(props) {
         }
         if (result.status.match(/User .* is not registered/)) {
           console.log('Hello')
-          setShowInvitationLink(true);
+
+          if (!userData.business) {
+            setShowInvitationLink(true);
+          }
         }
         setErrorMsg(result.status);
         return;

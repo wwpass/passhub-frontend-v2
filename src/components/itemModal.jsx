@@ -346,7 +346,7 @@ function ItemModal(props) {
 
         <div className="itemNoteModalField">
           <ItemModalFieldNav name="Note" htmlFor="notes" />
-          <div className="xxx">
+          <div>
             {edit ? (
               <TextareaAutosize
                 id="notes"

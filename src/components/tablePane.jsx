@@ -98,13 +98,6 @@ function TablePane(props) {
 
     const onItemModalClose = (refresh = false) => {
         setShowModal("");
-        /*        
-                if (refresh === true) {
-                  props.refreshUserData({
-                    safes: [itemModalArgs.safe.id],
-                  });
-                }
-        */
     };
 
     const onItemModalCloseSetFolder = (f) => {
@@ -315,12 +308,14 @@ function TablePane(props) {
                         <table className="item_table">
                             <thead>
                                 <tr>
-                                    <th className="d-none d-sm-table-cell col-sm-12 col-md-6 col-lg-4 col-xl-3" onClick={sortByTitle}>
+                                    <th className="d-none d-sm-table-cell col-sm-12 col-md-6 col-lg-4 col-xl-3" onClick={sortByTitle}
+                                        style={{ cursor: "pointer" }}>
                                         Title {sortBy === "title" && sortArrow}
                                     </th>
                                     <th className="d-none d-xl-table-cell                             col-xl-3"></th>
                                     <th className="d-none d-md-table-cell           col-md-6 col-lg-4 col-xl-3"></th>
-                                    <th className="d-none d-lg-table-cell                    col-lg-4 col-xl-3 column-modified" onClick={sortByModified}>
+                                    <th className="d-none d-lg-table-cell                    col-lg-4 col-xl-3 column-modified" onClick={sortByModified}
+                                        style={{ cursor: "pointer" }} >
                                         {sortBy === "modified" && sortArrow} Modified
                                     </th>
                                 </tr>

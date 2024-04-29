@@ -174,7 +174,7 @@ export default function UserPane(props) {
                         <div><b>User management</b></div>
 
                         <div style={{ display: "flex", gap: 32 }}>
-                            {props.company && <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={props.showCompanyModal}>Settins</div>}
+                            {props.company && <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={props.showCompanyModal}>Settings</div>}
 
                             <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={props.showAuditModal}>Audit</div>
                             {props.LDAP ? (
@@ -196,7 +196,7 @@ export default function UserPane(props) {
                             <div style={{ flexGrow: 1 }}>ACTIVE DIRECTORY</div>
                         ) : (
                             <>
-                                <input
+                                <input className="basic-input"
                                     type="email"
                                     placeholder="Email"
                                     style={{ flexGrow: 1 }}
@@ -228,10 +228,9 @@ export default function UserPane(props) {
                             onChange={onSearchChange}
                             value={searchString}
                             placeholder="Search Users"
-                            style={{ padding: "12px 36px 12px 40px", width: "100%" }}
                         />
                         <span className="search_clear" onClick={searchClear} style={{ margin: "12px 0 0 -27px" }}>
-                            <svg width="0.7em" height="0.7em" className="item_icon">
+                            <svg width="0.7em" height="0.7em" className="item_icon" style={{ fill: "var(--table-pane-color)" }}>
                                 <use href="#cross"></use>
                             </svg>
                         </span>
@@ -240,7 +239,8 @@ export default function UserPane(props) {
                                 width="24"
                                 height="24"
                                 style={{
-                                    opacity: 0.5,
+                                    opacity: 0.6,
+                                    stroke: "var(--table-pane-color)",
                                 }}
                             >
                                 <use href="#f-search"></use>

@@ -26,6 +26,7 @@ function UserRecord(props) {
       .then((result) => {
         console.log('changeRole result', result)
         if (result.data.status === "Ok") {
+          queryClient.invalidateQueries(["userList"], { exact: true });
           return "Ok";
         }
         if (result.data.status === "login") {
@@ -42,7 +43,7 @@ function UserRecord(props) {
   const changeRoleMutation = useMutation({
     mutationFn: changeRoleAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userList"], { exact: true });
+      // queryClient.invalidateQueries(["userList"], { exact: true });
     },
   })
 
