@@ -4,10 +4,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import NavSpan from "./navSpan";
 
-import logo from '../assets/new_ph_logo.svg';
+// import logo from '../assets/new_ph_logo.svg';
 
-
-// "public/img/new_ph_logo.svg"
 
 function Header(props) {
   return (
@@ -31,11 +29,12 @@ function Header(props) {
                 cursor: props.page === "Main" ? "default" : "pointer",
               }}
             >
-              <img
-                src={logo}
-                alt="logo"
-                style={{ width: "133px" }}
-              />
+
+              <svg style={{ fill: "var(--logo-color)", width: 133, height: 26.5 }}>
+                <use href="#ph-logo"></use>
+              </svg>
+
+
             </span>
             <span className="d-md-none" id="xs_indicator"></span>
           </div>
@@ -47,6 +46,7 @@ function Header(props) {
             page={props.page}
             gotoIam={props.gotoIam}
             gotoMain={props.gotoMain}
+            gotoMsp={props.gotoMsp}
           />
         </Col>
 
@@ -68,11 +68,9 @@ function Header(props) {
               onChange={props.onSearchChange}
               value={props.searchString}
               style={{
-                width: "100%",
-                background: "rgba(255, 255, 255, 0.6)",
                 backdropFilter: "blur(40px)",
-                height: "48px",
-                padding: "0 30px 0 10px",
+                padding: "0px 30px 0px 10px",
+                border: "none",
               }}
             />
 
@@ -80,7 +78,7 @@ function Header(props) {
               className="search_clear"
               onClick={props.onSearchClear}
             >
-              <svg width="0.7em" height="0.7em" className="item_icon">
+              <svg width="0.7em" height="0.7em" className="item_icon" style={{ fill: "var(--table-pane-color)" }}>
                 <use href="#cross"></use>
               </svg>
             </span>

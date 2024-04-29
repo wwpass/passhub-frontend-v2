@@ -118,8 +118,11 @@ function NavSpan(props) {
   };
 
   const inputBackground = props.searchString.trim().length
-    ? "white"
-    : "rgba(255, 255, 255, 0.6)";
+    ? "var(--active-search-background)"
+    : "var(--inactive-search-background)";
+
+  // const inputBackground = "var(--table-pane-background)";
+
 
   return (
     <React.Fragment>
@@ -142,22 +145,24 @@ function NavSpan(props) {
             style={{
               width: "100%",
               background: inputBackground,
+              paddingLeft: 44,
               backdropFilter: "blur(40px)",
+              border: "none",
+
             }}
           />
-
-          <span className="search_clear" onClick={props.onSearchClear}>
-            <svg width="0.7em" height="0.7em" className="item_icon">
+          <span className="search_clear" onClick={props.onSearchClear} style={{ margin: "12px 0 0 -27px" }}>
+            <svg width="0.7em" height="0.7em" className="item_icon" style={{ fill: "var(--table-pane-color)" }}>
               <use href="#cross"></use>
             </svg>
           </span>
-          <span style={{ position: "absolute", left: "55px", top: "10px" }}>
+          <span style={{ position: "absolute", left: "53px", top: "11px" }}>
             <svg
               width="24"
               height="24"
               style={{
-                opacity: 0.4,
-                //verticalAlign: "text-bottom",
+                opacity: 0.6,
+                stroke: "var(--table-pane-color)",
               }}
             >
               <use href="#f-search"></use>
@@ -181,7 +186,7 @@ function NavSpan(props) {
               onClick={showAccountDropDown}
             //onClick={showAccountMenu}
             >
-              <svg width="40" height="34" style={{ opacity: 0.8 }}>
+              <svg width="40" height="34" style={{ opacity: 0.7 }}>
                 <use href="#f-account"></use>
               </svg>
             </div>
@@ -332,6 +337,25 @@ export default NavSpan;
     return;
   };
 
+
+          <span className="search_clear" onClick={props.onSearchClear}>
+            <svg width="0.7em" height="0.7em" className="item_icon">
+              <use href="#cross"></use>
+            </svg>
+          </span>
+          
+          <span style={{ position: "absolute", left: "55px", top: "10px" }}>
+            <svg
+              width="24"
+              height="24"
+              style={{
+                opacity: 0.4,
+                //verticalAlign: "text-bottom",
+              }}
+            >
+              <use href="#f-search"></use>
+            </svg>
+          </span>
 
 
 */
