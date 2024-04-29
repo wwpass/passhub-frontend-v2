@@ -123,7 +123,7 @@ function MspPage(props) {
                     <div>Managed Companies</div>
 
                     <div style={{ margin: "16px 0 8px", display: "flex", gap: 16, alignItems: "baseline", flexWrap: "wrap" }}>
-                        <input
+                        <input className='basic-input'
                             type="text"
                             placeholder="Company name"
                             style={{ flexGrow: 1 }}

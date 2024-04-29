@@ -19,6 +19,7 @@ import SurveyModal from "./surveyModal";
 import IdleModal from "./idleModal"
 import MessageModal from './messageModal';
 import UserManagementPage from './userManagementPage';
+import MspPage from './mspPage';
 
 import progress from "../lib/progress";
 
@@ -33,12 +34,11 @@ let idleM = null;
 let copyMoveOperation = "";
 
 
-
 function userDataQuery() {
 
   //console.log("userData query called");
 
-  progress.lock();
+  progress.lock(240);
   return downloadUserData()
     .then(data => {
       progress.unlock();
@@ -131,6 +131,9 @@ function Root(props) {
       queryClient.invalidateQueries(["userData"], { exact: true })
     },
   })
+
+  const currentManagedCompanyRef = useRef(null);
+
 
   const gotPaymentMessage = () => {
     dataMutation.mutate();
@@ -325,8 +328,15 @@ function Root(props) {
     setBlob(null);
   }
 
-  const gotoIam = () => {
+  const gotoIam = (company = null) => {
     setPage("Iam");
+    currentManagedCompanyRef.current = company;
+    setFilename("");
+    setBlob(null);
+  }
+
+  const gotoMsp = () => {
+    setPage("Msp");
     setFilename("");
     setBlob(null);
   }
@@ -339,6 +349,7 @@ function Root(props) {
         searchString={searchString}
         gotoMain={gotoMain}
         gotoIam={gotoIam}
+        gotoMsp={gotoMsp}
       >
       </Header>
 
@@ -368,13 +379,21 @@ function Root(props) {
         <UserManagementPage
           show={page === "Iam"}
           gotoMain={gotoMain}
+          company={currentManagedCompanyRef.current}
         />
+
+        <MspPage
+          show={page === "Msp"}
+          gotoMain={gotoMain}
+          gotoCompanyAdmin={(company) => gotoIam(company)}
+        />
+
       </Row>
       <Row className="d-none d-sm-block">
         <div
           style={{
             height: "22px",
-            display: (page === "Main" || page === "Iam") ? "" : "none",
+            display: (page === "Main" || page === "Iam" || page === "Msp") ? "" : "none",
           }}
         ></div>
       </Row>
