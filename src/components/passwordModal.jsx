@@ -120,6 +120,32 @@ function PasswordModal(props) {
   const [urlWarning, setUrlWarning] = useState("");
   const [totpWarning, setTotpWarning] = useState("");
 
+  const [isHidden, setIsHidden] = useState(document.visibilityState == "hidden");
+
+
+
+  /*
+    useEffect(() => {
+  
+      if (props.isHidden && edit) {
+        console.log('save state')
+      }
+  
+    }, [props.isHidden])
+  */
+
+
+  useEffect(() => {
+    console.log('initial document.visibilityState', document.visibilityState);
+
+    document.addEventListener("visibilitychange", () => {
+      console.log('onVisibilityChange', document.visibilityState);
+      setIsHidden(document.visibilityState == "hideen");
+    })
+
+  }, [])
+
+
 
   const queryClient = useQueryClient();
 

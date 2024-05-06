@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { getApiUrl, getVerifier, getHostname } from "../lib/utils";
 
@@ -20,8 +20,8 @@ function EmailModal(props) {
 
   const accountData = getAccountData();
 
-  const [email, setEmail] =  useState(accountData.email? accountData.email: "");
-  const [errorMsg, setErrorMsg] =  useState("");
+  const [email, setEmail] = useState(accountData.email ? accountData.email : "");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const onSubmit = () => {
     const _email = email.trim();
@@ -61,47 +61,47 @@ function EmailModal(props) {
   };
 
 
-    let title = "Add your email address";
-    if (
-      accountData.email &&
-      accountData.email.length > 0
-    ) {
-      title = "Change email address";
-    }
-    return (
-      <Modal
-        show={props.show}
-        onHide={props.onClose}
-        animation={false}
-        centered
-      >
-        <ModalCross onClose={props.onClose}></ModalCross>
-        <div className="modalTitle">
-          <div className="h2">{title}</div>
-        </div>
+  let title = "Add your email address";
+  if (
+    accountData.email &&
+    accountData.email.length > 0
+  ) {
+    title = "Change email address";
+  }
+  return (
+    <Modal
+      show={props.show}
+      onHide={props.onClose}
+      animation={false}
+      centered
+    >
+      <ModalCross onClose={props.onClose}></ModalCross>
+      <div className="modalTitle">
+        <div className="h2">{title}</div>
+      </div>
 
-        <Modal.Body className="edit mb32">
-          <InputField
-            id="mailModalInput"
-            label="Email"
-            value={email}
-            edit={true}
-            onChange={onEmailChange}
-          ></InputField>
-          {errorMsg.length > 0 && (
-            <div className="error">{errorMsg}</div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="outline-secondary" onClick={props.onClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={onSubmit}>
-            Submit
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
+      <Modal.Body className="edit mb32">
+        <InputField
+          id="mailModalInput"
+          label="Email"
+          value={email}
+          edit={true}
+          onChange={onEmailChange}
+        ></InputField>
+        {errorMsg.length > 0 && (
+          <div className="error-message">{errorMsg}</div>
+        )}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="outline-secondary" onClick={props.onClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={onSubmit}>
+          Submit
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 }
 
 export default EmailModal;
