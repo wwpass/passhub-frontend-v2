@@ -93,7 +93,7 @@ function UserRecord(props) {
           console.log('the click', props.user.email)
           props.showUserModal(props.user)
         }}>{props.user.email}</td>
-        <td>
+        <td style={{ overflow: "visible" }}>
           <div className="d-none d-sm-block">
             {props.LDAP ? (<span style={{ float: "right", paddingRight: "1em" }}>authorized</span>) : (
               <Dropdown
@@ -135,7 +135,7 @@ function UserRecord(props) {
         console.log('the click', props.user.email)
         props.showUserModal(props.user)
       }}>{props.user.email}</td>
-      <td>
+      <td style={{ overflow: "visible" }}>
         <div className="d-none d-sm-block">
           {props.LDAP ? (<span style={{ float: "right", paddingRight: "1em" }}>{role}</span>) : (
 
