@@ -194,6 +194,15 @@ input.datapicker {
     border: 1px gray solid;
 }
 
+
+.error-message {
+    color: var(--danger-color);
+}
+
+.mb32 {
+    margin-bottom: 32px;
+}
+
 @import './scss/account-dropdown.scss';
 @import './scss/bank-card.scss';
 @import './scss/custom-scroll.scss';

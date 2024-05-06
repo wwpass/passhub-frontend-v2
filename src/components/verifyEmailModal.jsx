@@ -82,7 +82,7 @@ function VerifyEmailModal(props) {
           onChange={onCodeChange}
         ></InputField>
         {errorMsg.length > 0 && (
-          <div className="error">{errorMsg}</div>
+          <div className="error-message">{errorMsg}</div>
         )}
         <div className="dark50">
           If you do not receive this email, please check your Spam folder,
