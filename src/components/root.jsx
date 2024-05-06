@@ -122,6 +122,7 @@ function Root(props) {
   const [blob, setBlob] = useState(null);
   const [showToast, setShowToast] = useState("");
   const [showModal, setShowModal] = useState("");
+  const [copyMoveToastOperation, setCopyMoveToastOperation] = useState("nop");
 
   const queryClient = useQueryClient();
 
@@ -183,7 +184,7 @@ function Root(props) {
 
 
   //  -----------------------
-
+  {/*
   const cmtResult = useQuery({
     queryKey: ["copyMoveToast1"],
     queryFn: () => Promise.resolve(2).then(data => {
@@ -197,30 +198,12 @@ function Root(props) {
 
     if ((typeof cmtData == "object") && ("item" in cmtData) && ("operation" in cmtData)) {
       if (showToast != "CopyMoveToast") {
+        setCopyMoveToastOperation(cmtData.operation);
         setShowToast("CopyMoveToast");
         enablePaste(true);
-        // setCopyMoveToastOperation(cmtData.operation);
-        // console.log(107, cmtData);
       }
     }
   }, [cmtData])
-
-  const accountDataMutation = useMutation({
-    mutationFn: (_args) => {
-      Promise.resolve(3).then(data => {
-        // console.log("accountData mutate", data);
-        return udata;
-      })
-    },
-
-    onSuccess: (data, variables, context) => {
-      // console.log("setQueryData after accountDataMutation mutate", data, variables);
-      queryClient.setQueryData(["accountData"], udata);
-    },
-  })
-
-  useEffect(() => { accountDataMutation.mutate() }, [udata])
-
 
   const copyMoveMutation = useMutation({
     mutationFn: (_args) => {
@@ -249,6 +232,28 @@ function Root(props) {
       }
     }
   })
+*/}
+
+  //  -----------------------
+
+
+  const accountDataMutation = useMutation({
+    mutationFn: (_args) => {
+      Promise.resolve(3).then(data => {
+        // console.log("accountData mutate", data);
+        return udata;
+      })
+    },
+
+    onSuccess: (data, variables, context) => {
+      // console.log("setQueryData after accountDataMutation mutate", data, variables);
+      queryClient.setQueryData(["accountData"], udata);
+    },
+  })
+
+  useEffect(() => { accountDataMutation.mutate() }, [udata])
+
+
 
   let timeout = (udata && udata.idleTimeout) ? udata.idleTimeout : 123;
 
@@ -404,6 +409,7 @@ function Root(props) {
           operation={copyMoveOperation}
           onClose={() => {
             enablePaste(false);
+            queryClient.setQueryData(["copyMoveToast"], {});
             setShowToast("");
           }}
         >

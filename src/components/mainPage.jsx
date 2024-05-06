@@ -128,16 +128,8 @@ function MainPage(props) {
       setCopyMoveToastOperation(cmtData.operation);
       props.showCopyMoveToast(cmtData.operation);
       enablePaste(true);
-
-      /*
-      if(showToast != "CopyMoveToast") {
-        setShowToast("CopyMoveToast");
-        console.log(cmtData);
-      }
-      */
     }
   }, [cmtData])
-
 
   // move item processing
 
@@ -237,13 +229,6 @@ function MainPage(props) {
         copyMoveMutation.mutate({ node, pItem: cmtData.item, operation: copyMoveToastOperation });
       }
       props.hideCopyMoveToast();
-      /*      
-            if(showToast == "CopyMoveToast") {
-              setShowToast("");
-              enablePaste(false);
-            }
-      */
-      //      props.paste(node);
     }
   }
 
@@ -324,6 +309,7 @@ function MainPage(props) {
             : activeFolder
         }
         searchMode={searchString.length > 0}
+        onSearchClear={props.onSearchClear}
       />
 
       <FolderNameModal
@@ -442,21 +428,20 @@ function MainPage(props) {
       >
         {messageModalArgs && messageModalArgs.message}
       </MessageModal>
-
-
-
-
+      {/*
       <ToastContainer position="bottom-end" style={{ bottom: 32, right: 32 }}>
         <CopyMoveToast
           show={showToast == "CopyMoveToast"}
           operation={copyMoveToastOperation}
           onClose={() => {
             setShowToast("");
+            queryClient.setQueryData(["copyMoveToast"], {});
             enablePaste(false);
           }}
         >
         </CopyMoveToast>
       </ToastContainer>
+        */}
     </React.Fragment>
   );
 }
