@@ -287,8 +287,32 @@ function atStorageLimits() {
   return s >= account.maxStorage;
 }
 
-let pasteEnabled = false;
 
+let pasteTimestamp = 0
+const setPasteTimestamp = (ts) => { pasteTimestamp = ts; }
+
+let pasteEnabled = false;
+const PASTE_ENABLED_TIMEOUT = 30;
+
+function isPasteEnabled() {
+  const now = new Date() / 1000;
+  console.log('isPasteEnabled');
+  console.log(now - pasteTimestamp);
+  if (now - pasteTimestamp < PASTE_ENABLED_TIMEOUT) {
+    return true;
+  }
+  return false;
+}
+
+function enablePaste(status) {
+  if (!status) {
+    setPasteTimestamp(0);
+  }
+  pasteEnabled = status;
+}
+
+
+/*
 function enablePaste(status) {
   pasteEnabled = status;
 }
@@ -296,6 +320,9 @@ function enablePaste(status) {
 function isPasteEnabled(status) {
   return pasteEnabled;
 }
+
+*/
+
 
 const limits = { MAX_TITLE_LENGTH: 50, MAX_NOTE_LENGTH: 10000, MAX_USERNAME_LENGTH: 100, MAX_PASSWORD_LENGTH: 100, MAX_URL_LENGTH: 2048, MAX_TOTP_LENGTH: 2048 };
 
@@ -326,6 +353,7 @@ export {
   totalStorage,
 
   enablePaste,
+  setPasteTimestamp,
   isPasteEnabled
 
 };

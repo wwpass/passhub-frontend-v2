@@ -59,12 +59,12 @@ function ItemModal(props) {
   })
 
   const handleMove = () => {
-    copyMoveToastMutation.mutate({ item: props.args.item, operation: "move" });
+    copyMoveToastMutation.mutate({ item: props.args.item, operation: "move", timestamp: Date.now() });
     props.onClose();
   };
 
   const handleCopy = () => {
-    copyMoveToastMutation.mutate({ item: props.args.item, operation: "copy" });
+    copyMoveToastMutation.mutate({ item: props.args.item, operation: "copy", timestamp: Date.now() });
     props.onClose();
   };
 

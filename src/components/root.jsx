@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import axios from "axios";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTimer } from 'react-timer-hook';
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -284,6 +285,25 @@ function Root(props) {
     idleTimer.start();
   }
 
+  let expiryTimestamp = new Date().getTime();
+
+  const {
+    totalSeconds,
+    seconds,
+    minutes,
+    hours,
+    days,
+    isRunning,
+    start,
+    pause,
+    resume,
+    restart: restartCopyMoveToastTimer,
+  } = useTimer({
+    expiryTimestamp,
+    onExpire: () => { if (showToast == "CopyMoveToast") { setShowToast("") }; console.warn('onExpire called') }
+  });
+  console.log('seconds ' + seconds);
+
   extensionInterface.setRestartIdleTimer(restartIdleTimer);
 
 
@@ -309,15 +329,18 @@ function Root(props) {
 
   // -----------------------
 
+  const COPY_MOVE_TOAST_TIMEOUT = 10; // 10 sec
+
   const showCopyMoveToast = (operation) => {
     copyMoveOperation = operation;
     setShowToast("CopyMoveToast");
+    restartCopyMoveToastTimer(new Date().getTime() + COPY_MOVE_TOAST_TIMEOUT * 1000);
     enablePaste(true);
   }
 
   const hideCopyMoveToast = () => {
     setShowToast("");
-    enablePaste(false);
+    //    enablePaste(false);
   }
 
   const inMemoryView = (blob, filename) => {
@@ -408,8 +431,8 @@ function Root(props) {
           show={showToast == "CopyMoveToast"}
           operation={copyMoveOperation}
           onClose={() => {
-            enablePaste(false);
-            queryClient.setQueryData(["copyMoveToast"], {});
+            // enablePaste(false);
+            // queryClient.setQueryData(["copyMoveToast"], {});
             setShowToast("");
           }}
         >

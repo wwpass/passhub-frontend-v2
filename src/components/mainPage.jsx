@@ -18,6 +18,7 @@ import {
   getWsUrl,
   getVerifier,
   serverLog,
+  setPasteTimestamp,
   enablePaste
 } from "../lib/utils";
 
@@ -127,6 +128,7 @@ function MainPage(props) {
     if ((typeof cmtData == "object") && ("item" in cmtData) && ("operation" in cmtData)) {
       setCopyMoveToastOperation(cmtData.operation);
       props.showCopyMoveToast(cmtData.operation);
+      setPasteTimestamp(Date.now() / 1000);
       enablePaste(true);
     }
   }, [cmtData])
