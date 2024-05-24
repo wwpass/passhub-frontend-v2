@@ -25,23 +25,7 @@ import PathElement from "./pathElement";
 
 import AddDropUp from "./addDropUp";
 
-import { getFolderById } from "../lib/utils";
-
-function isPasswordItem(item) {
-    return !item.note && !item.file && item.version !== 5;
-}
-
-function isFileItem(item) {
-    return item.file ? true : false;
-}
-
-function isBankCardItem(item) {
-    return item.version === 5 && item.cleartext[0] === "card";
-}
-
-function isNoteItem(item) {
-    return item.note ? true : false;
-}
+import { getFolderById, isPasswordItem, isFileItem, isBankCardItem, isNoteItem } from "../lib/utils";
 
 function TablePane(props) {
 
@@ -51,6 +35,7 @@ function TablePane(props) {
     const [keyCounter, setKeyCounter] = useState(1);
     const [reverseSortTitle, setReverseSortTitle] = useState(false);
     const [reverseSortModified, setReverseSortModified] = useState(false);
+    const [reverseSortSize, setReverseSortSize] = useState(false);
     const [sortBy, setSortBy] = useState("title");
 
 
@@ -185,6 +170,16 @@ function TablePane(props) {
         }
     }
 
+    const sortBySize = () => {
+        if (props.searchType == 'Files') {
+            if (sortBy != "size") {
+                setSortBy("size");
+            } else {
+                setReverseSortSize(!reverseSortSize);
+            }
+        }
+    }
+
     const sortFunction = (a, b) => {
         if (sortBy == 'title') {
             if (!reverseSortTitle) return a.name.localeCompare(b.name); else return b.name.localeCompare(a.name);
@@ -203,6 +198,9 @@ function TablePane(props) {
         if (sortBy == 'title') {
             if (!reverseSortTitle) return itemName(a).localeCompare(itemName(b)); else return itemName(b).localeCompare(itemName(a));
         }
+        if ((props.searchType == 'Files') && (sortBy == 'size')) {
+            if (!reverseSortSize) return a.file.size - b.file.size; else return b.file.size - a.file.size;
+        }
 
         if (!reverseSortModified) return a.lastModified > b.lastModified ? -1 : 1; else return a.lastModified < b.lastModified ? -1 : 1;
     }
@@ -211,7 +209,10 @@ function TablePane(props) {
 
     const sortedItems = folder.items.toSorted(sortItemsFunction);
 
-    const reverseSort = sortBy == "title" ? reverseSortTitle : reverseSortModified;
+    let reverseSort = sortBy == "title" ? reverseSortTitle : reverseSortModified;
+    if (sortBy == 'size') {
+        reverseSort = reverseSortSize;
+    }
 
     const sortArrow = reverseSort ? (
         <svg width="24" height="24" style={{ fill: "var(--body-color)", transform: "rotate(180deg)" }}><use href="#angle"></use></svg>
@@ -313,7 +314,14 @@ function TablePane(props) {
                                         Title {sortBy === "title" && sortArrow}
                                     </th>
                                     <th className="d-none d-xl-table-cell                             col-xl-3"></th>
-                                    <th className="d-none d-md-table-cell           col-md-6 col-lg-4 col-xl-3"></th>
+
+                                    {props.searchType == 'Files' ? (
+                                        <th className="d-none d-md-table-cell           col-md-6 col-lg-4 col-xl-3 rightAlign" onClick={sortBySize}
+                                            style={{ cursor: "pointer" }}>{sortBy === "size" && sortArrow} Size</th>
+                                    ) : (
+                                        <th className="d-none d-md-table-cell           col-md-6 col-lg-4 col-xl-3 rightAlign"></th>
+                                    )}
+
                                     <th className="d-none d-lg-table-cell                    col-lg-4 col-xl-3 column-modified" onClick={sortByModified}
                                         style={{ cursor: "pointer" }} >
                                         {sortBy === "modified" && sortArrow} Modified
@@ -379,7 +387,7 @@ function TablePane(props) {
                 )}
 
                 {/*this.addMenu*/}
-                {!props.searchMode && (
+                {!props.searchMode ? (
                     <Button
                         variant="primary"
                         type="submit"
@@ -406,6 +414,27 @@ function TablePane(props) {
                             <use href="#f-plus"></use>
                         </svg>
                     </Button>
+                ) : (
+                    <Button
+                        variant="primary"
+                        type="submit"
+                        ref={addButtonRef}
+                        title="Reset Search mode"
+                        style={{
+                            position: "absolute",
+                            bottom: "16px",
+                            right: "16px",
+                            minWidth: "0",
+                            padding: "20px",
+                            borderRadius: "14px",
+                        }}
+                        onClick={() => {
+                            props.onSearchReset();
+                        }}
+                    >
+                        Reset Search <br />& Filters
+                    </Button>
+
                 )}
 
 

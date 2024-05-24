@@ -116,6 +116,7 @@ function listenToPaymentMessage(cb) {
 function Root(props) {
 
   const [searchString, setSearchString] = useState('');
+  const [searchType, setSearchType] = useState('--All--');
   const [page, setPage] = useState('Main');
   const [udata, setUData] = useState({})
   const [activeFolderId, setActiveFolderId] = useState(null)
@@ -306,10 +307,14 @@ function Root(props) {
 
   extensionInterface.setRestartIdleTimer(restartIdleTimer);
 
+  const resetSearch = () => {
+    setSearchString('');
+    setSearchType('--All--');
 
+  }
 
   const setActiveFolder = (folder) => {
-    setSearchString('');
+    resetSearch();
 
     if (typeof folder !== "object") {
       folder = getFolderById(udata.safes, folder);
@@ -372,6 +377,9 @@ function Root(props) {
   return (
     <Container className="d-flex" style={{ flexDirection: "column" }}>
       <Header page={page}
+        onSearchTypeChange={setSearchType}
+        searchType={searchType}
+
         onSearchChange={e => setSearchString(e.target.value)}
         onSearchClear={() => setSearchString('')}
         searchString={searchString}
@@ -396,7 +404,13 @@ function Root(props) {
           activeFolderId={activeFolderId}
           setActiveFolder={setActiveFolder}
           searchString={searchString}
+          searchType={searchType}
+
           onSearchClear={() => setSearchString('')}
+
+          onSearchReset={resetSearch}
+
+
           showCopyMoveToast={showCopyMoveToast}
           hideCopyMoveToast={hideCopyMoveToast}
 

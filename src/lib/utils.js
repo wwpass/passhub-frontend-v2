@@ -296,8 +296,8 @@ const PASTE_ENABLED_TIMEOUT = 30;
 
 function isPasteEnabled() {
   const now = new Date() / 1000;
-  console.log('isPasteEnabled');
-  console.log(now - pasteTimestamp);
+  //  console.log('isPasteEnabled');
+  //  console.log(now - pasteTimestamp);
   if (now - pasteTimestamp < PASTE_ENABLED_TIMEOUT) {
     return true;
   }
@@ -322,6 +322,22 @@ function isPasteEnabled(status) {
 }
 
 */
+
+function isPasswordItem(item) {
+  return !item.note && !item.file && item.version !== 5;
+}
+
+function isFileItem(item) {
+  return item.file ? true : false;
+}
+
+function isBankCardItem(item) {
+  return item.version === 5 && item.cleartext[0] === "card";
+}
+
+function isNoteItem(item) {
+  return item.note ? true : false;
+}
 
 
 const limits = { MAX_TITLE_LENGTH: 50, MAX_NOTE_LENGTH: 10000, MAX_USERNAME_LENGTH: 100, MAX_PASSWORD_LENGTH: 100, MAX_URL_LENGTH: 2048, MAX_TOTP_LENGTH: 2048 };
@@ -354,6 +370,11 @@ export {
 
   enablePaste,
   setPasteTimestamp,
-  isPasteEnabled
+  isPasteEnabled,
+
+  isPasswordItem,
+  isFileItem,
+  isBankCardItem,
+  isNoteItem,
 
 };

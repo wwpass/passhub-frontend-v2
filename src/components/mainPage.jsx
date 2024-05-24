@@ -231,6 +231,7 @@ function MainPage(props) {
         copyMoveMutation.mutate({ node, pItem: cmtData.item, operation: copyMoveToastOperation });
       }
       props.hideCopyMoveToast();
+      enablePaste(false);
     }
   }
 
@@ -265,9 +266,12 @@ function MainPage(props) {
   };
 
   const searchString = props.searchString.trim();
-  if (searchString.length > 0) {
-    searchFolder.items = search(searchString);
-    searchFolder.folders = searchFolders(searchString);
+
+  if ((searchString.length > 0) || (props.searchType != '--All--')) {
+    searchFolder.items = search(searchString, props.searchType);
+    if (props.searchType == '--All--') {
+      searchFolder.folders = searchFolders(searchString, props.searchType);
+    }
 
     const safePane = document.querySelector("#safe_pane");
 
@@ -306,12 +310,14 @@ function MainPage(props) {
         dropItem={dropItem}
 
         folder={
-          searchString.length > 0
+          ((searchString.length > 0) || (props.searchType != '--All--'))
             ? searchFolder
             : activeFolder
         }
-        searchMode={searchString.length > 0}
+        searchMode={((searchString.length > 0) || (props.searchType != '--All--'))}
         onSearchClear={props.onSearchClear}
+        onSearchReset={props.onSearchReset}
+        searchType={props.searchType}
       />
 
       <FolderNameModal
