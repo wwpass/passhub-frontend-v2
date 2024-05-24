@@ -262,7 +262,10 @@ function AccountDropDown(props) {
             Switch Theme
           </div>
         )}
-        <ThemeMenu onHidden={props.onClose} />
+        <ThemeMenu
+          onHidden={props.onClose}
+          theme={accountData.theme}
+        />
 
         <div
           className="account-menu-item"
