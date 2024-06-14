@@ -53,12 +53,19 @@ function NoteItem(props) {
       </td>
       <td
         colSpan="2"
-        className="d-xl-none item-name-td"
+        className="d-none d-md-table-cell d-xl-none item-name-td"
         onClick={showModal}
         style={{ cursor: "pointer" }}
       >
         {td1}
       </td>
+      <td
+        className="d-md-none item-name-td"
+        onClick={showModal}
+      >
+        {td1}
+      </td>
+
       <td className="d-none d-lg-table-cell column-modified">
         {lastModified(item)}
       </td>

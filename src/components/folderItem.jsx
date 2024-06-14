@@ -76,7 +76,6 @@ function FolderItem(props) {
         {angleIcon}
       </div>
 
-
       {
         props.searchMode && (
           <div className="search-path">
@@ -102,7 +101,7 @@ function FolderItem(props) {
 
       <td
         colSpan="2"
-        className="d-xl-none item-name-td"
+        className="d-none d-md-table-cell d-xl-none item-name-td"
         onClick={onClick}
         draggable
         onDragStart={dragStart}
@@ -110,9 +109,12 @@ function FolderItem(props) {
         {td1}
       </td>
 
-
-
-
+      <td
+        className="d-md-none item-name-td"
+        onClick={onClick}
+      >
+        {td1}
+      </td>
 
       <td className="d-none d-lg-table-cell column-modified">
         {lastModified(props.item)}

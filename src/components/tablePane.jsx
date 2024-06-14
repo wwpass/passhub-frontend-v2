@@ -308,7 +308,7 @@ function TablePane(props) {
                     >
                         <table className="item_table">
                             <thead>
-                                <tr>
+                                <tr className="d-none d-sm-table-row">
                                     <th className="d-none d-sm-table-cell col-sm-12 col-md-6 col-lg-4 col-xl-3" onClick={sortByTitle}
                                         style={{ cursor: "pointer" }}>
                                         Title {sortBy === "title" && sortArrow}
