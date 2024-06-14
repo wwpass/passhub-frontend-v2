@@ -75,8 +75,6 @@ function BankCardItem(props) {
         {td1}
       </td>
 
-
-
       <td className="d-none d-lg-table-cell column-modified">
         {lastModified(item)}
       </td>
