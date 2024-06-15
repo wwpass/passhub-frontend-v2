@@ -6,15 +6,6 @@
     color: var(--body-color);
 }
 
-.iam_table tbody tr {
-    border-bottom: 1px solid var(--table-pane-border-color);
-    height: 48px;
-}
-
-.iam_table tbody tr:hover {
-    background: var(--table-pane-hover);
-}
-
 
 .tableFixHead {
     overflow-y: auto;
@@ -70,9 +61,11 @@
 }
 
 
+
+
+/*
+
 #user-pane input {
-    border-radius: 12px;
-    padding: 12px;
     border: 1px solid #1B1B2633;
 }
 
@@ -83,3 +76,4 @@
 #user-pane input:focus {
     outline: none;
 }
+*/

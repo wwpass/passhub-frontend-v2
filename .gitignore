@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
+dist-dev
 dist.tgz
 dist-ssr
 *.local
@@ -23,3 +24,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+helper
+

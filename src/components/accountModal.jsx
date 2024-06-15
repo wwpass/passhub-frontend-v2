@@ -151,6 +151,13 @@ function AccountModal(props) {
                   <a href={accountData.receipt_url} style={{ color: "var(--link-color)" }} target='_blank'>Your latest payment receipt</a>
                 )}
               </div>
+              {/* 
+              <div>
+                {accountData.receipt_url && (
+                  <a href="/payments/billing.php" style={{ color: "var(--link-color)" }} target='_blank'>stripe billing page</a>
+                )}
+              </div>
+                */}
               <div>
                 {accountData.autorenew && (
                   <a href="#" onClick={() => {

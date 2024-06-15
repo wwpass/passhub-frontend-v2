@@ -214,7 +214,20 @@ function AccountDropDown(props) {
           Import
         </div>
 
-        {accountData.site_admin ? (
+        {accountData.msp ? (
+          <div
+            className="account-menu-item"
+            onClick={(e) => {
+              handleMenuCommand(e, "Msp");
+            }}
+          >
+            <svg width="24" height="24">
+              <use href="#i-wrench"></use>
+            </svg>
+            MSP
+          </div>
+
+        ) : (accountData.site_admin ? (
           <div
             className="account-menu-item"
             onClick={(e) => {
@@ -236,7 +249,7 @@ function AccountDropDown(props) {
             </svg>
             Contact us
           </div>
-        )}
+        ))}
 
         {(accountData.theme != "disabled") && (
           <div
@@ -249,7 +262,10 @@ function AccountDropDown(props) {
             Switch Theme
           </div>
         )}
-        <ThemeMenu onHidden={props.onClose} />
+        <ThemeMenu
+          onHidden={props.onClose}
+          theme={accountData.theme}
+        />
 
         <div
           className="account-menu-item"

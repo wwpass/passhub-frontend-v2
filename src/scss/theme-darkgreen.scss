@@ -60,4 +60,12 @@ body.theme-darkgreen {
     --safe-pane-icon-stroke: white;
     --icon-stroke: white;
     --icon-fill: white;
+
+    --logo-color: rgba(255, 255, 255, 0.8);
+    --account-fill-color: rgb(27, 27, 38);
+    --account-background-color: rgba(255, 255, 255, .6);
+
+    --inactive-search-background: var(--safe-pane-background);
+    --active-search-background: var(--table-pane-background);
+
 }

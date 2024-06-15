@@ -1,7 +1,9 @@
 import { contextMenu, Menu, Item } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import axios from "axios";
-import { getApiUrl, getVerifier, humanReadableFileSize } from "../lib/utils";
+import { getApiUrl, getVerifier } from "../lib/utils";
+import { getUserData } from "../lib/userData";
+
 
 
 
@@ -30,10 +32,29 @@ function ThemeMenu(props) {
     }
   }
 
+  const classes = document.querySelector('body').classList;
+
+
+  let currentTheme = "theme-lite";
+  for (const c of classes) {
+    if (c.substring(0, 6) == "theme-") {
+      currentTheme = c;
+    }
+  }
+
+  console.log(currentTheme);
+
   return (
+
     <Menu id={"theme-menu-id"} onVisibilityChange={onVisibilityChange}>
       {themes.map(t =>
-        <Item onClick={() => switchTheme(t)}> {t.substring(6)}</Item>
+        <Item
+          onClick={() => switchTheme(t)}
+          key={t.substring(6)}>
+          {currentTheme == t ? (
+            <span style={{ width: 24 }}>&#x2713;</span>
+          ) : (<span style={{ width: 24 }}></span>)}
+          {t.substring(6)}</Item>
       )}
     </Menu>
 

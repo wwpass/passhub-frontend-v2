@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 
-
 import { QueryClient, useQuery } from '@tanstack/react-query';
 
 import axios from "axios";
@@ -13,24 +12,30 @@ import GroupDeleteModal from "./groupDeleteModal";
 import GroupNameModal from "./groupNameModal";
 import GroupSafesModal from "./groupSafesModal";
 import UserModal from "./userModal";
+import AuditModal from "./auditModal";
+import CompanyModal from './companyModal';
 
 import { decryptGroups } from "../lib/userData";
 
 import UserPane from "./userPane";
 import GroupPane from "./groupPane";
 
-function downloadUserList() {
+function downloadUserList(company = null) {
   return axios
     .post(`${getApiUrl()}iam.php`, {
       verifier: getVerifier(),
       operation: "users",
+      company: company ? company._id : null
     });
 }
 
-function userListQuery() {
+function userListQuery(company) {
   console.log("userList query called");
+  if (company) {
+    console.log(`for company ${company.name}`);
+  }
 
-  return downloadUserList()
+  return downloadUserList(company)
     .then(result => {
 
       if (result.data.status === "Ok") {
@@ -65,7 +70,7 @@ export default function UserManagementPage(props) {
 
   const { data: datax, isLoading } = useQuery({
     queryKey: ["userList"],
-    queryFn: () => userListQuery().then(data => {
+    queryFn: () => userListQuery(props.company).then(data => {
       return data;
     }),
   });
@@ -75,7 +80,7 @@ export default function UserManagementPage(props) {
     return null;
   }
 
-  const { me, users, groups, LICENSED_USERS: licensedUsers } = datax;
+  const { me, users, groups, LICENSED_USERS: licensedUsers, LDAP } = datax;
 
   const userEmail = {}
 
@@ -115,7 +120,7 @@ export default function UserManagementPage(props) {
     }
   }
 
-  if ((showModal != "") && (showModal != "GroupCreateModal") && (showModal != "UserModal")) {
+  if ((showModal != "") && (showModal != "GroupCreateModal") && (showModal != "UserModal") && (showModal != "AuditModal")) {
 
     for (const group of groups) {
       if (group.GroupID === currentGroupRef.current.GroupID) {
@@ -146,8 +151,13 @@ export default function UserManagementPage(props) {
         users={users}
         licensed={licensedUsers}
         me={me}
+        LDAP={LDAP}
         showDelDialog={showDelDialog}
         showUserModal={showUserModal}
+        showAuditModal={() => setShowModal("AuditModal")}
+        showCompanyModal={() => setShowModal("CompanyModal")}
+
+        company={props.company}
       >
 
       </UserPane>
@@ -201,11 +211,16 @@ export default function UserManagementPage(props) {
         show={showModal == "UserModal"}
         user={currentUserRef.current}
         groups={groups}
+        LDAP={LDAP}
 
         onClose={(result = false) => {
           setShowModal("");
           if (result) {
-            setDelDialogData({ email: result, show: true });
+            if (result._id) {
+              setDelDialogData({ email: result.email, id: result._id, show: true });
+            } else {
+              setDelDialogData({ email: result.email, show: true });
+            }
           }
         }}
       >
@@ -217,6 +232,18 @@ export default function UserManagementPage(props) {
           setDelDialogData({ email: "", id: "", show: false });
         }}
       />
+
+      <AuditModal
+        show={showModal == "AuditModal"}
+        onClose={() => setShowModal("")}
+      />
+
+      <CompanyModal
+        show={showModal == "CompanyModal"}
+        onClose={() => setShowModal("")}
+        company={props.company}
+      >
+      </CompanyModal>
     </>
   );
 }

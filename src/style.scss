@@ -122,6 +122,86 @@ input.modalTitle::placeholder {
     opacity: 0.7;
 }
 
+.react-dropdown-select-dropdown span {
+    color: rgb(27, 27, 38);
+}
+
+/*------------------------------------------*/
+
+.fixed-head-table-wrapper {
+    /* also with custom scroll?*/
+    overflow: hidden auto;
+    position: relative;
+}
+
+.fixed-head-table-wrapper th {
+    position: sticky;
+    z-index: 1;
+
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0em;
+    text-align: left;
+
+    color: var(--body-color70);
+    background: var(--table-pane-background);
+    border: none;
+    top: 0;
+
+    padding: 8px 0.75em 0 0;
+}
+
+.fixed-head-table-wrapper tbody tr {
+    border-bottom: 1px solid var(--table-pane-border-color);
+    height: 46px;
+}
+
+.fixed-head-table-wrapper tbody tr:hover {
+    background: var(--table-pane-hover);
+}
+
+
+.fixed-head-table-wrapper td {
+    border: none;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
+}
+
+/*------------------------------------*/
+
+
+.wide-dialog {
+    max-width: 100%;
+}
+
+
+@media (min-width: 768px) {
+    .wide-dialog {
+        max-width: min(calc(100% - 128px), 1260px);
+    }
+}
+
+
+input.datapicker {
+    margin: 4px 8px;
+    padding: 8px 4px;
+    border-radius: 4px;
+    border: 1px gray solid;
+}
+
+
+.error-message {
+    color: var(--danger-color);
+}
+
+.mb32 {
+    margin-bottom: 32px;
+}
 
 @import './scss/account-dropdown.scss';
 @import './scss/bank-card.scss';

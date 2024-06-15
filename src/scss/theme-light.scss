@@ -5,7 +5,9 @@ body {
     --body-color70: rgba(27, 27, 38, 0.7);
     --danger-color: #b40020;
     --warning-color: rgb(222, 95, 0);
-    --link-color: #009a50;
+    /* --link-color: #009a50; */
+    --link-color: #007b40;
+
 
     --safe-pane-background: rgba(27, 27, 38, 0.86);
     --safe-pane-scroll-border-color: rgba(27, 27, 38, 0.86);
@@ -49,4 +51,13 @@ body {
     --safe-pane-icon-stroke: white;
     --icon-stroke: rgba(27, 27, 38, 0.6);
     --icon-fill: #1B1B26;
+
+    --logo-color: rgba(255, 255, 255, 1);
+
+    --account-fill-color: white;
+    --account-background-color: rgba(255, 255, 255, .6);
+
+    --inactive-search-background: rgba(255, 255, 255, 0.6);
+    --active-search-background: rgba(255, 255, 255, 1);
+
 }

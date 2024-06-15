@@ -54,6 +54,7 @@ function FolderMenuMobile(props) {
       </Item>
     </Menu>
   );
+  const pasteDisabled = () => !isPasteEnabled();
 
   const safeMenu = (
     <Menu id={SAFE_MENU_MOBILE_ID}>
@@ -80,7 +81,7 @@ function FolderMenuMobile(props) {
       </Item>
 
       <Item
-        disabled={!isPasteEnabled()}
+        disabled={pasteDisabled}
         onClick={() => {
           handleItemClick("Paste");
         }}

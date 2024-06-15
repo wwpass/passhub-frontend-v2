@@ -2,6 +2,7 @@ const mockData = {
   goPremium: false,
   takeSurvey: true,
   plan: "FREE",
+  /*  theme: "theme-dark", */
   safes: [
     {
       name: "Mock Safe",
@@ -22,7 +23,7 @@ const mockData = {
             {
               SafeID: 1,
               folder: "f1",
-              _id:"f1i1",
+              _id: "f1i1",
               cleartext: [
                 "Gmail",
                 "alice",
@@ -35,7 +36,7 @@ const mockData = {
             {
               SafeID: 1,
               folder: "f1",
-              _id:"f1i2",
+              _id: "f1i2",
               cleartext: [
                 "Note",
                 "alice",
@@ -43,7 +44,7 @@ const mockData = {
                 "",
                 "Work mail\r\n kj skajhdah skdal fklasjh ljkah lkjdsh kljdh afljksdh fkljas hfjkdsh afjkah ldh",
               ],
-              note:1,
+              note: 1,
               lastModified: "2021-08-27T02:01:20+00:00",
             },
 
@@ -56,12 +57,12 @@ const mockData = {
     {
       name: "Private",
       id: "sp52",
-      key:1,
+      key: 1,
       items: [
         {
           SafeID: 2,
           folder: 0,
-          _id:"2i1",
+          _id: "2i1",
           cleartext: [
             "Gmail",
             "alice",
@@ -74,7 +75,7 @@ const mockData = {
         {
           SafeID: 2,
           folder: 0,
-          _id:"2i2",
+          _id: "2i2",
           cleartext: [
             "long username",
             "alicealicealicealicealicealicealicealicealicealicealicealicealicealicealicealicealice",
@@ -87,7 +88,7 @@ const mockData = {
         {
           SafeID: 2,
           folder: 0,
-          _id:"2i3",
+          _id: "2i3",
           cleartext: [
             "long password",
             "",
@@ -100,7 +101,7 @@ const mockData = {
         {
           SafeID: 2,
           folder: 0,
-          _id:"2i4",
+          _id: "2i4",
 
           cleartext: [
             "long url",
@@ -114,7 +115,7 @@ const mockData = {
         {
           SafeID: 2,
           folder: 0,
-          _id:"2i5",
+          _id: "2i5",
 
           cleartext: [
             "Gmail",
@@ -128,7 +129,7 @@ const mockData = {
         {
           SafeID: 2,
           folder: 0,
-          _id:"2i6",
+          _id: "2i6",
           cleartext: [
             "Gmail",
             "alice",
@@ -141,7 +142,7 @@ const mockData = {
         {
           SafeID: 2,
           folder: 0,
-          _id:"2i7",
+          _id: "2i7",
           cleartext: [
             "Gmail",
             "alice",
@@ -154,7 +155,7 @@ const mockData = {
         {
           SafeID: 2,
           folder: 0,
-          _id:"2i8",
+          _id: "2i8",
           cleartext: [
             "Gmail",
             "alice",
@@ -167,7 +168,7 @@ const mockData = {
         {
           SafeID: 2,
           folder: 0,
-          _id:"2i9",
+          _id: "2i9",
           cleartext: [
             "Gmail",
             "alice",
@@ -180,7 +181,7 @@ const mockData = {
         {
           SafeID: 2,
           folder: 0,
-          _id:"2ia",
+          _id: "2ia",
           cleartext: [
             "Gmail",
             "alice",
@@ -191,9 +192,9 @@ const mockData = {
           lastModified: "2021-08-27T02:01:20+00:00",
         },
       ],
-     // folders: []
-  ///////////////////////////////
-  
+      // folders: []
+      ///////////////////////////////
+
       folders: [
         {
           SafeID: 2,
@@ -235,7 +236,7 @@ const mockData = {
               folders: [],
               items: [],
             }
- 
+
           ],
           items: [],
         },
@@ -243,59 +244,61 @@ const mockData = {
 
     },
     //------------------------------------------
-    
 
 
 
 
-    { name: "Work", id: 3,  items: [], folders: [] },
-    { name: "x1", id: 4,  items: [], folders: [] },
-    { name: "x2", id: 5,  items: [], folders: [] },
-    { name: "x3", id: 6,  items: [], folders: [] },
-    { name: "x4", id: 7,  items: [], folders: [] },
-    { name: "x5", id: 8,  items: [], folders: [] },
-    { name: "x6", id: 9,  items: [], folders: [] },
-    { name: "x7", id: 10,  items: [], folders: [] },
-    { name: "x8", id: 11,  items: [
-      {
-        SafeID: 11,
-        folder: 0,
-        _id:"11",
-        cleartext: [
-          "long password",
-          "shortname but",
-          "kjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwk",
-          "https://gmail.com",
-          "Work mail",
-          "22334455"
-        ],
-        lastModified: "2021-08-27T02:01:20+00:00",
-      },
-      {
-        SafeID: 11,
-        folder: 0,
-        _id:"12",
-        cleartext: [
-          "The note",
-          "",
-          "",
-          "",
-          "Work mail",
-        ],
-        note:1,
-        lastModified: "2021-08-27T02:01:20+00:00",
-      },
 
-    ], folders: [] },
+    { name: "Work", id: 3, items: [], folders: [] },
+    { name: "x1", id: 4, items: [], folders: [] },
+    { name: "x2", id: 5, items: [], folders: [] },
+    { name: "x3", id: 6, items: [], folders: [] },
+    { name: "x4", id: 7, items: [], folders: [] },
+    { name: "x5", id: 8, items: [], folders: [] },
+    { name: "x6", id: 9, items: [], folders: [] },
+    { name: "x7", id: 10, items: [], folders: [] },
+    {
+      name: "x8", id: 11, items: [
+        {
+          SafeID: 11,
+          folder: 0,
+          _id: "11",
+          cleartext: [
+            "long password",
+            "shortname but",
+            "kjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwk",
+            "https://gmail.com",
+            "Work mail",
+            "22334455"
+          ],
+          lastModified: "2021-08-27T02:01:20+00:00",
+        },
+        {
+          SafeID: 11,
+          folder: 0,
+          _id: "12",
+          cleartext: [
+            "The note",
+            "",
+            "",
+            "",
+            "Work mail",
+          ],
+          note: 1,
+          lastModified: "2021-08-27T02:01:20+00:00",
+        },
+
+      ], folders: []
+    },
     {
       name: "Cards",
       id: 12,
-      key:1,
+      key: 1,
       items: [
         {
           SafeID: 12,
           folder: 0,
-          _id:"12i1",
+          _id: "12i1",
 
           cleartext: [
             "card",

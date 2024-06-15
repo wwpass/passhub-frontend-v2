@@ -18,6 +18,7 @@ import {
   getWsUrl,
   getVerifier,
   serverLog,
+  setPasteTimestamp,
   enablePaste
 } from "../lib/utils";
 
@@ -127,17 +128,10 @@ function MainPage(props) {
     if ((typeof cmtData == "object") && ("item" in cmtData) && ("operation" in cmtData)) {
       setCopyMoveToastOperation(cmtData.operation);
       props.showCopyMoveToast(cmtData.operation);
+      setPasteTimestamp(Date.now() / 1000);
       enablePaste(true);
-
-      /*
-      if(showToast != "CopyMoveToast") {
-        setShowToast("CopyMoveToast");
-        console.log(cmtData);
-      }
-      */
     }
   }, [cmtData])
-
 
   // move item processing
 
@@ -237,13 +231,7 @@ function MainPage(props) {
         copyMoveMutation.mutate({ node, pItem: cmtData.item, operation: copyMoveToastOperation });
       }
       props.hideCopyMoveToast();
-      /*      
-            if(showToast == "CopyMoveToast") {
-              setShowToast("");
-              enablePaste(false);
-            }
-      */
-      //      props.paste(node);
+      enablePaste(false);
     }
   }
 
@@ -278,9 +266,12 @@ function MainPage(props) {
   };
 
   const searchString = props.searchString.trim();
-  if (searchString.length > 0) {
-    searchFolder.items = search(searchString);
-    searchFolder.folders = searchFolders(searchString);
+
+  if ((searchString.length > 0) || (props.searchType != '--All--')) {
+    searchFolder.items = search(searchString, props.searchType);
+    if (props.searchType == '--All--') {
+      searchFolder.folders = searchFolders(searchString, props.searchType);
+    }
 
     const safePane = document.querySelector("#safe_pane");
 
@@ -319,11 +310,14 @@ function MainPage(props) {
         dropItem={dropItem}
 
         folder={
-          searchString.length > 0
+          ((searchString.length > 0) || (props.searchType != '--All--'))
             ? searchFolder
             : activeFolder
         }
-        searchMode={searchString.length > 0}
+        searchMode={((searchString.length > 0) || (props.searchType != '--All--'))}
+        onSearchClear={props.onSearchClear}
+        onSearchReset={props.onSearchReset}
+        searchType={props.searchType}
       />
 
       <FolderNameModal
@@ -372,9 +366,9 @@ function MainPage(props) {
           }
 
           setShowModal("");
-          if (result === true) {
-            props.refreshUserData();
-          }
+          //          if (result === true) {
+          queryClient.invalidateQueries(["userData"], { exact: true })
+          // }
         }}
       ></ShareModal>
       <InviteToShareMailModal
@@ -391,10 +385,6 @@ function MainPage(props) {
         show={showModal == "DeleteFolderModal"}
         folder={deleteFolderModalArgs}
         onClose={(result = false) => {
-          if (result == "refresh") {
-            props.refreshUserData();
-            return;
-          }
 
           if (result == "group safe") {
             setMessageModalArgs({
@@ -446,21 +436,20 @@ function MainPage(props) {
       >
         {messageModalArgs && messageModalArgs.message}
       </MessageModal>
-
-
-
-
+      {/*
       <ToastContainer position="bottom-end" style={{ bottom: 32, right: 32 }}>
         <CopyMoveToast
           show={showToast == "CopyMoveToast"}
           operation={copyMoveToastOperation}
           onClose={() => {
             setShowToast("");
+            queryClient.setQueryData(["copyMoveToast"], {});
             enablePaste(false);
           }}
         >
         </CopyMoveToast>
       </ToastContainer>
+        */}
     </React.Fragment>
   );
 }

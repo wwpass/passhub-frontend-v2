@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import axios from "axios";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTimer } from 'react-timer-hook';
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -19,6 +20,7 @@ import SurveyModal from "./surveyModal";
 import IdleModal from "./idleModal"
 import MessageModal from './messageModal';
 import UserManagementPage from './userManagementPage';
+import MspPage from './mspPage';
 
 import progress from "../lib/progress";
 
@@ -33,12 +35,11 @@ let idleM = null;
 let copyMoveOperation = "";
 
 
-
 function userDataQuery() {
 
   //console.log("userData query called");
 
-  progress.lock();
+  progress.lock(240);
   return downloadUserData()
     .then(data => {
       progress.unlock();
@@ -115,6 +116,7 @@ function listenToPaymentMessage(cb) {
 function Root(props) {
 
   const [searchString, setSearchString] = useState('');
+  const [searchType, setSearchType] = useState('--All--');
   const [page, setPage] = useState('Main');
   const [udata, setUData] = useState({})
   const [activeFolderId, setActiveFolderId] = useState(null)
@@ -122,6 +124,7 @@ function Root(props) {
   const [blob, setBlob] = useState(null);
   const [showToast, setShowToast] = useState("");
   const [showModal, setShowModal] = useState("");
+  const [copyMoveToastOperation, setCopyMoveToastOperation] = useState("nop");
 
   const queryClient = useQueryClient();
 
@@ -131,6 +134,9 @@ function Root(props) {
       queryClient.invalidateQueries(["userData"], { exact: true })
     },
   })
+
+  const currentManagedCompanyRef = useRef(null);
+
 
   const gotPaymentMessage = () => {
     dataMutation.mutate();
@@ -178,43 +184,9 @@ function Root(props) {
 
   });
 
-  //  console.log('userQuery isLoading', userQuery.isLoading);
-  //   console.log('userQuery data', userQuery.data);
-
-
-  /*
-  
-        const userQuery = useQuery({
-          queryKey: ["userData"],
-  //         queryFn: userDataQuery,
-        queryFn: () => userDataQuery().then(data => {
-            conmsole.log(113);
-            setUData(data);
-            return data;
-          }),
-  
-          onSuccess: (data) => {
-            console.log('onSuccess', data)
-            setUData(data);
-  
-            if(firstTime) {
-              firstTime = false;
-              keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);
-    
-              if ("takeSurvey" in data && data.takeSurvey == true) {
-                setShowToast("takeSurveyToast");
-               }          
-    
-            }
-          },
-          onError: (err) => {console.log('onError', err)},
-          onSettled: (settled) => {console.log('onSettled', settled)},
-        });   
-  
-    */
 
   //  -----------------------
-
+  {/*
   const cmtResult = useQuery({
     queryKey: ["copyMoveToast1"],
     queryFn: () => Promise.resolve(2).then(data => {
@@ -228,30 +200,12 @@ function Root(props) {
 
     if ((typeof cmtData == "object") && ("item" in cmtData) && ("operation" in cmtData)) {
       if (showToast != "CopyMoveToast") {
+        setCopyMoveToastOperation(cmtData.operation);
         setShowToast("CopyMoveToast");
         enablePaste(true);
-        // setCopyMoveToastOperation(cmtData.operation);
-        // console.log(107, cmtData);
       }
     }
   }, [cmtData])
-
-  const accountDataMutation = useMutation({
-    mutationFn: (_args) => {
-      Promise.resolve(3).then(data => {
-        // console.log("accountData mutate", data);
-        return udata;
-      })
-    },
-
-    onSuccess: (data, variables, context) => {
-      // console.log("setQueryData after accountDataMutation mutate", data, variables);
-      queryClient.setQueryData(["accountData"], udata);
-    },
-  })
-
-  useEffect(() => { accountDataMutation.mutate() }, [udata])
-
 
   const copyMoveMutation = useMutation({
     mutationFn: (_args) => {
@@ -280,6 +234,28 @@ function Root(props) {
       }
     }
   })
+*/}
+
+  //  -----------------------
+
+
+  const accountDataMutation = useMutation({
+    mutationFn: (_args) => {
+      Promise.resolve(3).then(data => {
+        // console.log("accountData mutate", data);
+        return udata;
+      })
+    },
+
+    onSuccess: (data, variables, context) => {
+      // console.log("setQueryData after accountDataMutation mutate", data, variables);
+      queryClient.setQueryData(["accountData"], udata);
+    },
+  })
+
+  useEffect(() => { accountDataMutation.mutate() }, [udata])
+
+
 
   let timeout = (udata && udata.idleTimeout) ? udata.idleTimeout : 123;
 
@@ -310,12 +286,35 @@ function Root(props) {
     idleTimer.start();
   }
 
+  let expiryTimestamp = new Date().getTime();
+
+  const {
+    totalSeconds,
+    seconds,
+    minutes,
+    hours,
+    days,
+    isRunning,
+    start,
+    pause,
+    resume,
+    restart: restartCopyMoveToastTimer,
+  } = useTimer({
+    expiryTimestamp,
+    onExpire: () => { if (showToast == "CopyMoveToast") { setShowToast("") }; console.warn('onExpire called') }
+  });
+  console.log('seconds ' + seconds);
+
   extensionInterface.setRestartIdleTimer(restartIdleTimer);
 
+  const resetSearch = () => {
+    setSearchString('');
+    setSearchType('--All--');
 
+  }
 
   const setActiveFolder = (folder) => {
-    setSearchString('');
+    resetSearch();
 
     if (typeof folder !== "object") {
       folder = getFolderById(udata.safes, folder);
@@ -335,15 +334,18 @@ function Root(props) {
 
   // -----------------------
 
+  const COPY_MOVE_TOAST_TIMEOUT = 10; // 10 sec
+
   const showCopyMoveToast = (operation) => {
     copyMoveOperation = operation;
     setShowToast("CopyMoveToast");
+    restartCopyMoveToastTimer(new Date().getTime() + COPY_MOVE_TOAST_TIMEOUT * 1000);
     enablePaste(true);
   }
 
   const hideCopyMoveToast = () => {
     setShowToast("");
-    enablePaste(false);
+    //    enablePaste(false);
   }
 
   const inMemoryView = (blob, filename) => {
@@ -359,8 +361,15 @@ function Root(props) {
     setBlob(null);
   }
 
-  const gotoIam = () => {
+  const gotoIam = (company = null) => {
     setPage("Iam");
+    currentManagedCompanyRef.current = company;
+    setFilename("");
+    setBlob(null);
+  }
+
+  const gotoMsp = () => {
+    setPage("Msp");
     setFilename("");
     setBlob(null);
   }
@@ -368,11 +377,15 @@ function Root(props) {
   return (
     <Container className="d-flex" style={{ flexDirection: "column" }}>
       <Header page={page}
+        onSearchTypeChange={setSearchType}
+        searchType={searchType}
+
         onSearchChange={e => setSearchString(e.target.value)}
         onSearchClear={() => setSearchString('')}
         searchString={searchString}
         gotoMain={gotoMain}
         gotoIam={gotoIam}
+        gotoMsp={gotoMsp}
       >
       </Header>
 
@@ -391,7 +404,13 @@ function Root(props) {
           activeFolderId={activeFolderId}
           setActiveFolder={setActiveFolder}
           searchString={searchString}
+          searchType={searchType}
+
           onSearchClear={() => setSearchString('')}
+
+          onSearchReset={resetSearch}
+
+
           showCopyMoveToast={showCopyMoveToast}
           hideCopyMoveToast={hideCopyMoveToast}
 
@@ -402,13 +421,21 @@ function Root(props) {
         <UserManagementPage
           show={page === "Iam"}
           gotoMain={gotoMain}
+          company={currentManagedCompanyRef.current}
         />
+
+        <MspPage
+          show={page === "Msp"}
+          gotoMain={gotoMain}
+          gotoCompanyAdmin={(company) => gotoIam(company)}
+        />
+
       </Row>
       <Row className="d-none d-sm-block">
         <div
           style={{
             height: "22px",
-            display: (page === "Main" || page === "Iam") ? "" : "none",
+            display: (page === "Main" || page === "Iam" || page === "Msp") ? "" : "none",
           }}
         ></div>
       </Row>
@@ -418,7 +445,8 @@ function Root(props) {
           show={showToast == "CopyMoveToast"}
           operation={copyMoveOperation}
           onClose={() => {
-            enablePaste(false);
+            // enablePaste(false);
+            // queryClient.setQueryData(["copyMoveToast"], {});
             setShowToast("");
           }}
         >

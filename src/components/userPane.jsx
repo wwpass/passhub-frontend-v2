@@ -18,8 +18,6 @@ import "react-contexify/dist/ReactContexify.css";
 
 import UserTable from './userTable';
 
-
-
 export default function UserPane(props) {
     const [searchString, setSearchString] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
@@ -31,12 +29,17 @@ export default function UserPane(props) {
         if (email.trim() == "") {
             return;
         }
+        const args = {
+            verifier: getVerifier(),
+            operation: "newuser",
+            email: email.trim(),
+        };
+        if (props.company) {
+            args.company = props.company._id;
+        }
+
         return axios
-            .post(`${getApiUrl()}iam.php`, {
-                verifier: getVerifier(),
-                operation: "newuser",
-                email: email.trim(),
-            })
+            .post(`${getApiUrl()}iam.php`, args)
             .then((response) => {
                 const result = response.data;
 
@@ -64,6 +67,11 @@ export default function UserPane(props) {
             queryClient.invalidateQueries(["userList"], { exact: true })
         },
     })
+
+    const refresh = () => {
+        queryClient.invalidateQueries(["userList"], { exact: true })
+    }
+
 
 
     const onExport = () => {
@@ -164,23 +172,42 @@ export default function UserPane(props) {
 
                     <div className="d-none d-sm-flex" style={{ justifyContent: "space-between" }}>
                         <div><b>User management</b></div>
+
                         <div style={{ display: "flex", gap: 32 }}>
-                            <div style={{ cursor: "pointer", color: "var(--link-color)" }}>Audit</div>
-                            <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
+                            {props.company && <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={props.showCompanyModal}>Settings</div>}
+
+                            <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={props.showAuditModal}>Audit</div>
+                            {props.LDAP ? (
+                                <div onClick={refresh} title="Refresh" style={{ cursor: "pointer" }}>
+                                    <svg width="24" height="24">
+                                        <use href="#arrow-clockwise"></use>
+                                    </svg>
+                                </div>
+                            ) : (
+                                <>
+                                    <div style={{ cursor: "pointer", color: "var(--link-color)" }} onClick={onExport}>Export</div>
+                                </>
+                            )}
                         </div>
                     </div>
 
-                    <div style={{ margin: "16px 0 8px", display: "flex", gap: 16, flexWrap: "wrap" }}>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            style={{ flexGrow: 1 }}
-                            onFocus={inputOnFocus}
-                            onChange={inputOnChange}
-                            onKeyDown={inputOnKeyDown}
-                            value={email}
-                        />
-                        <Button className="d-none d-lg-block" style={{ margin: 0 }} onClick={submitEmail}>Add User</Button>
+                    <div style={{ margin: "16px 0 8px", display: "flex", gap: 16, alignItems: "baseline", flexWrap: "wrap" }}>
+                        {props.LDAP ? (
+                            <div style={{ flexGrow: 1 }}>ACTIVE DIRECTORY</div>
+                        ) : (
+                            <>
+                                <input className="basic-input"
+                                    type="email"
+                                    placeholder="Email"
+                                    style={{ flexGrow: 1 }}
+                                    onFocus={inputOnFocus}
+                                    onChange={inputOnChange}
+                                    onKeyDown={inputOnKeyDown}
+                                    value={email}
+                                />
+                                <Button className="d-none d-lg-block" style={{ margin: 0 }} onClick={submitEmail}>Add User</Button>
+                            </>
+                        )}
                         <span className="d-none d-lg-block" style={{ padding: "12px 16px", borderRadius: 12, background: "#E6E6F04D", color: "#1B1B26" }}>
                             Users {props.users.length}{licensed_users}
                         </span>
@@ -189,7 +216,9 @@ export default function UserPane(props) {
                         <span style={{ padding: "12px 16px", borderRadius: 12, background: "#E6E6F04D", color: "#1B1B26", display: "inline-block", flexGrow: 1 }}>
                             Users {props.users.length}{licensed_users}
                         </span>
-                        <Button style={{ margin: 0 }} onClick={submitEmail}>Add User</Button>
+                        {!props.LDAP && (
+                            <Button style={{ margin: 0 }} onClick={submitEmail}>Add User</Button>
+                        )}
                     </div>
                     <div id="add-user-error" style={{ height: 16, paddingLeft: 12, lineHeight: "16px", color: "red" }}>{errorMsg}</div>
                     <div style={{ display: "flex", position: "relative", margin: "8px 0 16px 0" }}>
@@ -199,10 +228,9 @@ export default function UserPane(props) {
                             onChange={onSearchChange}
                             value={searchString}
                             placeholder="Search Users"
-                            style={{ padding: "12px 36px 12px 40px", width: "100%" }}
                         />
                         <span className="search_clear" onClick={searchClear} style={{ margin: "12px 0 0 -27px" }}>
-                            <svg width="0.7em" height="0.7em" className="item_icon">
+                            <svg width="0.7em" height="0.7em" className="item_icon" style={{ fill: "var(--table-pane-color)" }}>
                                 <use href="#cross"></use>
                             </svg>
                         </span>
@@ -211,7 +239,8 @@ export default function UserPane(props) {
                                 width="24"
                                 height="24"
                                 style={{
-                                    opacity: 0.5,
+                                    opacity: 0.6,
+                                    stroke: "var(--table-pane-color)",
                                 }}
                             >
                                 <use href="#f-search"></use>
@@ -222,6 +251,7 @@ export default function UserPane(props) {
                 <UserTable
                     users={props.users}
                     me={props.me}
+                    LDAP={props.LDAP}
                     searchString={searchString}
                     showDelDialog={props.showDelDialog}
                     showUserModal={props.showUserModal}
@@ -230,7 +260,7 @@ export default function UserPane(props) {
             </div>
 
             <Menu id={"user-pane-menu"}>
-                <Item onClick={() => { }}>
+                <Item onClick={props.showAuditModal}>
                     Audit
                 </Item>
                 <Item onClick={onExport}>

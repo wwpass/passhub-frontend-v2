@@ -15,39 +15,57 @@ function FileItem(props) {
     // Tell the browser both copy and move are possible
     ev.effectAllowed = "copyMove";
   }
+  const td1 = (
+    <>
+      <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+        <svg
+          width="24"
+          height="24"
+          className="itemIcon"
+          style={{ cursor: "move" }}
+        >
+          <use href="#i-file"></use>
+        </svg>
+        {item.cleartext[0]}
+      </div>
+      {props.searchMode && (
+        <div className="search-path">
+          {item.path.map((e) => e[0]).join(" > ")}
+        </div>
+      )}
+    </>
+
+  )
 
   return (
-    <tr className="d-flex" style={{ alignItems: "center" }}>
+    <tr style={{ alignItems: "center" }}>
       <td
         id={`drag${item._id}`}
         draggable
         onDragStart={dragStart}
         colSpan="2"
-        className="col-sm-12 col-md-6 col-lg-4 col-xl-6 item-name-td"
+        className="d-none d-xl-table-cell item-name-td"
         onClick={showModal}
         style={{ cursor: "pointer" }}
       >
-        <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-          <svg
-            width="24"
-            height="24"
-            className="itemIcon"
-            style={{ cursor: "move" }}
-          >
-            <use href="#i-file"></use>
-          </svg>
-          {item.cleartext[0]}
-        </div>
-        {props.searchMode && (
-          <div className="search-path">
-            {item.path.map((e) => e[0]).join(" > ")}
-          </div>
-        )}
+        {td1}
       </td>
-      <td className="d-none d-md-table-cell        col-md-6 col-lg-4 col-xl-3 rightAlign">
+      <td
+        id={`drag${item._id}`}
+        draggable
+        onDragStart={dragStart}
+        className="d-xl-none item-name-td"
+        onClick={showModal}
+        style={{ cursor: "pointer" }}
+      >
+        {td1}
+      </td>
+
+
+      <td className="d-none d-md-table-cell  rightAlign">
         {humanReadableFileSize(item.file.size)}
       </td>
-      <td className="d-none d-lg-table-cell                 col-lg-4 col-xl-3 column-modified">
+      <td className="d-none d-lg-table-cell  column-modified">
         {lastModified(item)}
       </td>
     </tr>
