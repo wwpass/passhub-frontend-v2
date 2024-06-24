@@ -235,7 +235,14 @@ function TablePane(props) {
             >
                 <div
                     className="d-sm-none"
-                    style={{ display: "flex", cursor: "pointer", marginBottom: "18px", color: "var(--link-color)" }}
+                    style={{
+                        display: "flex",
+                        cursor: "pointer",
+                        height: 48,
+                        alignItems: "center",
+                        background: "var(--mobile-path-background)",
+                        color: "var(--link-color)"
+                    }}
                     onClick={() => {
                         if (props.searchMode) {
                             props.onSearchClear();
@@ -270,9 +277,11 @@ function TablePane(props) {
                         display: "flex",
                         justifyContent: "space-between",
                         position: "relative",
+                        height: 48,
+                        alignItems: "center",
                     }}
                 >
-                    <div className="h5">{folder.path[folder.path.length - 1][0]}</div>
+                    <span style={{ fontSize: 24, fontWeight: 700, color: "var(--table-pane-color)", paddingLeft: 12 }}>{folder.path[folder.path.length - 1][0]}</span>
                     {!props.searchMode && true && (
                         <FolderMenuMobile
                             node={folder}
@@ -281,11 +290,12 @@ function TablePane(props) {
                         />
                     )}
                 </div>
-
+                {/*
                 <div className="d-none d-sm-block path">
                     {pathString}
                     <b>{folder.path[folder.path.length - 1][0]}</b>
                 </div>
+*/}
 
                 {emptyFolder && (
                     <div>

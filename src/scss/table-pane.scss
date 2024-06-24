@@ -32,6 +32,10 @@
 }
 
 @media (max-width: 576px) {
+    #table_pane {
+        padding: 0 0 16px 0;
+    }
+
     #table_pane .path {
         padding-left: 12px;
     }

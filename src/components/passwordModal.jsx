@@ -437,8 +437,7 @@ function PasswordModal(props) {
           <ItemModalFieldNav
             margin27
             copy={!edit}
-            name="Google authenticator"
-          />
+            name="One-time passcode (TOTP)" />
           <div style={{ display: "flex", alignItems: "center" }}>
             <div className="totp_circle"></div>
             <div className="totp_digits"></div>
@@ -467,10 +466,10 @@ function PasswordModal(props) {
               }
             }}
           >
-            {totpSecret.length > 0 ? (
+            {((totpSecret.length > 0) || true) ? (
               <ItemModalFieldNav
                 copy={!edit}
-                name="Google authenticator secret"
+                name="One-time passcode (TOTP) secret key"
               />
             ) : (
               ""
@@ -479,7 +478,6 @@ function PasswordModal(props) {
               onChange={onTotpSecretChange}
               spellCheck={false}
               value={totpSecret}
-              placeholder="Google authenticator secret"
             ></input>
           </div>
           {unamePwdWarning &&
@@ -497,7 +495,7 @@ function PasswordModal(props) {
           <svg width="24" height="24" fill="none">
             <use href="#f-add"></use>
           </svg>
-          Add Google Authenticator
+          <span style={{ marginLeft: 6 }}>Add one-time passcode (TOTP)</span>
         </div>
       );
     }
