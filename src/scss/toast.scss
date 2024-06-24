@@ -14,17 +14,23 @@
 }
 
 .toast {
+    --bs-toast-max-width: 370px;
+}
+
+.toast {
     padding: 20px 22px 22px;
     background: linear-gradient(282.86deg, #00ba97 8.08%, #00bc62 68.47%);
     border-radius: 12px;
     color: white;
-    max-width: 35em;
+    /*    max-width: 35em; */
+
 }
 
 @media (max-width: 576px) {
     .toast {
         border-radius: 12px 12px 0 0;
-        width: 100%;
+        /*        width: 100%; */
+        --bs-toast-max-width: 500px;
     }
 }
 
