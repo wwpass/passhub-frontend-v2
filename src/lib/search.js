@@ -121,11 +121,11 @@ const search = (what, searchType = '--All--') => {
       for (const item of safe.rawItems) {
         let found = false;
         if (searchType == 'Cards' && !isBankCardItem(item)) {
-          console.log('not a card');
+          //          console.log('not a card');
           continue;
         }
         if (searchType == 'Files' && !isFileItem(item)) {
-          console.log('not a file');
+          //          console.log('not a file');
           continue;
         }
         if ((searchType == 'Files' || searchType == 'Cards') && what == '') {
@@ -135,6 +135,8 @@ const search = (what, searchType = '--All--') => {
           if (item.cleartext[1].toLowerCase().indexOf(lcWhat) >= 0) {
             found = true;
           } else if (item.cleartext[2].toLowerCase().indexOf(lcWhat) >= 0) {
+            found = true;
+          } else if (item.cleartext[3].toLowerCase().indexOf(lcWhat) >= 0) {
             found = true;
           } else if (item.cleartext[4].toLowerCase().indexOf(lcWhat) >= 0) {
             found = true;
