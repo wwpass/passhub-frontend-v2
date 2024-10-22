@@ -35,7 +35,7 @@ function ItemModal(props) {
     }
   }
 
-  const [edit, setEdit] = useState(props.args.item ? false : true);
+  //  const [edit, setEdit] = useState(props.args.item ? false : true);
   const [title, setTitle] = useState(_title);
   const [note, setNote] = useState(_note);
   const [errorMsg, setErrorMsg] = useState('');
@@ -108,7 +108,7 @@ function ItemModal(props) {
   };
 
   const onShow = () => {
-    edit && titleInput.current.focus();
+    props.edit && titleInput.current.focus();
   };
 
   const onClose = () => {
@@ -129,7 +129,7 @@ function ItemModal(props) {
       return;
     }
 
-    setEdit(true);
+    //    setEdit(true);
 
     if (props.onEdit) {
       props.onEdit();
@@ -197,7 +197,7 @@ function ItemModal(props) {
 */
 
 
-  let modalClass = edit ? "edit" : "view";
+  let modalClass = props.edit ? "edit" : "view";
 
   const maxHeight = props.isNote ? "" : "150px";
 
@@ -248,7 +248,7 @@ function ItemModal(props) {
         <div className="itemModalPath d-none d-sm-block set-active-folder">
           {pathString}
         </div>
-        {(!edit && !limitedView) ? (
+        {(!props.edit && !limitedView) ? (
           <div className="itemModalTools">
             {/*
                 <ItemViewIcon iconId="#f-history" opacity="1" title="History" />
@@ -298,7 +298,7 @@ function ItemModal(props) {
         )}
       </div>
 
-      {edit ? (
+      {props.edit ? (
         <Form.Control
           className="ModalTitle h2"
           ref={titleInput}
@@ -347,7 +347,7 @@ function ItemModal(props) {
         <div className="itemNoteModalField">
           <ItemModalFieldNav name="Note" htmlFor="notes" />
           <div>
-            {edit ? (
+            {props.edit ? (
               <TextareaAutosize
                 id="notes"
                 value={note}
@@ -364,7 +364,7 @@ function ItemModal(props) {
         <div style={{ color: "red" }}>{props.errorMsg}</div>
       )}
 
-      {edit && (
+      {props.edit && (
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={onClose}>
             Cancel

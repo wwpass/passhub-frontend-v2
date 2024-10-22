@@ -132,7 +132,10 @@ input.modalTitle::placeholder {
     /* also with custom scroll?*/
     overflow: hidden auto;
     position: relative;
+    scroll-padding-top: 46px;
 }
+
+
 
 .fixed-head-table-wrapper th {
     position: sticky;
@@ -153,10 +156,18 @@ input.modalTitle::placeholder {
     padding: 8px 0.75em 0 0;
 }
 
+/*
 .fixed-head-table-wrapper tbody tr {
     border-bottom: 1px solid var(--table-pane-border-color);
     height: 46px;
 }
+*/
+
+.fixed-head-table-wrapper tr {
+    border-bottom: 1px solid var(--table-pane-border-color);
+    height: 46px;
+}
+
 
 .fixed-head-table-wrapper tbody tr:hover {
     background: var(--table-pane-hover);

@@ -27,14 +27,15 @@ function SurveyToast(props) {
             display: "flex",
             flexWrap: "wrap",
             gap: 8,
-            margin: "16px 0 0 0",
+            margin: "24px 0 0 0",
+            justifyContent: "space-between"
           }}
         >
           <Button variant="primary" type="button" onClick={onSubmit}>
             Take&nbsp;short&nbsp;survey
           </Button>
           <Button variant="outline-secondary" onClick={props.onClose}>
-            Remind&nbsp;me&nbsp;later
+            Not&nbsp;now
           </Button>
         </div>
       </Toast.Body>

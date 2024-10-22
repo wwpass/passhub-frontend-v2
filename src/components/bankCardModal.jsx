@@ -113,7 +113,7 @@ function BankCardModal(props) {
   }
 
   let _ccNumber = "";
-  let _ccName =  "";
+  let _ccName = "";
   let _ccExpMonth = "";
   let _ccExpYear = "";
   let _ccCSC = "";
@@ -126,11 +126,11 @@ function BankCardModal(props) {
     _ccExpYear = props.args.item.cleartext[6];
     _ccCSC = props.args.item.cleartext[7];
     _edit = false;
-  }  
+  }
 
   const [edit, setEdit] = useState(_edit);
   const [ccNumber, setCCNumber] = useState(_ccNumber);
-  const [ccName, setCCName] =useState(_ccName);
+  const [ccName, setCCName] = useState(_ccName);
   const [ccExpMonth, setCCExpMonth] = useState(_ccExpMonth);
   const [ccExpYear, setCCExpYear] = useState(_ccExpYear);
   const [ccCSC, setCCCSC] = useState(_ccCSC);
@@ -141,14 +141,19 @@ function BankCardModal(props) {
   const queryClient = useQueryClient();
 
   const cardAction = (args) => {
-//     console.log('card Action: url', args.url,  'args', args.args);
+    //     console.log('card Action: url', args.url,  'args', args.args);
     return axios
       .post(`${getApiUrl()}${args.url}`, args.args)
       .then((response) => {
         const result = response.data;
 
         if (result.status === "Ok") {
-          props.onClose(true, result.id);
+          if (result.firstID) {
+            props.newItemInd(result.firstID);
+          }
+
+          //props.onClose(true, result.id);
+          setEdit(false);
           return "Ok";
         }
         if (result.status === "login") {
@@ -160,7 +165,7 @@ function BankCardModal(props) {
       })
       .catch((err) => {
         console.log(err);
-        setErrorMsg("Server error. Please try again later" );
+        setErrorMsg("Server error. Please try again later");
       });
   }
 
@@ -172,7 +177,7 @@ function BankCardModal(props) {
   })
 
   const onEdit = () => {
-    setEdit(true );
+    setEdit(true);
   };
 
   const onClose = () => {
@@ -221,7 +226,7 @@ function BankCardModal(props) {
       data.entryID = props.args.item._id;
     }
 
-    cardMutation.mutate({url: 'items.php', args: data})
+    cardMutation.mutate({ url: 'items.php', args: data })
   };
 
   const onCscChange = (e) => {
@@ -288,208 +293,209 @@ function BankCardModal(props) {
   */}
 
 
-    let expDate = "";
-    if (ccExpMonth !== "" && ccExpYear !== "") {
-      expDate = `${ccExpMonth}/${ccExpYear.slice(-2)}`;
-    }
-    /*
-    const path = this.props.args.folder
-      ? this.props.args.folder.path.join(" > ")
-      : [];
+  let expDate = "";
+  if (ccExpMonth !== "" && ccExpYear !== "") {
+    expDate = `${ccExpMonth}/${ccExpYear.slice(-2)}`;
+  }
+  /*
+  const path = this.props.args.folder
+    ? this.props.args.folder.path.join(" > ")
+    : [];
 */
-    return (
-      <ItemModal
-        show={props.show}
-        args={props.args}
-        onClose={props.onClose}
-        onCloseSetFolder={props.onCloseSetFolder}
-        onEdit={onEdit}
-        onSubmit={onSubmit}
-        errorMsg={errorMsg}
+  return (
+    <ItemModal
+      show={props.show}
+      args={props.args}
+      onClose={props.onClose}
+      onCloseSetFolder={props.onCloseSetFolder}
+      onEdit={onEdit}
+      onSubmit={onSubmit}
+      edit={edit}
+      errorMsg={errorMsg}
+    >
+      <div
+        className="itemModalField"
+        style={{
+          marginBottom: 32,
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+        }}
       >
         <div
-          className="itemModalField"
-          style={{
-            marginBottom: 32,
-            position: "relative",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{ flexGrow: 1 }}
-            onClick={() => {
-              if (!edit) {
-                const cc_number = ccNumber.replace(/\D/g, "");
-                copyToClipboard(cc_number);
-                document.querySelector("#ccnumber_copied").style.display = "flex";
-                startCopiedTimer();
-              }
-            }}
-          >
-            <ItemModalFieldNav
-              copy={!edit}
-              name="Card number"
-              htmlFor="cc-number"
-            />
-            <div>
-              <input
-                id="cc-number"
-                onChange={onNumberChange}
-                readOnly={!edit}
-                spellCheck={false}
-                value={ccNumber}
-                placeholder={edit ? "0000 0000 0000 0000" : ""}
-              ></input>
-              <div className="copied" id="ccnumber_copied">
-                <div>Copied &#10003;</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="card-exp-csc">
-          <div
-            className="itemModalField"
-            style={{
-              marginBottom: 32,
-              display: "flex",
-              justifyContent: "space-between",
-              overflow: "visible",
-              width: "100%",
-            }}
-          >
-            <div className="date-selector">
-              <ItemModalFieldNav name="Expiration date" />
-              {edit ? (
-                <ButtonGroup>
-                  <DropdownButton
-                    variant="outline-secondary"
-                    size="sm"
-                    id="expMonth"
-                    title={
-                      ccExpMonth === ""
-                        ? "Month"
-                        : ccExpMonth
-                    }
-                    onSelect={onMonthSelect}
-                  >
-                    {[
-                      "01",
-                      "02",
-                      "03",
-                      "04",
-                      "05",
-                      "06",
-                      "07",
-                      "08",
-                      "09",
-                      "10",
-                      "11",
-                      "12",
-                    ].map((m) => (
-                      <Dropdown.Item key = {`month${m}`} eventKey={m}>{m}</Dropdown.Item>
-                    ))}
-                  </DropdownButton>
-
-                  <DropdownButton
-                    variant="outline-secondary"
-                    size="sm"
-                    id="expYear"
-                    title={
-                      ccExpYear === ""
-                        ? "Year"
-                        : ccExpYear
-                    }
-                    onSelect={onYearSelect}
-                  >
-                    {twentyYears.map((y) => (
-                      <Dropdown.Item key = {`year${y}`}eventKey={y}>{y}</Dropdown.Item>
-                    ))}
-                  </DropdownButton>
-                </ButtonGroup>
-              ) : (
-                expDate
-              )}
-            </div>
-          </div>
-          <div
-            className="itemModalField"
-            style={{
-              marginBottom: 32,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{ flexGrow: 1 }}
-              onClick={() => {
-                if (!edit) {
-                  copyToClipboard(ccCSC);
-                  document.querySelector("#cccsc_copied").style.display =
-                    "flex";
-                  startCopiedTimer();
-                }
-              }}
-            >
-              <ItemModalFieldNav
-                name="Security code"
-                htmlFor="cc-csc"
-                copy={!edit}
-              />
-              <div style={{ display: "flex" }}>
-                <input
-                  id="cc-csc"
-                  type={hideCSC ? "password" : "text"}
-                  placeholder={edit ? "000" : ""}
-                  readOnly={!edit}
-                  onChange={onCscChange}
-                  spellCheck={false}
-                  value={ccCSC}
-                ></input>
-                <div className="copied" id="cccsc_copied">
-                  <div>Copied &#10003;</div>
-                </div>
-              </div>
-            </div>
-            <Eye onClick={toggleCSC} hide={hideCSC} />
-          </div>
-        </div>
-
-        <div
-          className="itemModalField"
-          style={{ marginBottom: 32, position: "relative" }}
+          style={{ flexGrow: 1 }}
           onClick={() => {
             if (!edit) {
-              copyToClipboard(ccName);
-              document.querySelector("#ccname_copied").style.display = "flex";
+              const cc_number = ccNumber.replace(/\D/g, "");
+              copyToClipboard(cc_number);
+              document.querySelector("#ccnumber_copied").style.display = "flex";
               startCopiedTimer();
             }
           }}
         >
           <ItemModalFieldNav
             copy={!edit}
-            name="Name on card"
-            htmlFor="cc-name"
+            name="Card number"
+            htmlFor="cc-number"
           />
           <div>
             <input
-              id="cc-name"
-              onChange={onNameChange}
+              id="cc-number"
+              onChange={onNumberChange}
               readOnly={!edit}
               spellCheck={false}
-              value={ccName}
+              value={ccNumber}
+              placeholder={edit ? "0000 0000 0000 0000" : ""}
             ></input>
-            <div className="copied" id="ccname_copied">
+            <div className="copied" id="ccnumber_copied">
               <div>Copied &#10003;</div>
             </div>
           </div>
         </div>
-      </ItemModal>
-    );
+      </div>
+
+      <div className="card-exp-csc">
+        <div
+          className="itemModalField"
+          style={{
+            marginBottom: 32,
+            display: "flex",
+            justifyContent: "space-between",
+            overflow: "visible",
+            width: "100%",
+          }}
+        >
+          <div className="date-selector">
+            <ItemModalFieldNav name="Expiration date" />
+            {edit ? (
+              <ButtonGroup>
+                <DropdownButton
+                  variant="outline-secondary"
+                  size="sm"
+                  id="expMonth"
+                  title={
+                    ccExpMonth === ""
+                      ? "Month"
+                      : ccExpMonth
+                  }
+                  onSelect={onMonthSelect}
+                >
+                  {[
+                    "01",
+                    "02",
+                    "03",
+                    "04",
+                    "05",
+                    "06",
+                    "07",
+                    "08",
+                    "09",
+                    "10",
+                    "11",
+                    "12",
+                  ].map((m) => (
+                    <Dropdown.Item key={`month${m}`} eventKey={m}>{m}</Dropdown.Item>
+                  ))}
+                </DropdownButton>
+
+                <DropdownButton
+                  variant="outline-secondary"
+                  size="sm"
+                  id="expYear"
+                  title={
+                    ccExpYear === ""
+                      ? "Year"
+                      : ccExpYear
+                  }
+                  onSelect={onYearSelect}
+                >
+                  {twentyYears.map((y) => (
+                    <Dropdown.Item key={`year${y}`} eventKey={y}>{y}</Dropdown.Item>
+                  ))}
+                </DropdownButton>
+              </ButtonGroup>
+            ) : (
+              expDate
+            )}
+          </div>
+        </div>
+        <div
+          className="itemModalField"
+          style={{
+            marginBottom: 32,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          <div
+            style={{ flexGrow: 1 }}
+            onClick={() => {
+              if (!edit) {
+                copyToClipboard(ccCSC);
+                document.querySelector("#cccsc_copied").style.display =
+                  "flex";
+                startCopiedTimer();
+              }
+            }}
+          >
+            <ItemModalFieldNav
+              name="Security code"
+              htmlFor="cc-csc"
+              copy={!edit}
+            />
+            <div style={{ display: "flex" }}>
+              <input
+                id="cc-csc"
+                type={hideCSC ? "password" : "text"}
+                placeholder={edit ? "000" : ""}
+                readOnly={!edit}
+                onChange={onCscChange}
+                spellCheck={false}
+                value={ccCSC}
+              ></input>
+              <div className="copied" id="cccsc_copied">
+                <div>Copied &#10003;</div>
+              </div>
+            </div>
+          </div>
+          <Eye onClick={toggleCSC} hide={hideCSC} />
+        </div>
+      </div>
+
+      <div
+        className="itemModalField"
+        style={{ marginBottom: 32, position: "relative" }}
+        onClick={() => {
+          if (!edit) {
+            copyToClipboard(ccName);
+            document.querySelector("#ccname_copied").style.display = "flex";
+            startCopiedTimer();
+          }
+        }}
+      >
+        <ItemModalFieldNav
+          copy={!edit}
+          name="Name on card"
+          htmlFor="cc-name"
+        />
+        <div>
+          <input
+            id="cc-name"
+            onChange={onNameChange}
+            readOnly={!edit}
+            spellCheck={false}
+            value={ccName}
+          ></input>
+          <div className="copied" id="ccname_copied">
+            <div>Copied &#10003;</div>
+          </div>
+        </div>
+      </div>
+    </ItemModal>
+  );
 }
 
 export default BankCardModal;

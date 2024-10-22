@@ -36,29 +36,28 @@ function MobileSafeNode(props) {
 
   return (
 
-      <div
-        className="folder"
-        onClick={() => {
-          props.onSelect(props.node);
-          document.querySelector("#safe_pane").classList.add("d-none");
-          document.querySelector("#table_pane").classList.remove("d-none");
-        }}
-        style={{
-          position: "relative",
-          outline: "none",
-          height: "48px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 18px",
-        }}
-      >
-        <span style={{ cursor: "default" }}>
-          {icon}
-          {props.node.name}
-        </span>
-        {angleIcon}
-      </div>
+    <div
+      className="folder"
+      onClick={() => {
+        props.onSelect(props.node);
+        document.querySelector("#safe_pane").classList.add("d-none");
+        document.querySelector("#table_pane").classList.remove("d-none");
+      }}
+      style={{
+        position: "relative",
+        outline: "none",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "12px 18px",
+      }}
+    >
+      <span style={{ cursor: "default", textWrap: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
+        {icon}
+        {props.node.name}
+      </span>
+      {angleIcon}
+    </div>
   );
 }
 

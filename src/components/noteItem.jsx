@@ -41,8 +41,11 @@ function NoteItem(props) {
     </>
   )
 
+  let trClass = props.searchMode ? "search-mode" : "";
+  trClass += props.newItem ? "new-item" : "";
+
   return (
-    <tr style={{ alignItems: "center" }}>
+    <tr className={trClass} style={{ alignItems: "center" }}>
       <td
         colSpan="3"
         className="d-none d-xl-table-cell item-name-td"

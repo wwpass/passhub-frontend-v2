@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import axios from "axios";
@@ -21,18 +21,29 @@ function NoteModal(props) {
     return null;
   }
 
-  const [errorMsg, setErrorMsg] = useState(""); 
+  const [errorMsg, setErrorMsg] = useState("");
+  const [edit, setEdit] = useState(props.args.item ? false : true);
+
+  const newItemId = useRef(null);
 
   const noteAction = (args) => {
-    console.log('note Action: url', args.url,  'args', args.args);
+    //    console.log('note Action: url', args.url, 'args', args.args);
     return axios
       .post(`${getApiUrl()}${args.url}`, args.args)
       .then((response) => {
         const result = response.data;
 
         if (result.status === "Ok") {
-          props.onClose(true, result.id);
-          return "Ok";
+          if (result.firstID) {
+            newItemId.current = result.firstID;
+            console.log('note firstID', newItemId.current);
+          }
+
+          //          props.onClose(true, result.id);
+          setEdit(false);
+          return queryClient.invalidateQueries(["userData"], { exact: true })
+
+          //          return "Ok";
         }
         if (result.status === "login") {
           window.location.href = "expired.php";
@@ -43,7 +54,7 @@ function NoteModal(props) {
       })
       .catch((err) => {
         console.log(err);
-        setErrorMsg("Server error. Please try again later" );
+        setErrorMsg("Server error. Please try again later");
       });
   }
 
@@ -87,52 +98,50 @@ function NoteModal(props) {
       data.entryID = props.args.item._id;
     }
 
-    noteMutation.mutate({url: 'items.php', args: data});
+    noteMutation.mutate({ url: 'items.php', args: data });
     return;
   };
 
 
-    if (typeof props.args.item == "undefined") {
-      if (atRecordsLimits()) {
-        return (
-          <UpgradeModal
-            show={props.show}
-            accountData={getUserData()}
-            onClose={props.onClose}
-          ></UpgradeModal>
-        );
-/*
-        
-        return (
-          <PlanLimitsReachedModal
-            show={this.props.show}
-            onClose={this.props.onClose}
-          ></PlanLimitsReachedModal>
-        );
-*/        
-      }
+  if (typeof props.args.item == "undefined") {
+    if (atRecordsLimits()) {
+      return (
+        <UpgradeModal
+          show={props.show}
+          accountData={getUserData()}
+          onClose={props.onClose}
+        ></UpgradeModal>
+      );
+      /*
+              
+              return (
+                <PlanLimitsReachedModal
+                  show={this.props.show}
+                  onClose={this.props.onClose}
+                ></PlanLimitsReachedModal>
+              );
+      */
     }
+  }
 
+  const onEdit = () => {
 
-/*
-    if (!isShown) {
-      isShown = true;
-      setErrorMsg("");
-    }
+    setEdit(true);
+  };
 
-*/    
-
-    return (
-      <ItemModal
-        show={props.show}
-        args={props.args}
-        onClose={props.onClose}
-        onCloseSetFolder={props.onCloseSetFolder}
-        onSubmit={onSubmit}
-        errorMsg={errorMsg}
-        isNote
-      ></ItemModal>
-    );
+  return (
+    <ItemModal
+      show={props.show}
+      args={props.args}
+      onClose={props.onClose}
+      onCloseSetFolder={props.onCloseSetFolder}
+      onSubmit={onSubmit}
+      onEdit={onEdit}
+      edit={edit}
+      errorMsg={errorMsg}
+      isNote
+    ></ItemModal>
+  );
 }
 
 export default NoteModal;

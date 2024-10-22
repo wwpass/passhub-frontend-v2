@@ -134,7 +134,7 @@ function openInExtension(item, url) {
 function listenToExtensionWakeup() {
     window.addEventListener("message", (event) => {
         if (("data" in event) && (typeof event.data.source === 'string') && (event.data.source.startsWith("react-devtools-"))) {
-            consoleLog(`--got ${event.data.source}--`);
+            //    consoleLog(`--got ${event.data.source}--`);
             return;
         }
 
@@ -362,7 +362,7 @@ if (!mobileDevice
         .then(response => {
             if (response) {
                 // extension found
-                consoleLog(response);
+                // consoleLog(response);
                 logExtensionId();
                 if (response.id == "Ok") {
                     listenToExtensionWakeup();
