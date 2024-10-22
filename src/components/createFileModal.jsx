@@ -29,7 +29,7 @@ import progress from "../lib/progress";
 
 
 
-const uploadFileP = (theFile, SafeID, folderID, note, aesKey) =>
+const uploadFileP = (theFile, SafeID, folderID, note, aesKey, props) =>
   theFile.arrayBuffer()
     .then(pFileContent => {
 
@@ -65,23 +65,28 @@ const uploadFileP = (theFile, SafeID, folderID, note, aesKey) =>
           },
           timeout: 600000,
         })
-        .then(result => {
-          if (result.data.status != "Ok") {
-            if (result.data.status === "login") {
-              window.location.href = "expired.php";
-              return;
+        .then(response => {
+          const result = response.data;
+
+          if (result.status === "Ok") {
+            if (result.firstID) {
+              props.newItemInd(result.firstID);
             }
-            throw new Error(result.data.status);
+            return result;
           }
-          return result;
+          if (response.status === "login") {
+            window.location.href = "expired.php";
+            return;
+          }
+          throw new Error(result.data.status);
         })
     })
 
-function uploadFiles({ files, SafeID, folderID, note, aesKey }) {
+function uploadFiles({ files, SafeID, folderID, note, aesKey, props }) {
 
   let promise = Promise.resolve();
   for (let i = 0; i < files.length; i++) {
-    promise = promise.then(() => uploadFileP(files[i], SafeID, folderID, note, aesKey))
+    promise = promise.then(() => uploadFileP(files[i], SafeID, folderID, note, aesKey, props))
   }
   return promise;
 }
@@ -134,7 +139,7 @@ function CreateFileModal(props) {
 
     progress.lock(0, "file upload");
     //    return uploadFiles( files, SafeID, folderID, note, aesKey)
-    fileMutation.mutate({ files, SafeID, folderID, note, aesKey });
+    fileMutation.mutate({ files, SafeID, folderID, note, aesKey, props });
     return;
     /*
     

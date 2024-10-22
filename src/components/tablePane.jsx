@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import Col from "react-bootstrap/Col";
 
@@ -38,6 +38,7 @@ function TablePane(props) {
     const [reverseSortSize, setReverseSortSize] = useState(false);
     const [sortBy, setSortBy] = useState("title");
 
+    const newItemRef = useRef(null);
 
     if (!props.folder) {
         return null;
@@ -47,6 +48,23 @@ function TablePane(props) {
     const addButtonRef = React.createRef();
 
     // let addButtonRect = { right: "16px", bottom: "16px" };
+
+
+    useEffect(() => {
+        const ni = document.querySelector('.new-item');
+
+        if (ni) {
+            setShowModal("")
+            console.log('table useEffect scrollIntoView');
+            ni.scrollIntoView({
+                behavior: 'smooth'
+            });
+            newItemRef.current = null;
+        } else {
+            console.log('no new-item found')
+        }
+
+    }, [newItemRef.current]);
 
     const handleAddClick = (cmd) => {
         if (cmd === "Password") {
@@ -84,15 +102,21 @@ function TablePane(props) {
     const onItemModalClose = (refresh = false) => {
         setShowModal("");
     };
+    const newItemInd = (id) => {
+        newItemRef.current = id;
+        console.log('newItemInd', id);
+    };
 
     const onItemModalCloseSetFolder = (f) => {
         setShowModal("");
         if (props.searchMode) {
-            const folderID =
-                itemModalArgs.item.folder != 0 // intentionally: better have it "0"
-                    ? itemModalArgs.item.folder
-                    : itemModalArgs.item.SafeID;
-            props.setActiveFolder(folderID);
+
+            if (('folder' in itemModalArgs.item) && itemModalArgs.item.folder != 0) {
+                props.setActiveFolder(itemModalArgs.item.folder);
+            } else {
+                props.setActiveFolder(itemModalArgs.item.SafeID);
+            }
+
         } else {
             props.setActiveFolder(f);
         }
@@ -369,6 +393,7 @@ function TablePane(props) {
                                                 item={f}
                                                 key={`item${f._id}`}
                                                 searchMode={props.searchMode}
+                                                newItem={newItemRef.current == f._id}
                                                 showModal={(item) =>
                                                     showItemModal("PasswordModal", item)
                                                 }
@@ -379,6 +404,7 @@ function TablePane(props) {
                                                 item={f}
                                                 key={`item${f._id}`}
                                                 searchMode={props.searchMode}
+                                                newItem={newItemRef.current == f._id}
                                                 showModal={(item) =>
                                                     showItemModal("NoteModal", item)
                                                 }
@@ -389,6 +415,7 @@ function TablePane(props) {
                                                 item={f}
                                                 key={`item${f._id}`}
                                                 searchMode={props.searchMode}
+                                                newItem={newItemRef.current == f._id}
                                                 showModal={(item) =>
                                                     showItemModal("FileModal", item)
                                                 }
@@ -399,6 +426,7 @@ function TablePane(props) {
                                                 item={f}
                                                 key={`item${f._id}`}
                                                 searchMode={props.searchMode}
+                                                newItem={newItemRef.current == f._id}
                                                 showModal={(item) =>
                                                     showItemModal("BankCardModal", item)
                                                 }
@@ -475,6 +503,7 @@ function TablePane(props) {
                     args={itemModalArgs}
                     openDeleteItemModal={openDeleteItemModal}
                     onClose={onItemModalClose}
+                    newItemInd={newItemInd}
                     onCloseSetFolder={onItemModalCloseSetFolder}
                     key="pwm"
                 ></PasswordModal>
@@ -497,6 +526,7 @@ function TablePane(props) {
                     openDeleteItemModal={openDeleteItemModal}
                     onClose={onItemModalClose}
                     key={keyCounter}
+                    newItemInd={newItemInd}
                 ></CreateFileModal>
 
                 <NoteModal
@@ -506,6 +536,8 @@ function TablePane(props) {
                     onClose={onItemModalClose}
                     onCloseSetFolder={onItemModalCloseSetFolder}
                     onCopyMove={props.onCopyMove}
+                    newItemInd={newItemInd}
+
                     key="nm"
                 ></NoteModal>
 
@@ -515,6 +547,7 @@ function TablePane(props) {
                     openDeleteItemModal={openDeleteItemModal}
                     onClose={onItemModalClose}
                     onCloseSetFolder={onItemModalCloseSetFolder}
+                    newItemInd={newItemInd}
 
                     key="bcm"
                 ></BankCardModal>

@@ -37,8 +37,12 @@ function FileItem(props) {
 
   )
 
+  let trClass = props.searchMode ? "search-mode" : "";
+  trClass += props.newItem ? "new-item" : "";
+
+
   return (
-    <tr style={{ alignItems: "center" }}>
+    <tr className={trClass} style={{ alignItems: "center" }}>
       <td
         id={`drag${item._id}`}
         draggable

@@ -18,7 +18,9 @@ function BankCardItem(props) {
 
   //  const trClass = props.searchMode ? "search-mode d-flex" : "d-flex";
 
-  const trClass = props.searchMode ? "search-mode" : "";
+  let trClass = props.searchMode ? "search-mode" : "";
+  trClass += props.newItem ? "new-item" : "";
+
   const td1 = (
 
     <>

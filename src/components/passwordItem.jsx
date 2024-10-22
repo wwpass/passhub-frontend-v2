@@ -44,6 +44,7 @@ function PasswordItem(props) {
 
   // let trClass = props.searchMode ? "search-mode d-flex" : "d-flex";
   let trClass = props.searchMode ? "search-mode" : "";
+  trClass += props.newItem ? "new-item" : "";
 
 
   return (

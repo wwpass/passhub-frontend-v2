@@ -116,7 +116,8 @@ function FileModal(props) {
         const result = response.data;
 
         if (result.status === "Ok") {
-          props.onClose(true, result.id);
+          // props.onClose(true, result.id);
+          setEdit(false);
           return "Ok";
         }
         if (result.status === "login") {
@@ -363,6 +364,7 @@ function FileModal(props) {
         onCloseSetFolder={props.onCloseSetFolder}
         ref={wrapperComponent}
         onSubmit={onSubmit}
+        edit={edit}
         errorMsg={errorMsg}
       >
         {!props.args.item ? (

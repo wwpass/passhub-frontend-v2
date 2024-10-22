@@ -166,7 +166,7 @@ function Root(props) {
         }
 
       }
-      // console.log('safes count', data.safes.length);
+      console.log('userData query Fn done');
       return data;
     }),
     onSuccess: (data) => {
@@ -303,7 +303,7 @@ function Root(props) {
     expiryTimestamp,
     onExpire: () => { if (showToast == "CopyMoveToast") { setShowToast("") }; console.warn('onExpire called') }
   });
-  console.log('seconds ' + seconds);
+  // console.log('seconds ' + seconds);
 
   extensionInterface.setRestartIdleTimer(restartIdleTimer);
 

@@ -17,6 +17,8 @@ const str2uint8 = (str) => {
   return bytes.buffer;
 };
 
+const fromHexString = (hexString) =>
+  Uint8Array.from(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
 
 const b64ToAb = (base64) => {
   const s = atob(base64);
@@ -157,11 +159,14 @@ const forgeDecryptAesKey = async (eKeyH) => {
   return ForgePrivateKey.decrypt(eKey, 'RSA-OAEP');
 };
 
+
 const decryptAesKey = (eKey) => {
   if (ForgePrivateKey) {
     return forgeDecryptAesKey(eKey);
   }
-  const u8Key = str2uint8(forge.util.hexToBytes(eKey));
+
+  let u8Key = fromHexString(eKey);
+
   return getSubtle().decrypt(
     {
       name: 'RSA-OAEP',
@@ -202,13 +207,11 @@ function createGroup(name) {
   return { eName, aes_key: hexEncryptedAesKey, version: 3 };
 };
 
-
 function encryptGroupName(name, key) {  // rename group
   const eName = encryptSafeName(name, key);
   //  const hexEncryptedAesKey = encryptAesKey(publicKeyPem, aesKey);
   return eName;
 };
-
 
 function createSafe(name) {
   const aesKey = forge.random.getBytesSync(32);

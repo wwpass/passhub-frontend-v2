@@ -27,7 +27,7 @@
 
 #table_pane .path {
     color: var(--body-color);
-    margin-bottom: 21px;
+    margin-bottom: 7px;
     padding-left: 24px;
 }
 
@@ -47,9 +47,11 @@
     margin-bottom: 96px;
 }
 
+/*
 .item_table th {
-    padding: 1 0.75em 0 1;
+    padding: 1em 0.75em 0 1em;
 }
+*/
 
 .item_table thead th:first-child {
     padding-left: 24px;
