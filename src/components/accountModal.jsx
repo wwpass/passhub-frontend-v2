@@ -244,7 +244,7 @@ function AccountModal(props) {
 
         {!accountData.business && (accountData.plan.toUpperCase() == "PREMIUM") && premiumDiv}
 
-        <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", rowGap: 16, margin: "0 30px 37px 30px" }}>
+        <div style={{ /*display: "flex",*/ display: "none", justifyContent: "space-between", flexWrap: "wrap", rowGap: 16, margin: "0 30px 37px 30px" }}>
           <div style={{ margin: "0 0 12px 0" }}>Inactivity&nbsp;timeout</div>
           <div style={{ display: "flex", justifyContent: "center", gap: "65px" }} >
             <img src={knot} alt="knot" style={{ height: "120px", opacity: "50%" }}></img>
