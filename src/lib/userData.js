@@ -35,6 +35,10 @@ function getAccountData() {
   return accountData;
 }
 
+function setGeneratorConfig(generator) {
+  userData.generator = generator;
+}
+
 
 function updateEmail(newMail) {
   userData['email'] = newMail;
@@ -298,4 +302,5 @@ export {
   decryptGroups, //to be removed: usermanagement may use all user data
   // setCmtData,
   // getCmtData
+  setGeneratorConfig
 };
