@@ -138,6 +138,7 @@ function Root(props) {
   })
 
   const currentManagedCompanyRef = useRef(null);
+
   const gotPaymentMessage = () => {
     dataMutation.mutate();
     console.log('gotPaymentMessage');

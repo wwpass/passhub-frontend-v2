@@ -67,7 +67,6 @@ function AuditModal(props) {
         }),
     });
 
-
     const refresh = () => {
         queryClient.invalidateQueries({ queryKey: ["audit"], exact: true })
     }

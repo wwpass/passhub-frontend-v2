@@ -26,7 +26,6 @@ function copyToClipboard(text) {
   document.body.removeChild(textArea);
 }
 
-
 function startCopiedTimer() {
   setTimeout(() => {
     document
@@ -36,4 +35,4 @@ function startCopiedTimer() {
 }
 
 
-export { copyToClipboard, startCopiedTimer};
+export { copyToClipboard, startCopiedTimer };

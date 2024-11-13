@@ -129,7 +129,6 @@ function FolderNameModal(props) {
     }
 
     // rename
-
     let prevName =
       props.args.folder.path[props.args.folder.path.length - 1][0];
     if (prevName == name) {
