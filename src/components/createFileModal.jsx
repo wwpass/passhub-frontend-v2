@@ -103,7 +103,7 @@ function CreateFileModal(props) {
     mutationFn: uploadFiles,
     onSuccess: data => {
       progress.unlock();
-      queryClient.invalidateQueries(["userData"], { exact: true });
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true });
       onClose();
     },
     onError: err => {

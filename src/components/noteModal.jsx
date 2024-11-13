@@ -41,7 +41,7 @@ function NoteModal(props) {
 
           //          props.onClose(true, result.id);
           setEdit(false);
-          return queryClient.invalidateQueries(["userData"], { exact: true })
+          return queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
 
           //          return "Ok";
         }
@@ -63,7 +63,7 @@ function NoteModal(props) {
   const noteMutation = useMutation({
     mutationFn: noteAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
   })
 

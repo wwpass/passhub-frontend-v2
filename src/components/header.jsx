@@ -34,7 +34,7 @@ function Header(props) {
   const [accountData, setAccountData] = useState(mockAccountData);
   const [emailToVerify, setEmailToVerify] = useState("");
 
-  const { isLoading, error, data } = useQuery({
+  const { isPending, error, data } = useQuery({
     queryKey: ["accountData"],
 
     queryFn: () => Promise.resolve(2).then(data => {
@@ -42,14 +42,10 @@ function Header(props) {
       //      setCmtData(data);
       return data;
     }),
-    onSuccess: () => {
-      // console.log('success 44')
-    }
-
   });
 
-  if (isLoading) {
-    // console.log('loading 46');
+  if (isPending) {
+    // console.log('pending 46');
   } else if (error) {
     //  console.log('error 46', error);
   } else {

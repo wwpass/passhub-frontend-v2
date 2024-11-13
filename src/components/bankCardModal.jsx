@@ -172,7 +172,7 @@ function BankCardModal(props) {
   const cardMutation = useMutation({
     mutationFn: cardAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
   })
 

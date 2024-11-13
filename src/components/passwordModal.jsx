@@ -182,7 +182,7 @@ function PasswordModal(props) {
   const passwordMutation = useMutation({
     mutationFn: passwordAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
   })
 

@@ -64,12 +64,12 @@ export default function UserPane(props) {
     const newUserMutation = useMutation({
         mutationFn: newUserAction,
         onSuccess: data => {
-            queryClient.invalidateQueries(["userList"], { exact: true })
+            queryClient.invalidateQueries({ queryKey: ["userList"], exact: true })
         },
     })
 
     const refresh = () => {
-        queryClient.invalidateQueries(["userList"], { exact: true })
+        queryClient.invalidateQueries({ queryKey: ["userList"], exact: true })
     }
 
 
