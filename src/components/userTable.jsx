@@ -2,12 +2,16 @@
 import UserRecord from "./userRecord";
 
 
-const cmpByEmail = ((a, b) => a.email.localeCompare(b.email));
+// const cmpByEmail = ((a, b) => a.email.localeCompare(b.email));
 
 
 function UserTable(props) {
 
-  const users = props.users.toSorted(cmpByEmail)
+  // const users = props.users.toSorted(cmpByEmail);
+  const users = [...props.users];
+  users.sort((a, b) => a.email.localeCompare(b.email));
+
+
 
   return (
 

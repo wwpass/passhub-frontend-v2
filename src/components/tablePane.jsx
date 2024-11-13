@@ -229,9 +229,17 @@ function TablePane(props) {
         if (!reverseSortModified) return a.lastModified > b.lastModified ? -1 : 1; else return a.lastModified < b.lastModified ? -1 : 1;
     }
 
-    const sortedFolders = folder.folders.toSorted(sortFunction);
+    // toSorted is too new 
+    //    const sortedFolders = folder.folders.toSorted(sortFunction);
+    const sortedFolders = [...folder.folders];
+    sortedFolders.sort(sortFunction);
 
-    const sortedItems = folder.items.toSorted(sortItemsFunction);
+
+    // const sortedItems = folder.items.toSorted(sortItemsFunction);
+
+    const sortedItems = [...folder.items];
+    sortedItems.sort(sortItemsFunction);
+
 
     let reverseSort = sortBy == "title" ? reverseSortTitle : reverseSortModified;
     if (sortBy == 'size') {
