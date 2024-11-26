@@ -15,11 +15,15 @@ const queryClient = new QueryClient();
 
 function fallbackRender({ error, resetErrorBoundary }) {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
-
+  console.log('+------')
+  console.log(error)
+  console.log('------+')
   return (
     <div role="alert">
       <p>Something went wrong:</p>
-      <pre>{error.message}</pre>
+      <p style={{ fontFamily: "monospace" }}>{error.message}</p>
+      {/*<p style={{ fontFamily: "monospace" }}>{error.stack}</p>*/}
+
     </div>
   );
 }
