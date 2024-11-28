@@ -9,9 +9,17 @@ import App from './App'
 
 import { ErrorBoundary } from "react-error-boundary";
 
+import { serverLog, serverLogPromise } from "./lib/utils";
+
 const queryClient = new QueryClient();
 
 
+function reportAndLogout(error) {
+  serverLogPromise(`error ${error.message} ${error.stack}`)
+    .finally(() => {
+      window.location.href = '/logout.php';
+    })
+}
 
 function fallbackRender({ error, resetErrorBoundary }) {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
@@ -19,12 +27,20 @@ function fallbackRender({ error, resetErrorBoundary }) {
   console.log(error)
   console.log('------+')
   return (
-    <div role="alert">
-      <p>Something went wrong:</p>
-      <p style={{ fontFamily: "monospace" }}>{error.message}</p>
-      {/*<p style={{ fontFamily: "monospace" }}>{error.stack}</p>*/}
-
-    </div>
+    <>
+      <div style={{ padding: 8 }}>
+        <p><b>Something went wrong</b> (don't worry, your data is safe):</p>
+        <p style={{ fontFamily: "monospace" }}>{error.message}</p>
+        <div style={{ margin: "48px 0 16px 8px" }}><a style={{ color: "white" }} href="/logout.php">Logout Now</a></div>
+        <div style={{ margin: "32px 0 16px 8px" }}><a style={{ color: "white", textDecoration: "underline" }} onClick={
+          (e) => {
+            e.preventDefault();
+            reportAndLogout(error);
+            return false;
+          }} href="/logout.php">Report & Logout</a>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -35,3 +51,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </QueryClientProvider>
   </ErrorBoundary>
 )
+
+
