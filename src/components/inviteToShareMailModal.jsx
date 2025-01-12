@@ -28,7 +28,7 @@ function InviteToShareMailModal(props) {
 
 ${from} wants to share a secure safe with you on PassHub.
 
-Go to https://passHub.net to create a free account. Share files and passwords securely with PassHub!
+Please follow ${window.location.origin} to create a free account. Share files and passwords securely with PassHub!
  `
 
   const [message, setMessage] = useState(template);

@@ -269,7 +269,10 @@ function ShareModal(props) {
           if (!userData.business) {
             setShowInvitationLink(true);
           }
+        } else {
+          setShowInvitationLink(false);
         }
+
         setErrorMsg(result.status);
         return;
       })
