@@ -137,6 +137,7 @@ function BankCardModal(props) {
   const [errorMsg, setErrorMsg] = useState("");
   const [hideCSC, setHideCSC] = useState(true);
   const [hideCardNumber, setHideCardNumber] = useState(true);
+  const [newItemId, setNewItemId] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -149,6 +150,7 @@ function BankCardModal(props) {
 
         if (result.status === "Ok") {
           if (result.firstID) {
+            setNewItemId(result.firstID);
             props.newItemInd(result.firstID);
           }
 
@@ -221,9 +223,12 @@ function BankCardModal(props) {
       vault: SafeID,
       folder: folderID,
       encrypted_data: eData,
-    };
+    }
+
     if (props.args.item) {
       data.entryID = props.args.item._id;
+    } else if (newItemId) {
+      data.entryID = newItemId;
     }
 
     cardMutation.mutate({ url: 'items.php', args: data })

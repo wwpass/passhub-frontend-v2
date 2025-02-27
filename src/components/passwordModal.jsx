@@ -119,12 +119,13 @@ function PasswordModal(props) {
   const [unamePwdWarning, setUnamePwdWarning] = useState("");
   const [urlWarning, setUrlWarning] = useState("");
   const [totpWarning, setTotpWarning] = useState("");
-
-  const [isHidden, setIsHidden] = useState(document.visibilityState == "hidden");
-
+  const [newItemId, setNewItemId] = useState(null);
 
 
   /*
+
+  const [isHidden, setIsHidden] = useState(document.visibilityState == "hidden");
+
     useEffect(() => {
   
       if (props.isHidden && edit) {
@@ -132,7 +133,6 @@ function PasswordModal(props) {
       }
   
     }, [props.isHidden])
-  */
 
 
   useEffect(() => {
@@ -145,6 +145,7 @@ function PasswordModal(props) {
 
   }, [])
 
+  */
 
 
   const queryClient = useQueryClient();
@@ -157,6 +158,7 @@ function PasswordModal(props) {
 
         if (result.status === "Ok") {
           if (result.firstID) {
+            setNewItemId(result.firstID);
             props.newItemInd(result.firstID);
           }
           // props.onClose(true, result.id);
@@ -324,6 +326,8 @@ function PasswordModal(props) {
     };
     if (props.args.item) {
       data.entryID = props.args.item._id;
+    } else if (newItemId) {
+      data.entryID = newItemId;
     }
 
     passwordMutation.mutate({ url: 'items.php', args: data })
