@@ -1,3 +1,5 @@
+import * as base32 from "hi-base32";
+
 // https://dev.to/al_khovansky/generating-2fa-one-time-passwords-in-js-using-web-crypto-api-1hfo
 
 function padCounter(counter) {
@@ -45,8 +47,8 @@ async function generateHOTP(key, counter) {
     counterArray,
   );
 
-//  const uKey = new Uint8Array(key);
-//  const Snum = truncate(uKey);
+  //  const uKey = new Uint8Array(key);
+  //  const Snum = truncate(uKey);
   const HS8 = new Uint8Array(HS);
   const Snum = truncate(HS8);
   // Make sure we keep leading zeroes
@@ -60,10 +62,47 @@ function getTOTPcounter() {
   return Math.floor(time / stepWindow);
 }
 
-async function getTOTP(key) {
-  const counter = getTOTPcounter();
+async function getTOTP1(key, counter) {
   const result = await generateHOTP(key, counter);
   return result;
 }
 
-export default getTOTP;
+async function getTOTP(base32secret) {
+  const s = base32secret.replace(/\s/g, "").toUpperCase();
+  const secretBytes = new Uint8Array(base32.decode.asBytes(s));
+
+  return window.crypto.subtle
+    .importKey(
+      "raw",
+      secretBytes,
+      { name: "HMAC", hash: { name: "SHA-1" } },
+      false,
+      ["sign"]
+    )
+    .then((key) => getTOTP1(key, getTOTPcounter()))
+}
+
+async function importKey(base32secret) {
+  const s = base32secret.replace(/\s/g, "").toUpperCase();
+  const secretBytes = new Uint8Array(base32.decode.asBytes(s));
+
+  return window.crypto.subtle
+    .importKey(
+      "raw",
+      secretBytes,
+      { name: "HMAC", hash: { name: "SHA-1" } },
+      false,
+      ["sign"]
+    )
+}
+
+// two sequential OTP keys
+async function getTOTP2(base32secret) {
+  const key = await importKey(base32secret)
+  const counter = getTOTPcounter();
+  const c0 = await generateHOTP(key, counter);
+  const c1 = await generateHOTP(key, counter + 1);
+  return [c0, c1]
+}
+
+export { getTOTP, getTOTP2 };
