@@ -135,9 +135,27 @@ function Header(props) {
                                     cursor: props.page === "Main" ? "default" : "pointer",
                                 }}
                             >
+                                {/*
+                                <img src="public/img/passhub_logo.svg" style={{ width: 133 }} />
+
+
                                 <svg style={{ fill: "var(--logo-color)", width: 133, height: 26.5 }}>
-                                    <use href="#ph-logo"></use>
+                                    <use href="#ph-logo-mh"></use>
                                 </svg>
+
+
+                                <svg style={{ fill: "var(--logo-color)", width: 133, height: 17.5 }}>
+                                    <use href="#ph-logo-3d"></use>
+                                </svg>
+                                <img src="/public/img/logo/logo.svg" style={{ width: 133, height: 26.5 }} />
+
+                                */}
+
+
+                                <svg style={{ fill: "var(--logo-color)", width: 133, height: 17.5 }}>
+                                    <use href="#ph-logo-2d"></use>
+                                </svg>
+
                             </span>
                             <span className="d-md-none" id="xs_indicator"></span>
                         </div>
