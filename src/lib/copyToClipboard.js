@@ -19,11 +19,18 @@ function selectText(textArea) {
   }
 }
 
-function copyToClipboard(text) {
+function copyToClipboard1(text) {
   const textArea = createTextArea(text);
   selectText(textArea);
   document.execCommand('copy');
   document.body.removeChild(textArea);
+}
+
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    windowClose();
+  })
 }
 
 function startCopiedTimer() {
