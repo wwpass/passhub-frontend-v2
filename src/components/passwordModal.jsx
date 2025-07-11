@@ -16,7 +16,7 @@ import {
 
 import { getUserData } from "../lib/userData";
 
-import getTOTP from "../lib/totp";
+import { getTOTP } from "../lib/totp";
 import { copyToClipboard } from "../lib/copyToClipboard";
 
 import ItemModalFieldNav from "./itemModalFieldNav";
@@ -334,7 +334,7 @@ function PasswordModal(props) {
 
   };
 
-  const showOTP = () => {
+  const showOTP1 = () => {
     if (
       edit ||
       !props.show ||
@@ -371,6 +371,35 @@ function PasswordModal(props) {
       }
     }
   };
+
+  const showOTP = () => {
+    if (
+      edit ||
+      !props.show ||
+      !props.args.item ||
+      props.args.item.cleartext.length < 6
+    ) {
+      return;
+    }
+
+    const secret = props.args.item.cleartext[5];
+    if (secret.length > 0) {
+
+      getTOTP(secret)
+        .then((six) => {
+          document
+            .querySelectorAll(".totp_digits")
+            .forEach((e) => (e.innerText = six));
+        })
+        .catch((err) => {
+          document
+            .querySelectorAll(".totp_digits")
+            .forEach((e) => (e.innerText = "invalid TOTP secret"));
+
+        })
+    }
+  };
+
 
   if (typeof props.args.item == "undefined") {
     if (atRecordsLimits()) {
@@ -550,6 +579,7 @@ function PasswordModal(props) {
             onChange={onUsernameChange}
             readOnly={!edit}
             spellCheck={false}
+            autoComplete="off"
             value={username}
           ></input>
         </div>
@@ -601,6 +631,7 @@ function PasswordModal(props) {
               onChange={onPasswordChange}
               readOnly={!edit}
               spellCheck={false}
+              autoComplete="off"
               value={password}
             ></input>
           </div>
