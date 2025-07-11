@@ -53,7 +53,9 @@ body {
     --icon-stroke: rgba(27, 27, 38, 0.6);
     --icon-fill: #1B1B26;
 
-    --logo-color: rgba(255, 255, 255, 1);
+    --logo-color: rgba(255, 255, 255, 0.8);
+    /*    --logo-color2: rgba(27, 27, 38, 0.6); */
+    --logo-color2: rgba(255, 255, 255, 0.2);
 
     --account-fill-color: white;
     --account-background-color: rgba(255, 255, 255, .6);
@@ -63,6 +65,7 @@ body {
 
     --logo-fill-color: white;
 
-    --logo-light-theme-width: 180px;
-    --logo-dark-theme-width: 0;
+    --logo-light-theme-width: 0px;
+    --logo-green-theme-width: 0;
+    --logo-dark-theme-width: 123px;
 }
