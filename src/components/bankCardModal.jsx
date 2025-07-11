@@ -350,6 +350,7 @@ function BankCardModal(props) {
               readOnly={!edit}
               spellCheck={false}
               value={ccNumber}
+              autoComplete="off"
               placeholder={edit ? "0000 0000 0000 0000" : ""}
             ></input>
             <div className="copied" id="ccnumber_copied">
@@ -459,6 +460,7 @@ function BankCardModal(props) {
                 readOnly={!edit}
                 onChange={onCscChange}
                 spellCheck={false}
+                autoComplete="off"
                 value={ccCSC}
               ></input>
               <div className="copied" id="cccsc_copied">
@@ -492,6 +494,7 @@ function BankCardModal(props) {
             onChange={onNameChange}
             readOnly={!edit}
             spellCheck={false}
+            autoComplete="off"
             value={ccName}
           ></input>
           <div className="copied" id="ccname_copied">
