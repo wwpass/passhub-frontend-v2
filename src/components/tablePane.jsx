@@ -4,8 +4,6 @@ import Col from "react-bootstrap/Col";
 
 import Button from "react-bootstrap/Button";
 
-import { Menu, Item } from "react-contexify";
-
 import FolderItem from "./folderItem";
 import PasswordItem from "./passwordItem";
 import NoteItem from "./noteItem";
@@ -24,6 +22,8 @@ import FolderMenuMobile from "./folderMenuMobile";
 import PathElement from "./pathElement";
 
 import AddDropUp from "./addDropUp";
+import RefreshButton from './refreshButton';
+
 
 import { getFolderById, isPasswordItem, isFileItem, isBankCardItem, isNoteItem } from "../lib/utils";
 
@@ -176,7 +176,6 @@ function TablePane(props) {
             </div>
         );
     }
-
 
     const sortByTitle = () => {
         if (sortBy != "title") {
@@ -337,10 +336,12 @@ function TablePane(props) {
                         />
                     )}
                 </div>
-
-                <div className="d-none d-sm-block path">
-                    {pathString}
-                    <b>{folder.path[folder.path.length - 1][0]}</b>
+                <div className="d-none d-sm-flex" style={{ justifyContent: "space-between", paddingRight: "1em" }}>
+                    <div className="d-none d-sm-block path">
+                        {pathString}
+                        <b>{folder.path[folder.path.length - 1][0]}</b>
+                    </div>
+                    <RefreshButton fill="var(--icon-stroke)"></RefreshButton>
                 </div>
 
                 {emptyFolder && (
