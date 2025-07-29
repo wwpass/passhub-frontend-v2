@@ -443,6 +443,12 @@ function ShareModal(props) {
             spellCheck={false}
             value={email}
             type="text"
+
+            onKeyDown={(e) => {
+              if (e.key === "Enter")
+                onSubmit();
+            }}
+
           ></input>
         </div>
       </div>

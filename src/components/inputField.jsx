@@ -35,6 +35,8 @@ function InputField(props) {
           id={props.id}
           onChange={props.onChange}
           onKeyUp={props.onKeyUp}
+          onKeyDown={props.onKeyDown}
+
           readOnly={!props.edit}
           spellCheck={false}
           value={props.value}
