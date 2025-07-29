@@ -78,7 +78,6 @@ function sendCTS() {
             .then(response => {
                 consoleLog('cts response');
                 consoleLog(response);
-
                 return sendAdvise(response)
             })
             .catch(err => {
@@ -125,8 +124,6 @@ function sendCredentials(s) {
 };
 
 async function openInExtension(item, url) {
-
-
     if (url.length > 0) {
 
         if (item.cleartext.length > 5) {
