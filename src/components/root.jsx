@@ -311,6 +311,19 @@ function Root(props) {
   };
 
   const gotoMain = () => {
+    if (page == "Main") {
+      // for mobile:
+
+      const safePane = document.querySelector("#safe_pane");
+      const tablePane = document.querySelector("#table_pane");
+      if (safePane && safePane.classList.contains("d-none") && !tablePane.classList.contains("d-none")) {
+        document.querySelector("#safe_pane").classList.remove("d-none");
+        document.querySelector("#table_pane").classList.add("d-none");
+      }
+      return;
+    }
+
+    // back from File view
     setPage("Main");
     setFilename("");
     setBlob(null);
