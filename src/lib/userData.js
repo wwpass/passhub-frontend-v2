@@ -35,6 +35,10 @@ function getAccountData() {
   return accountData;
 }
 
+function setGeneratorConfig(generator) {
+  userData.generator = generator;
+}
+
 
 function updateEmail(newMail) {
   userData['email'] = newMail;
@@ -192,6 +196,8 @@ const downloadUserData = () => {
     */
   }
 
+  console.log('downloadUserData');
+  let startTime = new Date().getTime();
   return axios
     .post(`${getApiUrl()}get_user_datar.php`, {
       verifier: getVerifier(),
@@ -204,6 +210,10 @@ const downloadUserData = () => {
       }
 
       if (result.data.status === "Ok") {
+        console.log('got user data');
+        let endTime = new Date().getTime();
+        console.log('downloadUserData time', endTime - startTime);
+
         const data = result.data.data;
 
         return passhubCrypto.getPrivateKey(data)
@@ -223,6 +233,9 @@ const downloadUserData = () => {
           })
           .then((safes) => {
             // console.log('safes decrypted', safes);
+
+            let decryptTime = new Date().getTime();
+            console.log('decrypt time', decryptTime - endTime);
             data.safes.sort((a, b) =>
               a.name.toLowerCase().localeCompare(b.name.toLowerCase())
             );
@@ -263,8 +276,10 @@ const downloadUserData = () => {
 
             data.totalRecords = totalRecords;
             data.totalStorage = totalStorage;
+            if (window.location.href.includes("except")) {
+              throw new Error('downloadUserData');
+            }
             return data;
-
           })
           .catch(err => {
             if (window.location.href.includes("debug")) {
@@ -298,4 +313,5 @@ export {
   decryptGroups, //to be removed: usermanagement may use all user data
   // setCmtData,
   // getCmtData
+  setGeneratorConfig
 };

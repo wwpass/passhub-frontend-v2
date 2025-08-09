@@ -259,7 +259,7 @@ function AccountDropDown(props) {
             <svg width="24" height="24" style={{ opacity: 0.6 }}>
               <use href="#theme-dark"></use>
             </svg>
-            Switch Theme
+            Theme
           </div>
         )}
         <ThemeMenu

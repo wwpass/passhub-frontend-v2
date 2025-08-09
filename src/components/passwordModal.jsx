@@ -16,7 +16,7 @@ import {
 
 import { getUserData } from "../lib/userData";
 
-import getTOTP from "../lib/totp";
+import { getTOTP } from "../lib/totp";
 import { copyToClipboard } from "../lib/copyToClipboard";
 
 import ItemModalFieldNav from "./itemModalFieldNav";
@@ -119,12 +119,13 @@ function PasswordModal(props) {
   const [unamePwdWarning, setUnamePwdWarning] = useState("");
   const [urlWarning, setUrlWarning] = useState("");
   const [totpWarning, setTotpWarning] = useState("");
-
-  const [isHidden, setIsHidden] = useState(document.visibilityState == "hidden");
-
+  const [newItemId, setNewItemId] = useState(null);
 
 
   /*
+
+  const [isHidden, setIsHidden] = useState(document.visibilityState == "hidden");
+
     useEffect(() => {
   
       if (props.isHidden && edit) {
@@ -132,7 +133,6 @@ function PasswordModal(props) {
       }
   
     }, [props.isHidden])
-  */
 
 
   useEffect(() => {
@@ -145,6 +145,7 @@ function PasswordModal(props) {
 
   }, [])
 
+  */
 
 
   const queryClient = useQueryClient();
@@ -157,6 +158,7 @@ function PasswordModal(props) {
 
         if (result.status === "Ok") {
           if (result.firstID) {
+            setNewItemId(result.firstID);
             props.newItemInd(result.firstID);
           }
           // props.onClose(true, result.id);
@@ -182,7 +184,7 @@ function PasswordModal(props) {
   const passwordMutation = useMutation({
     mutationFn: passwordAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
   })
 
@@ -324,13 +326,15 @@ function PasswordModal(props) {
     };
     if (props.args.item) {
       data.entryID = props.args.item._id;
+    } else if (newItemId) {
+      data.entryID = newItemId;
     }
 
     passwordMutation.mutate({ url: 'items.php', args: data })
 
   };
 
-  const showOTP = () => {
+  const showOTP1 = () => {
     if (
       edit ||
       !props.show ||
@@ -367,6 +371,35 @@ function PasswordModal(props) {
       }
     }
   };
+
+  const showOTP = () => {
+    if (
+      edit ||
+      !props.show ||
+      !props.args.item ||
+      props.args.item.cleartext.length < 6
+    ) {
+      return;
+    }
+
+    const secret = props.args.item.cleartext[5];
+    if (secret.length > 0) {
+
+      getTOTP(secret)
+        .then((six) => {
+          document
+            .querySelectorAll(".totp_digits")
+            .forEach((e) => (e.innerText = six));
+        })
+        .catch((err) => {
+          document
+            .querySelectorAll(".totp_digits")
+            .forEach((e) => (e.innerText = "invalid TOTP secret"));
+
+        })
+    }
+  };
+
 
   if (typeof props.args.item == "undefined") {
     if (atRecordsLimits()) {
@@ -546,6 +579,7 @@ function PasswordModal(props) {
             onChange={onUsernameChange}
             readOnly={!edit}
             spellCheck={false}
+            autoComplete="off"
             value={username}
           ></input>
         </div>
@@ -597,6 +631,7 @@ function PasswordModal(props) {
               onChange={onPasswordChange}
               readOnly={!edit}
               spellCheck={false}
+              autoComplete="off"
               value={password}
             ></input>
           </div>

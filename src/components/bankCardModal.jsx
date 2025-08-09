@@ -137,6 +137,7 @@ function BankCardModal(props) {
   const [errorMsg, setErrorMsg] = useState("");
   const [hideCSC, setHideCSC] = useState(true);
   const [hideCardNumber, setHideCardNumber] = useState(true);
+  const [newItemId, setNewItemId] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -149,6 +150,7 @@ function BankCardModal(props) {
 
         if (result.status === "Ok") {
           if (result.firstID) {
+            setNewItemId(result.firstID);
             props.newItemInd(result.firstID);
           }
 
@@ -172,7 +174,7 @@ function BankCardModal(props) {
   const cardMutation = useMutation({
     mutationFn: cardAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
   })
 
@@ -221,9 +223,12 @@ function BankCardModal(props) {
       vault: SafeID,
       folder: folderID,
       encrypted_data: eData,
-    };
+    }
+
     if (props.args.item) {
       data.entryID = props.args.item._id;
+    } else if (newItemId) {
+      data.entryID = newItemId;
     }
 
     cardMutation.mutate({ url: 'items.php', args: data })
@@ -345,6 +350,7 @@ function BankCardModal(props) {
               readOnly={!edit}
               spellCheck={false}
               value={ccNumber}
+              autoComplete="off"
               placeholder={edit ? "0000 0000 0000 0000" : ""}
             ></input>
             <div className="copied" id="ccnumber_copied">
@@ -454,6 +460,7 @@ function BankCardModal(props) {
                 readOnly={!edit}
                 onChange={onCscChange}
                 spellCheck={false}
+                autoComplete="off"
                 value={ccCSC}
               ></input>
               <div className="copied" id="cccsc_copied">
@@ -487,6 +494,7 @@ function BankCardModal(props) {
             onChange={onNameChange}
             readOnly={!edit}
             spellCheck={false}
+            autoComplete="off"
             value={ccName}
           ></input>
           <div className="copied" id="ccname_copied">

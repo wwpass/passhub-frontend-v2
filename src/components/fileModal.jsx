@@ -136,7 +136,7 @@ function FileModal(props) {
   const fileMutation = useMutation({
     mutationFn: fileAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
   })
 

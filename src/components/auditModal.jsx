@@ -60,7 +60,7 @@ function AuditModal(props) {
         props.onClose();
     };
 
-    const { data: response, isLoading } = useQuery({
+    const { data: response, isPending } = useQuery({
         queryKey: ["audit"],
         queryFn: () => auditQuery().then(data => {
             return data;
@@ -68,11 +68,11 @@ function AuditModal(props) {
     });
 
     const refresh = () => {
-        queryClient.invalidateQueries(["audit"], { exact: true })
+        queryClient.invalidateQueries({ queryKey: ["audit"], exact: true })
     }
 
-    if (isLoading) {
-        console.log('isLoading');
+    if (isPending) {
+        console.log('isPending');
         return null;
     }
 

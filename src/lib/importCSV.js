@@ -231,18 +231,6 @@ function importCSV(text) {
 
           if (e[4].startsWith('NoteType:Credit Card\n')) {
 
-            /*
-            NoteType:Credit Card
-            Language:en-US
-            Name on Card:emili bronte
-            Type:type-credit
-            Number:4242 4242 4242 4242
-            Security Code:123
-            Start Date:March,22
-            Expiration Date:April,25
-            Notes:notes for card)
-            */
-
             let ccFields = e[4].split('\n');
             let [ccName, ccNumber, ccExpMonth, ccExpYear, ccCsc, notes] = ["", "", "", "", "", "", ""];
             for (let ccField of ccFields) {

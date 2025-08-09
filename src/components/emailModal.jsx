@@ -87,6 +87,10 @@ function EmailModal(props) {
           value={email}
           edit={true}
           onChange={onEmailChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter")
+              onSubmit();
+          }}
         ></InputField>
         {errorMsg.length > 0 && (
           <div className="error-message">{errorMsg}</div>

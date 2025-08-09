@@ -1,6 +1,7 @@
 const consoleLog = console.log;
 // const consoleLog = () => {};
 
+import { getTOTP, getTOTP2 } from "./totp";
 
 const isIOS = navigator.userAgent.match(/iPhone|iPod|iPad/i)
     || (navigator.userAgent.match(/Intel Mac OS X/i) && navigator.maxTouchPoints > 1);
@@ -37,7 +38,7 @@ function setRestartIdleTimer(fn) {
 
 let findRecords = null;
 
-function sendAdvise(message) {
+async function sendAdvise(message) {
     consoleLog('sendAdvise');
     consoleLog(message);
     if (message.id === 'find') { // legacy
@@ -51,7 +52,9 @@ function sendAdvise(message) {
             restartIdleTimer();
         }
     }
-    return extension.runtime.sendMessage(extensionId, findRecords(message))
+
+    const found = await findRecords(message);
+    return extension.runtime.sendMessage(extensionId, found)
         .then(response => {
             if (!response) {
                 if (extension.runtime.lastError) {
@@ -120,14 +123,31 @@ function sendCredentials(s) {
     }
 };
 
-function openInExtension(item, url) {
+async function openInExtension(item, url) {
     if (url.length > 0) {
-        sendCredentials({
-            id: 'loginRequest',
-            username: item.cleartext[1],
-            password: item.cleartext[2],
-            url,
-        });
+
+        if (item.cleartext.length > 5) {
+            const secret = item.cleartext[5];
+            if (secret.length > 0) {
+
+                let six = await getTOTP(secret)
+                sendCredentials({
+                    id: 'loginRequest',
+                    username: item.cleartext[1],
+                    password: item.cleartext[2],
+                    totp: six,
+                    url,
+                });
+
+            }
+        } else {
+            return sendCredentials({
+                id: 'loginRequest',
+                username: item.cleartext[1],
+                password: item.cleartext[2],
+                url,
+            });
+        }
     }
 }
 

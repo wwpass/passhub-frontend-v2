@@ -14,27 +14,38 @@ import CheckBox from "./checkBox";
 // import generatePassword from "password-generator";
 import generatePassword from "../lib/password-generator";
 
+import { getUserData, setGeneratorConfig } from "../lib/userData";
+
 function GeneratePasswordModal(props) {
-  /*  
-    state = {
-      passwordLength: 12,
-      uppercase: true,
-      lowercase: true,
-      digits: true,
-      specialChars: false,
-      redoCount: 0,
-    };
-  */
+
   if (!props.show) {
     return null;
   }
 
-  const [passwordLength, setPasswordLength] = useState(12);
-  const [uppercase, setUppercase] = useState(true);
-  const [lowercase, setLowercase] = useState(true);
-  const [digits, setDigits] = useState(true);
-  const [specialChars, setSpecialChars] = useState(false);
+  const specialCharset0 = "!#$%&()*+:?@^{}";
+  const allSpecialChars = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+
+  const ud = getUserData();
+
+  const generator = ("generator" in ud) ? ud.generator : {
+    passwordLength: 12,
+    uppercase: true,
+    lowercase: true,
+    digits: true,
+    specialChars: false,
+    specialCharset: specialCharset0,
+  };
+
+  const [passwordLength, setPasswordLength] = useState(generator.passwordLength);
+  const [uppercase, setUppercase] = useState(generator.uppercase);
+  const [lowercase, setLowercase] = useState(generator.lowercase);
+  const [digits, setDigits] = useState(generator.digits);
+  const [specialChars, setSpecialChars] = useState(generator.specialChars);
   const [redoCount, setRedoCount] = useState(0);
+
+  const [specialCharset, setSpecialCharset] = useState(generator.specialCharset ? generator.specialCharset : specialCharset0);
+  const [changed, setChanged] = useState(false);
+
 
   let password = "";
 
@@ -46,11 +57,10 @@ function GeneratePasswordModal(props) {
     props.onClose("dummy", password);
   };
 
-  const updatePreferences = (change) => {
-
-    const state = { passwordLength, uppercase, lowercase, digits, specialChars };
-    const value = { ...state, ...change }
-
+  const rememberConfig = () => {
+    const value = { passwordLength, uppercase, lowercase, digits, specialChars, specialCharset };
+    setGeneratorConfig(value);
+    setChanged(false);
     axios
       .post(`${getApiUrl()}account.php`, {
         operation: "generator",
@@ -60,9 +70,22 @@ function GeneratePasswordModal(props) {
   }
 
   const onSliderChange = (length) => {
+    setChanged(true);
     setPasswordLength(length);
-    updatePreferences({ passwordLength: length });
   };
+
+
+  const escapeSquareBrackets = (str) => {
+    let result = "";
+    str.split("").forEach((char) => {
+      if ((char == "[") || (char == "]") || (char == "^") || (char == "-") || (char == "\\")) {
+        result += `\\${char}`;
+      } else {
+        result += char;
+      }
+    });
+    return result;
+  }
 
   const genPassword = () => {
     let len = passwordLength;
@@ -83,7 +106,7 @@ function GeneratePasswordModal(props) {
       }
     }
     if (specialChars) {
-      pattern += "!#$%&()*+:?@^{}";
+      pattern += escapeSquareBrackets(specialCharset);
     }
     if (lowercase) {
       pattern += "a-kmp-z";
@@ -95,22 +118,36 @@ function GeneratePasswordModal(props) {
       pattern = "A-HJ-MPZa-kmp-z";
     }
     pattern = "[" + pattern + "]";
+
     let p = generatePassword(len, m, pattern);
     for (let i = 0; i < 100; i++) {
+
       let redo = false;
       if (digits) {
+
         if (!p.match(/[0-9]/)) {
           redo = true;
         }
-      } else if (uppercase) {
+      }
+      if (uppercase) {
         if (!p.match(/[A-HJ-MPZ]/)) {
+          // console.log("fail");
           redo = true;
         }
-      } else if (lowercase) {
+      }
+      if (lowercase) {
         if (!p.match(/[a-kmp-z]/)) {
           redo = true;
         }
       }
+      if (specialChars) {
+        const pattern = `[${escapeSquareBrackets(specialCharset)}]`;
+        const r = new RegExp(pattern, 'g');
+        if (!p.match(r)) {
+          redo = true;
+        }
+      }
+
       if (!redo) {
         break;
       }
@@ -122,6 +159,23 @@ function GeneratePasswordModal(props) {
 
   password = genPassword();
 
+  function specialCharacterClick(index) {
+    const char = allSpecialChars[index];
+
+    const idx = specialCharset.indexOf(char)
+    let x = specialCharset;
+    if (idx == -1) {
+      x = x + char;
+    } else {
+      if (specialCharset.length < 2) {
+        return
+      }
+      x = x.slice(0, idx) + x.slice(idx + 1);
+    }
+    x = x.split("").sort().join('');
+    setChanged(true);
+    setSpecialCharset(x);
+  }
   return (
     <Modal
       show={props.show}
@@ -192,37 +246,60 @@ function GeneratePasswordModal(props) {
         <div style={{ display: "flex", flexWrap: "wrap" }}>
           <CheckBox
             checked={uppercase}
-            onClick={() => { updatePreferences({ uppercase: !uppercase }); setUppercase(!uppercase) }}
+            onClick={() => { setChanged(true); setUppercase(!uppercase) }}
           >
             Uppercase
           </CheckBox>
+
+          <CheckBox
+            checked={lowercase}
+            onClick={() => { setChanged(true); setLowercase(!lowercase) }}
+          >
+            Lowercase
+          </CheckBox>
+
+
           <CheckBox
             checked={digits}
-            onClick={() => { updatePreferences({ digits: !digits }); setDigits(!digits) }}
+            onClick={() => { setChanged(true); setDigits(!digits) }}
           >
             Digits
           </CheckBox>
         </div>
 
 
-        <div style={{ display: "flex", flexWrap: "wrap" }}>
-
-
-          <CheckBox
-            checked={lowercase}
-            onClick={() => { updatePreferences({ lowercase: !lowercase }); setLowercase(!lowercase) }}
-          >
-            Lowercase
-          </CheckBox>
+        <div style={{ display: "flex", alignItems: "center", gap: "0 50px", flexWrap: "wrap", }}>
 
           <CheckBox
             checked={specialChars}
-            onClick={() => { updatePreferences({ specialChars: !specialChars }); setSpecialChars(!specialChars) }}
+            onClick={() => { setChanged(true); setSpecialChars(!specialChars) }}
           >
             Special characters
           </CheckBox>
         </div>
 
+        {specialChars &&
+          (<div>
+            <div style={{ fontFamily: "monospace", fontWeight: "bold", margin: "20px 0 10px 0" }}>
+              {allSpecialChars.split("").map((char, index) => {
+                return (
+                  <span key={index} onClick={() => specialCharacterClick(index)} style={{
+                    margin: "0 4px",
+                    padding: "0 5px",
+                    cursor: "pointer",
+                    color: (specialCharset.indexOf(char) == -1) ? "var(--body-color)" : "var(--link-color)",
+                    fontWeight: (specialCharset.indexOf(char) == -1) ? "normal" : "bold"
+                  }}>{char}</span>
+                );
+              })}
+            </div>
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              (click to enable/disable a character)
+            </div>
+          </div>
+          )}
+
+        <div onClick={rememberConfig} style={{ display: changed ? "block" : "none", color: "var(--link-color)", cursor: "pointer" }}>Remember my settings</div>
 
 
       </Modal.Body>
@@ -231,7 +308,7 @@ function GeneratePasswordModal(props) {
           Cancel
         </Button>
         <Button variant="primary" onClick={onSubmit}>
-          Save
+          Use this password
         </Button>
       </Modal.Footer>
 
@@ -242,3 +319,25 @@ function GeneratePasswordModal(props) {
 
 export default GeneratePasswordModal;
 
+
+
+/*
+  const onSpecialCharsetChange = (e) => {
+    setSpecialCharset(e.target.value);
+  }
+*/
+
+/*}
+            <div>
+              <input value={specialCharset} onChange={onSpecialCharsetChange}
+                style={{
+                  border: "none",
+                  outline: "none",
+                  fontFamily: "monospace",
+                  fontWeight: "bold",
+                  letterSpacing: "0.2em",
+                  width: "100%",
+                  spellCheck: false,
+                }} />
+            </div>
+*/

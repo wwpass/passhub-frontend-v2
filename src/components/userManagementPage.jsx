@@ -68,15 +68,15 @@ export default function UserManagementPage(props) {
   //  const [groupModalArgs, setGroupModalArgs] = useState({});
   const [delDialogData, setDelDialogData] = useState({ email: "", id: "", show: false });
 
-  const { data: datax, isLoading } = useQuery({
+  const { data: datax, isPending } = useQuery({
     queryKey: ["userList"],
     queryFn: () => userListQuery(props.company).then(data => {
       return data;
     }),
   });
 
-  if (isLoading) {
-    console.log('isLoading');
+  if (isPending) {
+    console.log('isPending');
     return null;
   }
 

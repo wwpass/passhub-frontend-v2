@@ -23,8 +23,7 @@ function NoteModal(props) {
 
   const [errorMsg, setErrorMsg] = useState("");
   const [edit, setEdit] = useState(props.args.item ? false : true);
-
-  const newItemId = useRef(null);
+  const [newItemId, setNewItemId] = useState(null);
 
   const noteAction = (args) => {
     //    console.log('note Action: url', args.url, 'args', args.args);
@@ -35,13 +34,13 @@ function NoteModal(props) {
 
         if (result.status === "Ok") {
           if (result.firstID) {
-            newItemId.current = result.firstID;
-            console.log('note firstID', newItemId.current);
+            setNewItemId(result.firstID);
+            props.newItemInd(result.firstID);
           }
 
           //          props.onClose(true, result.id);
           setEdit(false);
-          return queryClient.invalidateQueries(["userData"], { exact: true })
+          return queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
 
           //          return "Ok";
         }
@@ -63,7 +62,7 @@ function NoteModal(props) {
   const noteMutation = useMutation({
     mutationFn: noteAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
   })
 
@@ -93,9 +92,12 @@ function NoteModal(props) {
       vault: SafeID,
       folder: folderID,
       encrypted_data: eData,
-    };
+    }
+
     if (props.args.item) {
       data.entryID = props.args.item._id;
+    } else if (newItemId) {
+      data.entryID = newItemId;
     }
 
     noteMutation.mutate({ url: 'items.php', args: data });

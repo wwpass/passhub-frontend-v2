@@ -41,7 +41,7 @@ function DelUserModal(props) {
   const deleteUserMutation = useMutation({
     mutationFn: deleteUserAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userList"], { exact: true });
+      queryClient.invalidateQueries({ queryKey: ["userList"], exact: true });
       props.onClose();
     },
   })

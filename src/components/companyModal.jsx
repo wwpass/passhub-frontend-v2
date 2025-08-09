@@ -34,7 +34,7 @@ function CompanyModal(props) {
                 licensedUsers
             })
             .then(() => {
-                queryClient.invalidateQueries(["companyList"], { exact: true })
+                queryClient.invalidateQueries({ queryKey: ["companyList"], exact: true })
                 props.onClose();
             });
     }
@@ -78,41 +78,3 @@ function CompanyModal(props) {
 
 export default CompanyModal;
 
-
-/*
-function companyProfileQuery() {
-    console.log("companyProfile query called");
-
-    return getCompanyProfile(props.company)
-        .then(result => {
-
-            if (result.data.status === "Ok") {
-                return result.data
-            }
-            if (result.data.status === "login") {
-                window.location.href = "expired.php";
-                return;
-            }
-            setErrorMsg(result.data.status);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-};
-
-const { data: datax, isLoading } = useQuery({
-    queryKey: ["companyProfile"],
-    queryFn: () => companyProfileQuery().then(data => {
-        return data;
-    }),
-});
-
-if (isLoading) {
-    console.log('isLoading');
-    return null;
-}
-console.log('datax');
-console.log(datax);
-
-const { profile } = datax;
-*/
