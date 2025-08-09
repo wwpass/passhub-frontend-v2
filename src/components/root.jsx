@@ -313,7 +313,7 @@ function Root(props) {
   const gotoMain = () => {
     if (page == "Main") {
       // for mobile:
-
+      resetSearch();
       const safePane = document.querySelector("#safe_pane");
       const tablePane = document.querySelector("#table_pane");
       if (safePane && safePane.classList.contains("d-none") && !tablePane.classList.contains("d-none")) {
@@ -350,6 +350,7 @@ function Root(props) {
 
         onSearchChange={e => setSearchString(e.target.value)}
         onSearchClear={() => setSearchString('')}
+
         searchString={searchString}
         gotoMain={gotoMain}
         gotoIam={gotoIam}
