@@ -236,7 +236,12 @@ function Root(props) {
     idleTimer.start();
   }
 
-  let expiryTimestamp = new Date().getTime();
+  //  let expiryTimestamp = new Date().getTime();
+  let expiryTimestamp = new Date();
+
+
+
+
 
   const {
     totalSeconds,
@@ -250,7 +255,8 @@ function Root(props) {
     resume,
     restart: restartCopyMoveToastTimer,
   } = useTimer({
-    expiryTimestamp,
+    // expiryTimestamp,  // ? version 3 to version 4 migration
+    autoStart: false,
     onExpire: () => {
       if (showToast == "CopyMoveToast") {
         setShowToast("")
@@ -258,7 +264,6 @@ function Root(props) {
       console.warn('onExpire called')
     }
   });
-  // console.log('seconds ' + seconds);
 
   extensionInterface.setRestartIdleTimer(restartIdleTimer);
 
@@ -294,7 +299,10 @@ function Root(props) {
   const showCopyMoveToast = (operation) => {
     copyMoveOperation = operation;
     setShowToast("CopyMoveToast");
-    restartCopyMoveToastTimer(new Date().getTime() + COPY_MOVE_TOAST_TIMEOUT * 1000);
+    //    restartCopyMoveToastTimer(new Date().getTime() + COPY_MOVE_TOAST_TIMEOUT * 1000);
+    let timerEnd = new Date();
+    timerEnd.setSeconds(timerEnd.getSeconds() + COPY_MOVE_TOAST_TIMEOUT);
+    restartCopyMoveToastTimer(timerEnd);
     enablePaste(true);
   }
 
