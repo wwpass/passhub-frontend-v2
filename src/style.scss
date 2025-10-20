@@ -1,3 +1,28 @@
+@use './scss/std-bootstrap.scss';
+
+@use './scss/account-dropdown.scss';
+@use './scss/bank-card.scss';
+@use './scss/custom-scroll.scss';
+@use './scss/file.scss';
+@use './scss/iam.scss';
+@use './scss/item-modal-field.scss';
+@use './scss/modal.scss';
+@use './scss/nav.scss';
+@use './scss/password.scss';
+@use './scss/progress.scss';
+@use './scss/safe-pane.scss';
+@use './scss/share.scss';
+@use './scss/table-pane.scss';
+@use './scss/toast.scss';
+
+
+@use './scss/theme-light.scss';
+@use './scss/theme-dark.scss';
+@use './scss/theme-dark2.scss';
+@use './scss/theme-dark5.scss';
+@use './scss/theme-darkgreen.scss';
+// @import './scss/theme-darkgreen2.scss';
+
 @font-face {
     font-family: OpenSans;
     src: url("/fonts/OpenSans-Regular.ttf");
@@ -19,16 +44,22 @@ body,
     font-family: OpenSans;
 }
 
+/*
 @import './scss/theme-light.scss';
 @import './scss/theme-dark.scss';
 @import './scss/theme-dark2.scss';
 @import './scss/theme-dark5.scss';
 @import './scss/theme-darkgreen.scss';
 // @import './scss/theme-darkgreen2.scss';
+*/
+
+
 
 body {
+    --bs-body-color: var(--body-color);
     margin: 0;
     background: var(--body-background-img);
+
     background-size: cover;
     background-position: center;
     color: var(--body-color);
@@ -214,6 +245,7 @@ input.datapicker {
     margin-bottom: 32px;
 }
 
+/*
 @import './scss/account-dropdown.scss';
 @import './scss/bank-card.scss';
 @import './scss/custom-scroll.scss';
@@ -229,3 +261,4 @@ input.datapicker {
 @import './scss/std-bootstrap.scss';
 @import './scss/table-pane.scss';
 @import './scss/toast.scss';
+*/
