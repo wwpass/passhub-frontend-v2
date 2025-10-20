@@ -3,11 +3,11 @@ import Col from "react-bootstrap/Col";
 
 import FolderTreeNode from "./folderTreeNode";
 import MobileSafeNode from "./mobileSafeNode";
+import RefreshButton from "./refreshButton";
 
 function SafePane(props) {
 
   const [showModal, setShowModal] = useState("");
-
 
   useEffect(() => {
 
@@ -18,7 +18,6 @@ function SafePane(props) {
       });
     }
   }, [props.activeFolder])
-
 
   const handleSelect = (folder) => {
     props.setActiveFolder(folder);
@@ -44,7 +43,12 @@ function SafePane(props) {
         }}
       >
         {/*<div className="folder">Recent and favorities</div> */}
-        <div className="folders-header">SAFES</div>
+        <div className="folders-header d-flex" style={{ justifyContent: "space-between", paddingRight: "1em" }}>
+          <span>SAFES</span>
+          <div className="d-sm-none">
+            <RefreshButton fill="var(--safe-pane-icon-stroke)"></RefreshButton>
+          </div>
+        </div>
 
         <div className="safe_scroll_control custom-scroll d-sm-none">
           {props.safes.map((s) => (

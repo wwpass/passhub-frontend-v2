@@ -41,7 +41,7 @@ function UserModal(props) {
             .then((result) => {
                 console.log('changeRole result', result)
                 if (result.data.status === "Ok") {
-                    queryClient.invalidateQueries(["userList"], { exact: true });
+                    queryClient.invalidateQueries({ queryKey: ["userList"], exact: true });
                     return "Ok";
                 }
                 if (result.data.status === "login") {
@@ -96,7 +96,7 @@ function UserModal(props) {
     const groupMutation = useMutation({
         mutationFn: groupAction,
         onSuccess: () => {
-            queryClient.invalidateQueries(["userList"], { exact: true })
+            queryClient.invalidateQueries({ queryKey: ["userList"], exact: true })
         },
     })
 

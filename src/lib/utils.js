@@ -23,6 +23,16 @@ function keepTicketAlive(ttl, age) {
   intervalID = window.setInterval(CheckIdleTime, 1000);
 }
 
+function serverLogPromise(msg) {
+  const data = {
+    verifier: getVerifier(),
+    msg
+  };
+
+  return axios.post(`${getApiUrl()}serverlog.php`, data);
+}
+
+
 function serverLog(msg) {
   const data = {
     verifier: getVerifier(),
@@ -38,6 +48,8 @@ function serverLog(msg) {
       // do nothig, one way  
     })
 }
+
+
 
 //https://en.wikipedia.org/wiki/List_of_the_most_common_passwords
 const frequentPasswords = [
@@ -344,6 +356,7 @@ const limits = { MAX_TITLE_LENGTH: 50, MAX_NOTE_LENGTH: 10000, MAX_USERNAME_LENG
 
 export {
   serverLog,
+  serverLogPromise,
   isStrongPassword,
   keepTicketAlive,
   baseName,

@@ -9,11 +9,14 @@ import "react-contexify/dist/ReactContexify.css";
 
 import Group from "./group";
 
-const cmpByName = ((a, b) => a.name.localeCompare(b.name));
+// const cmpByName = ((a, b) => a.name.localeCompare(b.name));
 
 export default function GroupPane(props) {
 
-    const groups = props.groups.toSorted(cmpByName)
+
+    //     const groups = props.groups.toSorted(cmpByName)
+    const groups = [...props.groups];
+    groups.sort((a, b) => a.name.localeCompare(b.name));
 
     function showUserPane() {
         document.querySelector('#user-pane').classList.remove("d-none");

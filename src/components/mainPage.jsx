@@ -141,7 +141,7 @@ function MainPage(props) {
       return dropAndPaste.doMove(props.safes, node, pItem, operation);
     },
     onSuccess: (data, variables, context) => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
     onError: (err, variables, context) => {
       if (err.message == "no dst write") {
@@ -299,6 +299,7 @@ function MainPage(props) {
         handleOpenFolder={handleOpenFolder}
         dropItem={dropItem}
       />
+
       <TablePane
         safes={props.safes}
         inMemoryView={props.inMemoryView}
@@ -367,7 +368,7 @@ function MainPage(props) {
 
           setShowModal("");
           //          if (result === true) {
-          queryClient.invalidateQueries(["userData"], { exact: true })
+          queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
           // }
         }}
       ></ShareModal>

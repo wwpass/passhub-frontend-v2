@@ -53,7 +53,7 @@ function ImportModal(props) {
         const result = reply.data;
         progress.unlock();
         if (result.status === "Ok") {
-          queryClient.invalidateQueries(["userData"], { exact: true })
+          queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
           props.onClose(true);
           return;
         }

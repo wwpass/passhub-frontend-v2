@@ -5,7 +5,9 @@ import CompanyRecord from "./companyRecord";
 
 function CompanyTable(props) {
 
-  const companies = props.companies.toSorted((a, b) => a.name.localeCompare(b.name))
+  // const companies = props.companies.toSorted((a, b) => a.name.localeCompare(b.name))
+  const companies = [...props.companies];
+  companies.sort((a, b) => a.name.localeCompare(b.name));
 
   return (
 

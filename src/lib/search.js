@@ -6,6 +6,9 @@ import {
   isNoteItem,
 } from "./utils";
 
+import { getTOTP, getTOTP2 } from "./totp";
+
+
 const paymentCards = () => {
   const cards = [];
   const safes = getUserData().safes;
@@ -25,7 +28,6 @@ const paymentCards = () => {
   }
   return { id: "payment", found: cards };
 };
-
 
 function hostInItem(hostname, item) {
   const urls = item.cleartext[3].split("\x01");
@@ -49,9 +51,7 @@ function hostInItem(hostname, item) {
   return false
 }
 
-
-
-const advise = (what) => {
+async function advise(what) {
   if (what.id === "payment page") {
     return paymentCards();
   }
@@ -71,12 +71,26 @@ const advise = (what) => {
           const items = safe.rawItems;
           for (const item of items) {
             if (hostInItem(hostname, item)) {
-              result.push({
-                safe: safe.name,
-                title: item.cleartext[0],
-                username: item.cleartext[1],
-                password: item.cleartext[2],
-              });
+              if ((item.cleartext.length > 5) && (item.cleartext[5].length > 0)) {
+                const secret = item.cleartext[5];
+
+                let [totp, totp_next] = await getTOTP2(secret)
+                result.push({
+                  safe: safe.name,
+                  title: item.cleartext[0],
+                  username: item.cleartext[1],
+                  password: item.cleartext[2],
+                  totp,
+                  totp_next
+                });
+              } else {
+                result.push({
+                  safe: safe.name,
+                  title: item.cleartext[0],
+                  username: item.cleartext[1],
+                  password: item.cleartext[2],
+                })
+              }
             }
           }
         }

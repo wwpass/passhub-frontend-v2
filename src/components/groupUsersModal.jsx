@@ -64,7 +64,7 @@ function GroupUsersModal(props) {
   const groupMutation = useMutation({
     mutationFn: groupAction,
     onSuccess: () => {
-      queryClient.invalidateQueries(["userList"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userList"], exact: true })
     },
   })
 

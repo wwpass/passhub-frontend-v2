@@ -58,7 +58,9 @@ body.theme-dark {
     --icon-stroke: #ddd;
     --icon-fill: #ddd;
 
-    --logo-color: rgba(255, 255, 255, 0.8);
+    --logo-color: rgba(255, 255, 255, 0.7);
+    --logo-color2: rgba(27, 27, 38, 0.6);
+
 
     --account-fill-color: rgb(27, 27, 38);
     --account-background-color: rgba(255, 255, 255, .6);
@@ -66,4 +68,7 @@ body.theme-dark {
     --inactive-search-background: var(--safe-pane-background);
     --active-search-background: var(--table-pane-background);
 
+    --logo-light-theme-width: 0;
+    --logo-green-theme-width: 0;
+    --logo-dark-theme-width: 123px;
 }

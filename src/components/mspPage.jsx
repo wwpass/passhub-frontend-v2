@@ -45,15 +45,15 @@ function MspPage(props) {
             });
     };
 
-    const { data: datax, isLoading } = useQuery({
+    const { data: datax, isPending } = useQuery({
         queryKey: ["companyList"],
         queryFn: () => companyListQuery().then(data => {
             return data;
         }),
     });
 
-    if (isLoading) {
-        console.log('isLoading');
+    if (isPending) {
+        console.log('isPending');
         return null;
     }
 
@@ -77,7 +77,7 @@ function MspPage(props) {
                 if (result.status === "Ok") {
                     setCompanyName("");
                     setErrorMsg("");
-                    queryClient.invalidateQueries(["companyList"], { exact: true })
+                    queryClient.invalidateQueries({ queryKey: ["companyList"], exact: true })
                     return "Ok";
                 }
                 if (result.status === "login") {

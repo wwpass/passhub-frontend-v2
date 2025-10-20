@@ -60,7 +60,7 @@ function GroupSafesModal(props) {
   const groupMutation = useMutation({
     mutationFn: groupAction,
     onSuccess: () => {
-      queryClient.invalidateQueries(["userList"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userList"], exact: true })
     },
   })
 
@@ -180,7 +180,7 @@ function GroupSafesModal(props) {
     });
   };
 
-  const cmpByName = ((a, b) => a.name.localeCompare(b.name));
+  // const cmpByName = ((a, b) => a.name.localeCompare(b.name));
 
   const folders = group.safes.map(s => {
     const f = getFolderById(allSafes, s.SafeID);
@@ -188,7 +188,10 @@ function GroupSafesModal(props) {
     return f;
   });
 
-  const sortedFolders = folders.toSorted(cmpByName);
+  //   const sortedFolders = folders.toSorted(cmpByName);
+  const sortedFolders = [...sortedFolders];
+  sortedFolders.sort((a, b) => a.name.localeCompare(b.name));
+
 
 
   return (

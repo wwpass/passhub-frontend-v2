@@ -21,7 +21,7 @@ function DeleteItemModal(props) {
         const result = response.data;
 
         if (result.status === "Ok") {
-            props.onClose();
+          props.onClose();
           return "Ok";
         }
         if (result.status === "login") {
@@ -33,7 +33,7 @@ function DeleteItemModal(props) {
       })
       .catch((err) => {
         console.log(err);
-        setErrorMsg("Server error. Please try again later" );
+        setErrorMsg("Server error. Please try again later");
       });
   }
 
@@ -41,7 +41,7 @@ function DeleteItemModal(props) {
   const deleteItemMutation = useMutation({
     mutationFn: deleteItemAction,
     onSuccess: data => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
   })
 
@@ -54,76 +54,78 @@ function DeleteItemModal(props) {
   };
 
   const onSubmit = () => {
-      deleteItemMutation.mutate({url: 'delete.php', args: {
-      vault: props.args.safe.id,
-      verifier: getVerifier(),
-      id: props.args.item._id,
-    }});
+    deleteItemMutation.mutate({
+      url: 'delete.php', args: {
+        vault: props.args.safe.id,
+        verifier: getVerifier(),
+        id: props.args.item._id,
+      }
+    });
   }
 
-    let path = [];
-    let title = "";
-    let modalTitle = "Delete Record";
+  let path = [];
+  let title = "";
+  let modalTitle = "Delete Record";
 
 
-    path = props.folder
-      ? props.folder.path.map((e) => e[0]).join(" > ")
-      : [];
-    title = props.args.item.cleartext[0];
+  path = props.folder
+    ? props.folder.path.map((e) => e[0]).join(" > ")
+    : [];
+  title = props.args.item.cleartext[0];
 
-    if (props.args.item.file) {
-      modalTitle = "Delete File";
-    }
-    if (props.args.item.note) {
-      modalTitle = "Delete Note";
-    }
+  if (props.args.item.file) {
+    modalTitle = "Delete File";
+  }
+  if (props.args.item.note) {
+    modalTitle = "Delete Note";
+  }
 
-    return (
-      <Modal
-        show={props.show}
-        onHide={onClose}
-        animation={false}
-        centered
-      >
-        <div className="itemModalNav">
-          <div className="itemModalPath">{path}</div>
-          <div>
-            <span
-              style={{
-                fontSize: "2rem",
-                fontWeight: "400",
-                position: "absolute",
-                right: "0",
-                marginRight: "20px",
-                cursor: "pointer",
-              }}
-              onClick={props.onClose}
-            >
-              &#215;
-            </span>
-          </div>
-        </div>
-        <div className="ModalTitle h2">{modalTitle}</div>
-
-        <Modal.Body>
-          {errorMsg && (
-            <div style={{ color: "red" }}>{errorMsg}</div>
-          )}
-          Do you really want to delete{" "}
-          <span style={{ fontSize: "larger", fontWeight: "bold" }}>
-            {title} ?
+  return (
+    <Modal
+      show={props.show}
+      onHide={onClose}
+      animation={false}
+      centered
+    >
+      <div className="itemModalNav">
+        <div className="itemModalPath">{path}</div>
+        <div>
+          <span
+            style={{
+              fontSize: "2rem",
+              fontWeight: "400",
+              position: "absolute",
+              right: "0",
+              marginRight: "20px",
+              cursor: "pointer",
+            }}
+            onClick={props.onClose}
+          >
+            &#215;
           </span>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="outline-secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="danger" type="submit" onClick={onSubmit}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
+        </div>
+      </div>
+      <div className="ModalTitle h2">{modalTitle}</div>
+
+      <Modal.Body>
+        {errorMsg && (
+          <div style={{ color: "red" }}>{errorMsg}</div>
+        )}
+        Do you really want to delete{" "}
+        <span style={{ fontSize: "larger", fontWeight: "bold" }}>
+          {title} ?
+        </span>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="outline-secondary" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant="danger" type="submit" onClick={onSubmit}>
+          Delete
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 }
 
 export default DeleteItemModal;

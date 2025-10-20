@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from "axios";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, focusManager } from "@tanstack/react-query";
 import { useTimer } from 'react-timer-hook';
 
 import Container from "react-bootstrap/Container";
@@ -113,6 +113,8 @@ function listenToPaymentMessage(cb) {
   );
 }
 
+let lastInvisibleTime = -1;
+
 function Root(props) {
 
   const [searchString, setSearchString] = useState('');
@@ -131,12 +133,11 @@ function Root(props) {
   const dataMutation = useMutation({
     mutationFn: (_args) => Promise.resolve(_args),
     onSuccess: data => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
+      queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
     },
   })
 
   const currentManagedCompanyRef = useRef(null);
-
 
   const gotPaymentMessage = () => {
     dataMutation.mutate();
@@ -169,75 +170,9 @@ function Root(props) {
       console.log('userData query Fn done');
       return data;
     }),
-    onSuccess: (data) => {
-      //       console.log('onSuccess', data)
-    },
-    onError: (err) => {
-      console.log('onError', err)
-    },
-    onSettled: (data) => {
-      // console.log('onSettled')
-      if (data) {
-        // console.log('OS total1', data.totalRecords)
-      }
-    },
-
+    refetchOnWindowFocus: false
+    //    staleTime: 60 * 1000
   });
-
-
-  //  -----------------------
-  {/*
-  const cmtResult = useQuery({
-    queryKey: ["copyMoveToast1"],
-    queryFn: () => Promise.resolve(2).then(data => {
-      return data;
-    }),
-  });
-
-  const cmtData = cmtResult.data;
-
-  useEffect(() => {
-
-    if ((typeof cmtData == "object") && ("item" in cmtData) && ("operation" in cmtData)) {
-      if (showToast != "CopyMoveToast") {
-        setCopyMoveToastOperation(cmtData.operation);
-        setShowToast("CopyMoveToast");
-        enablePaste(true);
-      }
-    }
-  }, [cmtData])
-
-  const copyMoveMutation = useMutation({
-    mutationFn: (_args) => {
-      const { node, pItem, operation } = _args;
-      return dropAndPaste.doMove(props.safes, node, pItem, operation);
-    },
-    onSuccess: (data, variables, context) => {
-      queryClient.invalidateQueries(["userData"], { exact: true })
-    },
-    onError: (err, variables, context) => {
-      if (err.message == "no dst write") {
-        setShowModal("NoRightsModal");
-        setMessageModalArgs({
-          message:
-            'Sorry, "Paste" is forbidden. You have only read access to the destination safe.',
-        })
-        return;
-      }
-      if (err.message == "no src write") {
-        setShowModal("NoRightsModal");
-        setMessageModalArgs({
-          message:
-            'Sorry, "Move" operation is forbidden. You have only read access to the source safe.',
-        })
-        return;
-      }
-    }
-  })
-*/}
-
-  //  -----------------------
-
 
   const accountDataMutation = useMutation({
     mutationFn: (_args) => {
@@ -253,13 +188,28 @@ function Root(props) {
     },
   })
 
-  useEffect(() => { accountDataMutation.mutate() }, [udata])
+  useEffect(() => {
+    accountDataMutation.mutate();
+  }, [udata])
 
 
+  useEffect(() => {
+    console.log('focusManager.subscribe');
+    const unsubscribe = focusManager.subscribe((isVisible) => {
+      console.log('isVisible', isVisible)
+      if (isVisible) {
+        if (lastInvisibleTime > 0 && ((new Date().getTime() - lastInvisibleTime) > 60 * 1000)) {
+          const unseen = (new Date().getTime() - lastInvisibleTime) / 1000;
+          console.log('unseen for ' + unseen + ' sec');
+          queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
+        }
+      } else {
+        lastInvisibleTime = new Date().getTime();
+      }
+    })
+  }, [])
 
   let timeout = (udata && udata.idleTimeout) ? udata.idleTimeout : 123;
-
-
 
   const idleTimer = useIdleTimer({
     //         timeout: 4 * 60 * 60 * 1000 , // 3 min
@@ -286,7 +236,12 @@ function Root(props) {
     idleTimer.start();
   }
 
-  let expiryTimestamp = new Date().getTime();
+  //  let expiryTimestamp = new Date().getTime();
+  let expiryTimestamp = new Date();
+
+
+
+
 
   const {
     totalSeconds,
@@ -300,10 +255,15 @@ function Root(props) {
     resume,
     restart: restartCopyMoveToastTimer,
   } = useTimer({
-    expiryTimestamp,
-    onExpire: () => { if (showToast == "CopyMoveToast") { setShowToast("") }; console.warn('onExpire called') }
+    // expiryTimestamp,  // ? version 3 to version 4 migration
+    autoStart: false,
+    onExpire: () => {
+      if (showToast == "CopyMoveToast") {
+        setShowToast("")
+      };
+      console.warn('onExpire called')
+    }
   });
-  // console.log('seconds ' + seconds);
 
   extensionInterface.setRestartIdleTimer(restartIdleTimer);
 
@@ -339,7 +299,10 @@ function Root(props) {
   const showCopyMoveToast = (operation) => {
     copyMoveOperation = operation;
     setShowToast("CopyMoveToast");
-    restartCopyMoveToastTimer(new Date().getTime() + COPY_MOVE_TOAST_TIMEOUT * 1000);
+    //    restartCopyMoveToastTimer(new Date().getTime() + COPY_MOVE_TOAST_TIMEOUT * 1000);
+    let timerEnd = new Date();
+    timerEnd.setSeconds(timerEnd.getSeconds() + COPY_MOVE_TOAST_TIMEOUT);
+    restartCopyMoveToastTimer(timerEnd);
     enablePaste(true);
   }
 
@@ -356,6 +319,19 @@ function Root(props) {
   };
 
   const gotoMain = () => {
+    if (page == "Main") {
+      // for mobile:
+      resetSearch();
+      const safePane = document.querySelector("#safe_pane");
+      const tablePane = document.querySelector("#table_pane");
+      if (safePane && safePane.classList.contains("d-none") && !tablePane.classList.contains("d-none")) {
+        document.querySelector("#safe_pane").classList.remove("d-none");
+        document.querySelector("#table_pane").classList.add("d-none");
+      }
+      return;
+    }
+
+    // back from File view
     setPage("Main");
     setFilename("");
     setBlob(null);
@@ -382,6 +358,7 @@ function Root(props) {
 
         onSearchChange={e => setSearchString(e.target.value)}
         onSearchClear={() => setSearchString('')}
+
         searchString={searchString}
         gotoMain={gotoMain}
         gotoIam={gotoIam}

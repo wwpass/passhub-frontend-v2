@@ -230,7 +230,7 @@ function AccountModal(props) {
         {!accountData.business && (
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <div style={{ marginBottom: 37 }}>
-              Accout type:{" "}
+              Account type:{" "}
               <b>{accountType}</b>
             </div>
             {showUpgrade && (
