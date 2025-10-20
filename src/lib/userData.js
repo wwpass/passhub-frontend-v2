@@ -176,46 +176,155 @@ function normalizeSafes(safes) {
   }
 }
 
+function _decryptUserData1(data) {
+  let startTime = new Date().getTime();
+  return passhubCrypto.getPrivateKey(data)
+    .then((k) => decryptGroups(data.groups))
+    .then((groups) => {
+      for (let safe of data.safes) {
+        if (safe.group) {
+          for (let group of groups) {
+            if (safe.group == group.GroupID) {
+              safe.bstringKey = passhubCrypto.decryptSafeKey(safe.key, group.bstringKey);
+              break;
+            }
+          }
+        }
+      }
+      return decryptSafes(data.safes)
+    })
+    .then((safes) => {
+      console.log('safes decrypted', safes);
 
-const downloadUserData = () => {
+      let decryptTime = new Date().getTime();
+      console.log('decrypt time', decryptTime - startTime);
+      data.safes.sort((a, b) =>
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      );
+      normalizeSafes(data.safes);
+      data.activeFolder = getFolderById(data.safes, data.currentSafe);
+      if (!data.activeFolder) {
+        console.log("active folder not found" + data.currentSafe);
+        data.activeFolder = data.safes[0];
+      }
+      userData = data;
+      let totalRecords = 0;
+      let totalStorage = 0;
+      for (const safe of data.safes) {
+        totalRecords += safe.items.length;
+        for (const item of safe.items) {
+          if ('file' in item) {
+            totalStorage += item.file.size;
+          }
+        }
+      }
+
+      accountData = {
+        email: data.email,
+        maxRecords: data.maxRecords,
+        maxStorage: data.maxStorage,
+        maxFileSize: data.maxFileSize,
+        upgrade: data.upgrade,
+        business: data.business,
+        plan: data.plan,
+        expires: data.expires,
+        autorenew: data.autorenew,
+        receipt_url: data.receipt_url,
+        totalRecords,
+        totalStorage,
+        idleTimeout: data.idleTimeout,
+        desktop_inactivity: data.desktop_inactivity
+      }
+
+      data.totalRecords = totalRecords;
+      data.totalStorage = totalStorage;
+      if (window.location.href.includes("except")) {
+        throw new Error('downloadUserData');
+      }
+      return data;
+    })
+
+}
+
+
+// const downloadUserData = () => {
+async function downloadUserData() {
+
 
   if (window.location.href.includes("mock") || window.location.href.includes("localhost")) {
     mockData.activeFolder = mockData.safes[0];
     mockData.safes[0].folders[0].safe = mockData.safes[0];
     mockData.safes[1].folders[0].safe = mockData.safes[1];
     normalizeSafes(mockData.safes);
-    return Promise.resolve(mockData);
-    /*
-      this.setState(mockData);
-      if ("goPremium" in mockData && mockData.goPremium == true) {
-        self.props.showToast("goPremiumToast");
-      } else if ("takeSurvey" in mockData && mockData.takeSurvey == true) {
-        self.props.showToast("takeSurveyToast");
-      }
-      return;
-    */
+    //    return Promise.resolve(mockData);
+    return mockData;
   }
 
   console.log('downloadUserData');
   let startTime = new Date().getTime();
-  return axios
-    .post(`${getApiUrl()}get_user_datar.php`, {
+
+  let result = await axios.post(`${getApiUrl()}get_user_datar.php`, {
+    verifier: getVerifier(),
+  })
+
+  if (result.data.status === "login") {
+    window.location.href = "expired.php";
+    progress.unlock();
+    return false;
+  }
+  if (result.data.status === "not found") {
+    console.log('Hello 1')
+    console.log(result)
+    result = await createUser(result.data);
+
+    console.log('Hello 2')
+    console.log(result)
+
+    result = await axios.post(`${getApiUrl()}get_user_datar.php`, {
       verifier: getVerifier(),
     })
-    .then((result) => {
-      // console.log('got user data');
-      if (result.data.status === "create user") {
-        createUser(result.data);
-        return;
-      }
 
-      if (result.data.status === "Ok") {
-        console.log('got user data');
-        let endTime = new Date().getTime();
-        console.log('downloadUserData time', endTime - startTime);
+    console.log('Hello 3')
+    console.log(result)
+  }
 
-        const data = result.data.data;
+  if (result.data.status === "Ok") {
+    console.log('got user data');
+    let endTime = new Date().getTime();
+    console.log('downloadUserData time', endTime - startTime);
 
+    const data = result.data.data;
+    const r = await _decryptUserData1(data);
+    return r;
+    /*
+    */
+  }
+
+  /*
+      })
+      .catch((error) => {
+        progress.unlock();
+        console.log('cauth 185', error);
+      });
+  */
+};
+
+export {
+  downloadUserData,
+  getUserData,
+  getAccountData,
+  updateEmail,
+  updateInactivityTimeout,
+  clearAutorenew,
+
+  decryptGroups, //to be removed: usermanagement may use all user data
+  // setCmtData,
+  // getCmtData
+  setGeneratorConfig
+};
+
+
+/*
         return passhubCrypto.getPrivateKey(data)
           .then((k) => decryptGroups(data.groups))
           .then((groups) => {
@@ -233,7 +342,7 @@ const downloadUserData = () => {
           })
           .then((safes) => {
             // console.log('safes decrypted', safes);
-
+ 
             let decryptTime = new Date().getTime();
             console.log('decrypt time', decryptTime - endTime);
             data.safes.sort((a, b) =>
@@ -256,7 +365,7 @@ const downloadUserData = () => {
                 }
               }
             }
-
+ 
             accountData = {
               email: data.email,
               maxRecords: data.maxRecords,
@@ -273,7 +382,7 @@ const downloadUserData = () => {
               idleTimeout: data.idleTimeout,
               desktop_inactivity: data.desktop_inactivity
             }
-
+ 
             data.totalRecords = totalRecords;
             data.totalStorage = totalStorage;
             if (window.location.href.includes("except")) {
@@ -289,29 +398,4 @@ const downloadUserData = () => {
             console.log('caught', err)
             window.location.href = `error_page.php?js=387&error=${err}`;
           });
-      }
-      if (result.data.status === "login") {
-        window.location.href = "expired.php";
-        progress.unlock();
-        return;
-      }
-    })
-    .catch((error) => {
-      progress.unlock();
-      console.log('cauth 185', error);
-    });
-};
-
-export {
-  downloadUserData,
-  getUserData,
-  getAccountData,
-  updateEmail,
-  updateInactivityTimeout,
-  clearAutorenew,
-
-  decryptGroups, //to be removed: usermanagement may use all user data
-  // setCmtData,
-  // getCmtData
-  setGeneratorConfig
-};
+          */
