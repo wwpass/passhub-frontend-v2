@@ -37,15 +37,13 @@ function uploadUserData() {
             encryptedPrivateKey: credentials_to_send.encryptedPrivateKey,
             import: encryptedSafes
         }
-
     )
         .then((reply) => {
             const result = reply.data;
-            if (result.status === 'Ok') {
-                window.location.href = 'index.php';
-                return;
+            if (result.status != 'Ok') {
+                alert(result.status);
             }
-            alert(result.status);
+            return result.status;
         })
 }
 
@@ -101,6 +99,10 @@ function cryptoapi_catch(err) {
 }
 
 function createUser(data) {
+
+    console.log('createUser called');
+    console.log(data);
+
     ticket = data.ticket;
     template_safes = data.template_safes;
 
