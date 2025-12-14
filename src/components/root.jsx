@@ -37,7 +37,6 @@ let copyMoveOperation = "";
 
 function userDataQuery() {
 
-  //console.log("userData query called");
 
   progress.lock(240);
   return downloadUserData()
@@ -166,12 +165,11 @@ function Root(props) {
 
           document.querySelector("body").classList.add(data.theme);
           if (data.theme == "theme-lite") {
-            document.querySelector("body").removerAttribute("data-bs-theme");
+            document.querySelector("body").removeAttribute("data-bs-theme");
           } else {
             document.querySelector("body").setAttribute("data-bs-theme", "dark");
           }
         }
-
       }
       console.log('userData query Fn done');
       return data;
