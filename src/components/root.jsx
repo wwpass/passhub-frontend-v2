@@ -53,9 +53,9 @@ extensionInterface.connect(advise);
 
 document.addEventListener("passhubExtInstalled", function (data) {
   console.log("got passhubExtInstalled");
-  extensionInterface.connect(advise);
+  extensionInterface.InitiateExtensionConnection();
+  //  extensionInterface.connect(advise);
 });
-
 
 let wrongOrigin = 0;
 
