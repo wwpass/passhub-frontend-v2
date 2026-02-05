@@ -11,6 +11,7 @@ import ModalCross from "./modalCross";
 import importXML from "../lib/importXML";
 import importJSON from "../lib/importJSON";
 import importCSV from "../lib/importCSV";
+import import1PUX from "../lib/import1PUX";
 import importMerge from "../lib/importMerge";
 import { createSafeFromFolder } from "../lib/crypto";
 import progress from "../lib/progress";
@@ -75,8 +76,9 @@ function ImportModal(props) {
     }
 
     const extension = theFile.name.split(".").pop().toLowerCase();
-    if (!['csv', 'xml', 'json'].includes(extension)) {
-      setErrorMsg("Unsupported file type, only XML and CSV are allowed");
+
+    if (!['csv', 'xml', 'json', '1pux'].includes(extension)) {
+      setErrorMsg("Unsupported file type, only XM, CSV, JSON, and 1PUX are allowed");
       return;
     }
 
@@ -95,6 +97,15 @@ function ImportModal(props) {
       const text = reader.result;
       let imported = {};
       try {
+        if (extension === "1pux") {
+          import1PUX(text)
+            .then(imported => {
+              imported.name = theFile.name;
+              const importedSafe = createSafeFromFolder(imported);
+              uploadImportedData([importedSafe]);
+            })
+          return;
+        }
         if (extension === "xml") {
           imported = importXML(text);
         } else if (extension === "json") {
@@ -135,8 +146,12 @@ function ImportModal(props) {
         uploadImportedData(safeArray);
       }
     };
-    progress.lock();
-    reader.readAsText(theFile);
+    //    progress.lock();
+    if (extension === "1pux") {
+      reader.readAsArrayBuffer(theFile);
+    } else {
+      reader.readAsText(theFile);
+    }
   };
 
   console.log("ImportModal start draw");
@@ -176,7 +191,7 @@ function ImportModal(props) {
 
           <input
             type="file"
-            accept=".xml,.csv,.json"
+            accept=".xml,.csv,.json,.1pux"
             id="inputFileModal"
             onChange={onFileInputChange}
           ></input>
@@ -190,9 +205,9 @@ function ImportModal(props) {
             marginBottom: 32,
           }}
         >
-          <b>Supports:</b> KeePass&nbsp;2.x&nbsp;XML, Bitwarden&nbsp;JSON, KeePassX&nbsp;CSV,
+          <b>Supports:</b> KeePass&nbsp;2.x&nbsp;XML, Bitwarden&nbsp;JSON,  1Password&nbsp;1PUX, KeePassX&nbsp;CSV,
           Chrome&nbsp;passwords&nbsp;CSV, Firefox&nbsp;passwords&nbsp;CSV, Safari&nbsp;passwords&nbsp;CSV,
-          Lastpass&nbsp;CSV, DashLane&nbsp;CSV
+          Lastpass&nbsp;CSV, DashLane&nbsp;CSV, 1Password&nbsp;CSV
         </div>
         <div style={{ marginBottom: 0 }}>
           {[
