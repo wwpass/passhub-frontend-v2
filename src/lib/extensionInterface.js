@@ -1,5 +1,5 @@
-const consoleLog = console.log;
-// const consoleLog = () => {};
+// const consoleLog = console.log;
+const consoleLog = () => { };
 
 import { getTOTP, getTOTP2 } from "./totp";
 
@@ -228,13 +228,13 @@ function InitiateExtensionConnection() {
             promises.push(extension.runtime.sendMessage(extId, message));
         }
         Promise.allSettled(promises).then(values => {
-            console.log('promiseAll returns');
-            console.log(values);
+            consoleLog('promiseAll returns');
+            consoleLog(values);
 
             for (let i = 0; i < extensionIds.length; i++) {
                 if (values[i].status == "fulfilled") {
                     extensionId = extensionIds[i];
-                    console.log(`extension ${extensionId} found`);
+                    consoleLog(`extension ${extensionId} found`);
 
                     if (values[i].value) {
                         consoleLog('remember-me got response');

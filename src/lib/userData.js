@@ -194,17 +194,14 @@ function _decryptUserData1(data) {
       return decryptSafes(data.safes)
     })
     .then((safes) => {
-      console.log('safes decrypted', safes);
 
       let decryptTime = new Date().getTime();
-      console.log('decrypt time', decryptTime - startTime);
       data.safes.sort((a, b) =>
         a.name.toLowerCase().localeCompare(b.name.toLowerCase())
       );
       normalizeSafes(data.safes);
       data.activeFolder = getFolderById(data.safes, data.currentSafe);
       if (!data.activeFolder) {
-        console.log("active folder not found" + data.currentSafe);
         data.activeFolder = data.safes[0];
       }
       userData = data;
@@ -260,7 +257,6 @@ async function downloadUserData() {
     return mockData;
   }
 
-  console.log('downloadUserData');
   let startTime = new Date().getTime();
 
   let result = await axios.post(`${getApiUrl()}get_user_datar.php`, {
@@ -273,31 +269,21 @@ async function downloadUserData() {
     return false;
   }
   if (result.data.status === "not found") {
-    console.log('Hello 1')
-    console.log(result)
     result = await createUser(result.data);
 
-    console.log('Hello 2')
-    console.log(result)
 
     result = await axios.post(`${getApiUrl()}get_user_datar.php`, {
       verifier: getVerifier(),
     })
 
-    console.log('Hello 3')
-    console.log(result)
   }
 
   if (result.data.status === "Ok") {
-    console.log('got user data');
     let endTime = new Date().getTime();
-    console.log('downloadUserData time', endTime - startTime);
 
     const data = result.data.data;
     const r = await _decryptUserData1(data);
     return r;
-    /*
-    */
   }
 
   /*
