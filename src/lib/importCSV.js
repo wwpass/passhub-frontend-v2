@@ -252,9 +252,6 @@ function importCSV(text) {
     return safes;
   }
 
-
-
-
   // url,username,password,totp, extra,name,grouping,fav -- new lastpass
   if ((titles.length === 8)
     && (titles[0] === 'url')
