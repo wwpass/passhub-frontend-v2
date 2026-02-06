@@ -1,5 +1,6 @@
 import { isAxiosError } from "axios";
 import JSZip from "jszip";
+import { createSafeFromFolder } from "../lib/crypto";
 
 
 /*
@@ -18,7 +19,6 @@ where each folder is
 }
 
 */
-
 
 function unknownToPasshub(item) {
     const title = ("title" in item.overview) ? item.overview.title : "unnamed";
@@ -53,9 +53,43 @@ function unknownToPasshub(item) {
 
     note += ("notesPlain" in item.details) ? item.details.notesPlain : '';
 
-
     return { cleartext: [title, '', '', '', note], options: { note: 1 } }
 }
+
+
+/*
+
+{
+    "loginFields": [],
+    "sections": [],
+    "passwordHistory": [],
+    "documentAttributes": {
+        "fileName": "logo24.png",
+            "documentId": "7bgfvsmm6fgsu3vpex2ll54szi",
+                "decryptedSize": 35925
+    }
+}
+*/
+
+
+function fileToPasshub(item) {
+    const title = ("title" in item.overview) ? item.overview.title : "unnamed";
+
+    let note = `1Password record type FILE\n\n`;
+
+    if ("documentAttributes" in item.details) {
+        for (const key in item.details.documentAttributes) {
+            note += `${key}: ${item.details.documentAttributes[key]}\n`
+        }
+    }
+
+    note += "\n";
+
+    note += ("notesPlain" in item.details) ? item.details.notesPlain : '';
+
+    return { cleartext: [title, '', '', '', note], options: { note: 1, onePasswordDocumentId: item.details.documentAttributes.documentId } }
+}
+
 
 
 function noteToPasshub(item) {
@@ -63,7 +97,6 @@ function noteToPasshub(item) {
     let note = ("notesPlain" in item.details) ? item.details.notesPlain : '';
     return { cleartext: [title, '', '', '', note], options: { note: 1 } }
 }
-
 
 function loginToPasshub(item) {
     const title = ("title" in item.overview) ? item.overview.title : "unnamed";
@@ -161,17 +194,17 @@ function toPasshub(item) {
         if (item.categoryUuid == "003") {
             return noteToPasshub(item);
         }
-        /*
-                if (item.categoryUuid == "108") {
-                    return ssnToPasshub(item);
-                }
-        */
+
+        if (item.categoryUuid == "006") {
+            return fileToPasshub(item);
+        }
+
         return unknownToPasshub(item);
     }
     return result;
 }
 
-function onePassToPasshub(onePass) {
+async function onePassToPasshub(onePass) {
     let result = {
         folders: [],
         items: []
@@ -207,6 +240,7 @@ function onePassToPasshub(onePass) {
     return result;
 }
 
+/*
 function import1PUX(zipFileContent) {
 
     const zip = new JSZip();
@@ -222,6 +256,26 @@ function import1PUX(zipFileContent) {
         .catch(err => {
             console.log(err);
         })
+}
+*/
+
+
+async function import1PUX(zipFileContent, puxFilename) {
+
+    try {
+        const zip = new JSZip();
+        const data = await zip.loadAsync(zipFileContent);
+
+        console.log(data);
+
+        const txt = await zip.file("export.data").async("string");
+
+        const obj = JSON.parse(txt);
+        console.log(obj);
+        return await onePassToPasshub(obj);
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 export default import1PUX;

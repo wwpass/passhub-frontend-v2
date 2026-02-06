@@ -275,11 +275,16 @@ function encryptFolder(folder, aes_key) {
     result._id = folder._id;
   }
   for (const item of folder.items) {
-    let options = {};
-    if (item.note) {
-      options["note"] = item.note;
-    } else if (item.version === 5) {
-      options["version"] = item.version;
+    let options = {}
+
+    if (!("options" in item)) {  // who did it?
+      if (item.note) {
+        options["note"] = item.note;
+      } else if (item.version === 5) {
+        options["version"] = item.version;
+      }
+    } else {
+      options = item.options;
     }
 
     if ("file" in item) { // only possible when moving Folder
