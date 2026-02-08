@@ -1,7 +1,7 @@
-import { isAxiosError } from "axios";
+import axios from "axios";
 import JSZip from "jszip";
-import { createSafeFromFolder } from "../lib/crypto";
-
+import * as passhubCrypto from "../lib/crypto";
+import { getApiUrl, getVerifier } from "../lib/utils";
 
 /*
 the Goal: return a "Safe" object with 
@@ -19,6 +19,8 @@ where each folder is
 }
 
 */
+
+let fileIDs = [];
 
 function unknownToPasshub(item) {
     const title = ("title" in item.overview) ? item.overview.title : "unnamed";
@@ -80,6 +82,9 @@ function fileToPasshub(item) {
     if ("documentAttributes" in item.details) {
         for (const key in item.details.documentAttributes) {
             note += `${key}: ${item.details.documentAttributes[key]}\n`
+            if (key == "documentId") {
+                fileIDs.push(item.details.documentAttributes[key]);
+            }
         }
     }
 
@@ -204,8 +209,9 @@ function toPasshub(item) {
     return result;
 }
 
-async function onePassToPasshub(onePass) {
+async function onePassToPasshub(onePass, fileName) {
     let result = {
+        name: fileName,
         folders: [],
         items: []
     };
@@ -260,13 +266,100 @@ function import1PUX(zipFileContent) {
 */
 
 
+const uploadImportedData = (safeArray) => {
+    if (safeArray.length === 0) {
+        return;
+    }
+
+    return axios
+        .post(`${getApiUrl()}impex.php`, {
+            verifier: getVerifier(),
+            import: safeArray,
+        })
+        .then((reply) => {
+            const result = reply.data;
+            if (result.status === "Ok") {
+                return;
+            }
+            return;
+        })
+    /*        
+            .catch((error) => {
+                //            progress.unlock();
+    //            setErrorMsg("Server error. Please try again later");
+            });
+    */
+};
+
+
+
+
+/*==================
+ const { fileInfo, cFileContent } = passhubCrypto.encryptFile(
+        pFileContent,
+        aesKey
+      );
+====================*/
+
+
+async function uploadFiles(zip, fileIDs) {
+    zip.folder("files").forEach(function (relativePath, file) {
+        console.log("iterating over", relativePath, file);
+    });
+    return fileIDs;
+}
+
+
 async function import1PUX(zipFileContent, puxFilename) {
 
+    fileIDs = [];
+    let aesKey;
+
+
+    console.log(271)
+    const zip = new JSZip();
+
+    return zip.loadAsync(zipFileContent)
+        .then(() => zip.file("export.data").async("string"))
+        .then(jsonObj => {
+            const obj = JSON.parse(jsonObj);
+            return onePassToPasshub(obj, puxFilename).then(imported => {
+                console.log(275, 'fileIDs')
+                console.log(fileIDs)
+                //                console.log(imported)
+                const { safe: importedSafe, binaryKey } = passhubCrypto.createSafeFromFolder(imported, true)
+                aesKey = binaryKey;
+                console.log('binaryKey ', binaryKey)
+                //                console.log(277)
+                //                console.log(importedSafe)
+                return uploadImportedData([importedSafe]).then(() => uploadFiles(zip, fileIDs))
+                // return importedSafe;
+            })
+        })
+        /*
+            .then(txt => {
+                console.log('import1PUX 271');
+                return 1;
+            })
+            .catch(err => {
+                console.log('275')
+
+            })
+                */
+        .catch(err => {
+            console.log('error 280')
+            console.log(err)
+        });
+    //    return 1;
+
+
+
+    /*
     try {
         const zip = new JSZip();
         const data = await zip.loadAsync(zipFileContent);
 
-        console.log(data);
+        //         console.log(data);
 
         const txt = await zip.file("export.data").async("string");
 
@@ -276,7 +369,75 @@ async function import1PUX(zipFileContent, puxFilename) {
     } catch (err) {
         console.log(err);
     }
+        */
 }
+
+
+
+/*
+      const { fileInfo, cFileContent } = passhubCrypto.encryptFile(
+        pFileContent,
+        aesKey
+      );
+*/
+
+
+/*
+const uploadFileP = (theFile, SafeID, folderID, note, aesKey, props) =>
+  theFile.arrayBuffer()
+    .then(pFileContent => {
+
+      const { fileInfo, cFileContent } = passhubCrypto.encryptFile(
+        pFileContent,
+        aesKey
+      );
+      const title = theFile.name;
+
+      const pData = [title, "", "", "", note];
+      const options = {};
+
+      const eData = passhubCrypto.encryptItem(
+        pData,
+        aesKey,
+        options
+      );
+
+      const data = new FormData();
+      data.append("vault", SafeID);
+      data.append("folder", folderID);
+      data.append("verifier", getVerifier());
+
+      data.append("meta", eData);
+      data.append("file", fileInfo);
+      const ab = passhubCrypto.str2uint8(cFileContent);
+      const bl = new Blob([ab]);
+      data.append("blob", bl);
+      return axios
+        .post(`${getApiUrl()}create_file.php`, data, {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+          timeout: 600000,
+        })
+        .then(response => {
+          const result = response.data;
+
+          if (result.status === "Ok") {
+            if (result.firstID) {
+              props.newItemInd(result.firstID);
+            }
+            return result;
+          }
+          if (response.status === "login") {
+            window.location.href = "expired.php";
+            return;
+          }
+          throw new Error(result.data.status);
+        })
+    })
+
+*/
+
 
 export default import1PUX;
 

@@ -93,18 +93,74 @@ function ImportModal(props) {
       setErrorMsg("Error loading file");
     };
 
+
+    function delay() {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, 3000);
+      });
+
+    }
+
     reader.onload = () => {
       const text = reader.result;
       let imported = {};
       try {
         if (extension === "1pux") {
-          import1PUX(text)
+
+          return import1PUX(text, theFile.name).then((data) => {
+            console.log(111)
+            console.log(data);
+            queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
+            props.onClose(true);
+          })
+
+          /*          
+          return delay().then(() => {
+            console.log(110);
+            queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
+            props.onClose(true);
+
+          })
+*/
+
+          /*
+          import1PUX(text, theFile.name)
+            .then((data) => {
+              console.log('importModal');
+              console.log(data);
+
+              progress.unlock();
+              props.onClose(true);
+
+            })
+            .catch(err => {
+              console.log(111);
+            })
+*/
+
+
+          /*
+          import1PUX(text, theFile.name)
             .then(imported => {
               imported.name = theFile.name;
               const importedSafe = createSafeFromFolder(imported);
               uploadImportedData([importedSafe]);
+              return;
             })
-          return;
+*/
+
+
+
+
+          /*          
+                      .then(() => {
+                        console.log('Hello 103');
+                        queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
+                        props.onClose(true);
+                        return;
+          
+                      })
+          */
         }
         if (extension === "xml") {
           imported = importXML(text);
@@ -129,8 +185,6 @@ function ImportModal(props) {
         return;
       }
 
-      console.log(imported);
-
       if (mode !== "restore") {
         let importedSafe;
         if ((imported.folders.length == 1) && (imported.folders[0].name == 'lastpass')) {
@@ -139,22 +193,19 @@ function ImportModal(props) {
         } else {
           importedSafe = createSafeFromFolder(imported);
         }
-        console.log(importedSafe);
         uploadImportedData([importedSafe]);
       } else {
         const safeArray = importMerge(imported.folders, props.safes);
         uploadImportedData(safeArray);
       }
     };
-    //    progress.lock();
+    // progress.lock();
     if (extension === "1pux") {
       reader.readAsArrayBuffer(theFile);
     } else {
       reader.readAsText(theFile);
     }
   };
-
-  console.log("ImportModal start draw");
 
   return (
     <Modal

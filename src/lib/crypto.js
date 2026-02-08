@@ -233,7 +233,7 @@ function createSafe(name) {
   return { /*name, */ eName, aes_key: hexEncryptedAesKey, version: 3 };
 };
 
-function createSafeFromFolder(folder) {
+function createSafeFromFolder(folder, needBinaryKey = false) {
   const aesKey = forge.random.getBytesSync(32);
   const hexEncryptedAesKey = encryptAesKey(publicKeyPem, aesKey);
   const result = {};
@@ -251,7 +251,10 @@ function createSafeFromFolder(folder) {
       result.folders.push(encryptFolder(folder.folders[f], aesKey));
     }
   }
-  return result;
+  if (!needBinaryKey) {
+    return result;
+  }
+  return { safe: result, binaryKey: aesKey }
 }
 
 function decryptSafeName(safe, aesKey) {
