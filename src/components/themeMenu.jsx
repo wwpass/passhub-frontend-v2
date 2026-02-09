@@ -47,8 +47,6 @@ function ThemeMenu(props) {
     }
   }
 
-  console.log(currentTheme);
-
   return (
 
     <Menu id={"theme-menu-id"} onVisibilityChange={onVisibilityChange}>
