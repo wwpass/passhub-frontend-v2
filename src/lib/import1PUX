@@ -3,36 +3,74 @@ import JSZip from "jszip";
 import * as passhubCrypto from "../lib/crypto";
 import { getApiUrl, getVerifier } from "../lib/utils";
 
-/*
-the Goal: return a "Safe" object with 
-{
-    - safe name
-    - safe items[] 
-    - safe folders[]
-}
-
-where each folder is 
-{
-    - folder name
-    - folder items[] 
-    - folder folders[]
-}
-
-*/
 
 let fileIDs = [];
+
+
+function getTags(item) {
+    let tags = '';
+
+    if (("tags" in item.overview) && (Array.isArray(item.overview.tags))) {
+        tags += '\n\ntags: ';
+        tags += item.overview.tags.join(' ');
+        tags += '\n';
+    }
+    return tags;
+}
+
 
 function unknownToPasshub(item) {
     const title = ("title" in item.overview) ? item.overview.title : "unnamed";
 
     let note = `1Password record type ${item.categoryUuid}\n\n`;
 
-    if (item.categoryUuid == "108") {
-        note = "1Password record type SSN\n\n";
+    if (item.categoryUuid == "004") {
+        note = "1Password record type IDENTITY\n\n";
     }
-
+    if (item.categoryUuid == "100") {
+        note = "1Password record type SOFTWARE LICENSE\n\n";
+    }
     if (item.categoryUuid == "101") {
         note = "1Password record type BANK ACCOUNT\n\n";
+    }
+    if (item.categoryUuid == "102") {
+        note = "1Password record type DATABASE\n\n";
+    }
+    if (item.categoryUuid == "103") {
+        note = "1Password record type DRIVER LICENSE\n\n";
+    }
+    if (item.categoryUuid == "104") {
+        note = "1Password record type OUTDOOR LICENSE\n\n";
+    }
+    if (item.categoryUuid == "105") {
+        note = "1Password record type MEMBERSHIP\n\n";
+    }
+    if (item.categoryUuid == "106") {
+        note = "1Password record type PASSPORT\n\n";
+    }
+    if (item.categoryUuid == "107") {
+        note = "1Password record type REWARDS\n\n";
+    }
+    if (item.categoryUuid == "109") {
+        note = "1Password record type WIRELESS ROUTER\n\n";
+    }
+    if (item.categoryUuid == "110") {
+        note = "1Password record type SERVER\n\n";
+    }
+    if (item.categoryUuid == "111") {
+        note = "1Password record type EMAIL\n\n";
+    }
+    if (item.categoryUuid == "112") {
+        note = "1Password record type API CREDENTIALS\n\n";
+    }
+    if (item.categoryUuid == "113") {
+        note = "1Password record type MEDICAL RECORD\n\n";
+    }
+    if (item.categoryUuid == "114") {
+        note = "1Password record type SSH KEY\n\n";
+    }
+    if (item.categoryUuid == "115") {
+        note = "1Password record type CRYPTO WALLET\n\n";
     }
 
     if (("sections" in item.details)
@@ -54,52 +92,37 @@ function unknownToPasshub(item) {
     note += "\n";
 
     note += ("notesPlain" in item.details) ? item.details.notesPlain : '';
+    note += getTags(item);
 
     return { cleartext: [title, '', '', '', note], options: { note: 1 } }
 }
 
 
-/*
-
-{
-    "loginFields": [],
-    "sections": [],
-    "passwordHistory": [],
-    "documentAttributes": {
-        "fileName": "logo24.png",
-            "documentId": "7bgfvsmm6fgsu3vpex2ll54szi",
-                "decryptedSize": 35925
-    }
-}
-*/
-
-
 function fileToPasshub(item) {
-    const title = ("title" in item.overview) ? item.overview.title : "unnamed";
-
-    let note = `1Password record type FILE\n\n`;
+    let title = ("title" in item.overview) ? item.overview.title : "unnamed";
 
     if ("documentAttributes" in item.details) {
         for (const key in item.details.documentAttributes) {
-            note += `${key}: ${item.details.documentAttributes[key]}\n`
             if (key == "documentId") {
                 fileIDs.push(item.details.documentAttributes[key]);
+            }
+            if (key == "fileName") {
+                title = item.details.documentAttributes[key];
             }
         }
     }
 
-    note += "\n";
-
-    note += ("notesPlain" in item.details) ? item.details.notesPlain : '';
+    let note = ("notesPlain" in item.details) ? item.details.notesPlain : '';
+    note += getTags(item);
 
     return { cleartext: [title, '', '', '', note], options: { note: 1, onePasswordDocumentId: item.details.documentAttributes.documentId } }
 }
 
-
-
 function noteToPasshub(item) {
     const title = ("title" in item.overview) ? item.overview.title : "unnamed";
     let note = ("notesPlain" in item.details) ? item.details.notesPlain : '';
+    note += getTags(item);
+
     return { cleartext: [title, '', '', '', note], options: { note: 1 } }
 }
 
@@ -108,7 +131,6 @@ function loginToPasshub(item) {
     let username = '';
     let password = '';
     let urls = [];
-    let note = ("notesPlain" in item.details) ? item.details.notesPlain : '';
 
     try {
         for (const field of item.details.loginFields) {
@@ -127,6 +149,11 @@ function loginToPasshub(item) {
     } catch (err) {
         console.log(err);
     }
+
+    let note = ("notesPlain" in item.details) ? item.details.notesPlain : '';
+    note += getTags(item);
+
+
     if (("sections" in item.details)
         && Array.isArray(item.details.sections)
         && (item.details.sections.length > 0)
@@ -138,6 +165,7 @@ function loginToPasshub(item) {
             if (field?.title == "one-time password")
                 totp = field?.value?.totp;
         }
+
         if (totp) {
             return { cleartext: [title, username, password, urls.join('\x01'), note, totp] }
         }
@@ -146,10 +174,34 @@ function loginToPasshub(item) {
     return { cleartext: [title, username, password, urls.join('\x01'), note] }
 }
 
+
+
+function sshToPasshub(item) {
+
+    const title = ("title" in item.overview) ? item.overview.title : "unnamed";
+
+    let sshKey = {};
+
+    try {
+        for (const field of item.details.sections[0].fields) {
+            if (field.id == "private_key") {
+                sshKey = field.value.sshKey;
+            }
+        }
+    } catch (err) {
+        console.log(err);
+    }
+
+    let note = JSON.stringify(sshKey);
+    note += '\n';
+    note += ("notesPlain" in item.details) ? item.details.notesPlain : '';
+    note += getTags(item);
+    return { cleartext: [title, '', '', '', note], options: { note: 1 } }
+}
+
 function cardToPasshub(item) {
 
     const title = ("title" in item.overview) ? item.overview.title : "unnamed";
-    let note = ("notesPlain" in item.details) ? item.details.notesPlain : '';
 
     let ccNumber = '';
     let ccName = '';
@@ -171,6 +223,9 @@ function cardToPasshub(item) {
             }
             if (field.id == "expiry") {
                 let expiry = field.value.monthYear;
+                if ((typeof expiry) == "number") {
+                    expiry = expiry.toString();
+                }
                 if ((expiry.length == 6) && (expiry.substring(0, 1) == '2')) {
 
                     ccExpYear = expiry.substring(0, 4);
@@ -181,6 +236,9 @@ function cardToPasshub(item) {
     } catch (err) {
         console.log(err);
     }
+
+    let note = ("notesPlain" in item.details) ? item.details.notesPlain : '';
+    note += getTags(item);
 
     return { cleartext: ["card", title, note, ccNumber, ccName, ccExpMonth, ccExpYear, ccCSC], options: { version: 5 } }
 
@@ -202,6 +260,10 @@ function toPasshub(item) {
 
         if (item.categoryUuid == "006") {
             return fileToPasshub(item);
+        }
+
+        if (item.categoryUuid == "114") {
+            return sshToPasshub(item);
         }
 
         return unknownToPasshub(item);
@@ -242,29 +304,8 @@ async function onePassToPasshub(onePass, fileName) {
             result.folders.push(folder);
         }
     }
-    console.log(result);
     return result;
 }
-
-/*
-function import1PUX(zipFileContent) {
-
-    const zip = new JSZip();
-    return zip.loadAsync(zipFileContent)
-        .then(data => {
-            console.log(data);
-            return zip.file("export.data").async("string").then(function (txt) {
-                const obj = JSON.parse(txt);
-                console.log(obj);
-                return onePassToPasshub(obj);
-            });
-        })
-        .catch(err => {
-            console.log(err);
-        })
-}
-*/
-
 
 const uploadImportedData = (safeArray) => {
     if (safeArray.length === 0) {
@@ -292,40 +333,6 @@ const uploadImportedData = (safeArray) => {
 };
 
 
-
-
-/*==================
- const { fileInfo, cFileContent } = passhubCrypto.encryptFile(
-        pFileContent,
-        aesKey
-      );
-====================*/
-
-/*
-async function uploadFiles(zip, filesToUpload) {
-
-    for (const filename of filesToUpload) {
-        const result = await zip.file(filename).async("arraybuffer")
-        console.log(result)
-    }
-    return "Hello 310";
-}
-
-
-function uploadFiles(zip, filesToUpload) {
-    return filesToUpload.reduce((promise, filename) => {
-        return promise.then(() => {
-            return zip.file(filename).async("arraybuffer")
-                .then(result => {
-                    console.log(result);
-                    console.log(filename);
-                });
-        });
-    }, Promise.resolve()).then(() => "Hello 310");
-}
-
-*/
-
 function uploadPuxFile(zip, filename, id, binaryAesKey, safeID) {
 
     return zip.file(filename).async("arraybuffer").then(pFileContent => {
@@ -334,22 +341,8 @@ function uploadPuxFile(zip, filename, id, binaryAesKey, safeID) {
             binaryAesKey
         );
 
-        // const title = theFile.name;
-
-        //        const pData = [title, "", "", "", note];
-        //        const options = {};
-
-        /*
-                const eData = passhubCrypto.encryptItem(
-                    //            pData,
-                    //             aesKey,
-                    //            options
-                );
-        */
-
         const data = new FormData();
         data.append("vault", safeID);
-        //        data.append("folder", folderID);
         data.append("verifier", getVerifier());
 
         data.append("puxId", id);
@@ -386,19 +379,14 @@ function uploadPuxFile(zip, filename, id, binaryAesKey, safeID) {
 async function uploadFiles(zip, filesToUpload, binaryKey, safeID) {
     for (const { filename, id } of filesToUpload) {
         await uploadPuxFile(zip, filename, id, binaryKey, safeID);
-        console.log(filename, "uploaded");
     }
-    return "Hello 310";
+    return "1PUX files uploaded";
 }
-
 
 async function import1PUX(zipFileContent, puxFilename) {
 
     fileIDs = [];
     let aesKey;
-
-
-    console.log(271)
     const zip = new JSZip();
 
     return zip.loadAsync(zipFileContent)
@@ -406,142 +394,31 @@ async function import1PUX(zipFileContent, puxFilename) {
         .then(jsonObj => {
             const obj = JSON.parse(jsonObj);
             return onePassToPasshub(obj, puxFilename).then(imported => {
-                console.log(275, 'fileIDs')
-                console.log(fileIDs)
                 const filesToUpload = []
                 zip.folder("files").forEach((relativePath, file) => {
-                    console.log("iterating over", relativePath, file);
                     for (const fid of fileIDs) {
-                        console.log(`looking for ${fid} in ${file.name}`)
                         if (file.name.includes(fid)) {
                             filesToUpload.push({ filename: file.name, id: fid })
-                            console.log('fid found')
                             continue;
                         }
                     }
                 })
 
-
-                //                console.log(imported)
                 const { safe: importedSafe, binaryKey } = passhubCrypto.createSafeFromFolder(imported, true)
                 aesKey = binaryKey;
-                console.log('binaryKey ', binaryKey)
-                //                console.log(277)
-                //                console.log(importedSafe)
-                // return uploadImportedData([importedSafe]).then(() => uploadFiles(zip, filesToUpload, binaryKey))
                 return uploadImportedData([importedSafe]).then((r) => {
-                    console.log(r);
                     if ((r.status == "Ok") && (r.safeIDs.length == 1)) {
                         const safeID = r.safeIDs[0];
                         return uploadFiles(zip, filesToUpload, binaryKey, safeID);
                     }
                     return r;
                 })
-                // return importedSafe;
             })
         })
-        /*
-            .then(txt => {
-                console.log('import1PUX 271');
-                return 1;
-            })
-            .catch(err => {
-                console.log('275')
-
-            })
-                */
         .catch(err => {
             console.log('error 280')
             console.log(err)
         });
-    //    return 1;
-
-
-
-    /*
-    try {
-        const zip = new JSZip();
-        const data = await zip.loadAsync(zipFileContent);
-
-        //         console.log(data);
-
-        const txt = await zip.file("export.data").async("string");
-
-        const obj = JSON.parse(txt);
-        console.log(obj);
-        return await onePassToPasshub(obj);
-    } catch (err) {
-        console.log(err);
-    }
-        */
 }
 
-
-
-/*
-      const { fileInfo, cFileContent } = passhubCrypto.encryptFile(
-        pFileContent,
-        aesKey
-      );
-*/
-
-
-/*
-const uploadFileP = (theFile, SafeID, folderID, note, aesKey, props) =>
-  theFile.arrayBuffer()
-    .then(pFileContent => {
-
-      const { fileInfo, cFileContent } = passhubCrypto.encryptFile(
-        pFileContent,
-        aesKey
-      );
-      const title = theFile.name;
-
-      const pData = [title, "", "", "", note];
-      const options = {};
-
-      const eData = passhubCrypto.encryptItem(
-        pData,
-        aesKey,
-        options
-      );
-
-      const data = new FormData();
-      data.append("vault", SafeID);
-      data.append("folder", folderID);
-      data.append("verifier", getVerifier());
-
-      data.append("meta", eData);
-      data.append("file", fileInfo);
-      const ab = passhubCrypto.str2uint8(cFileContent);
-      const bl = new Blob([ab]);
-      data.append("blob", bl);
-      return axios
-        .post(`${getApiUrl()}create_file.php`, data, {
-          headers: {
-            "content-type": "multipart/form-data",
-          },
-          timeout: 600000,
-        })
-        .then(response => {
-          const result = response.data;
-
-          if (result.status === "Ok") {
-            if (result.firstID) {
-              props.newItemInd(result.firstID);
-            }
-            return result;
-          }
-          if (response.status === "login") {
-            window.location.href = "expired.php";
-            return;
-          }
-          throw new Error(result.data.status);
-        })
-    })
-
-*/
-
-
 export default import1PUX;
-
