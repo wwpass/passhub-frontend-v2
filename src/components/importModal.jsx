@@ -78,7 +78,7 @@ function ImportModal(props) {
     const extension = theFile.name.split(".").pop().toLowerCase();
 
     if (!['csv', 'xml', 'json', '1pux'].includes(extension)) {
-      setErrorMsg("Unsupported file type, only XM, CSV, JSON, and 1PUX are allowed");
+      setErrorMsg("Unsupported file type, only XML, CSV, JSON, and 1PUX are allowed");
       return;
     }
 
@@ -108,59 +108,9 @@ function ImportModal(props) {
         if (extension === "1pux") {
 
           return import1PUX(text, theFile.name).then((data) => {
-            console.log(111)
-            console.log(data);
             queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
             props.onClose(true);
           })
-
-          /*          
-          return delay().then(() => {
-            console.log(110);
-            queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
-            props.onClose(true);
-
-          })
-*/
-
-          /*
-          import1PUX(text, theFile.name)
-            .then((data) => {
-              console.log('importModal');
-              console.log(data);
-
-              progress.unlock();
-              props.onClose(true);
-
-            })
-            .catch(err => {
-              console.log(111);
-            })
-*/
-
-
-          /*
-          import1PUX(text, theFile.name)
-            .then(imported => {
-              imported.name = theFile.name;
-              const importedSafe = createSafeFromFolder(imported);
-              uploadImportedData([importedSafe]);
-              return;
-            })
-*/
-
-
-
-
-          /*          
-                      .then(() => {
-                        console.log('Hello 103');
-                        queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
-                        props.onClose(true);
-                        return;
-          
-                      })
-          */
         }
         if (extension === "xml") {
           imported = importXML(text);
@@ -199,7 +149,7 @@ function ImportModal(props) {
         uploadImportedData(safeArray);
       }
     };
-    // progress.lock();
+    progress.lock();
     if (extension === "1pux") {
       reader.readAsArrayBuffer(theFile);
     } else {
