@@ -32,7 +32,7 @@ function ViewFile(props) {
   // const componentDidUpdate = () => {
   const drawIFrame = () => {
     if (props.show) {
-      if (ext == "pdf") {
+      if (["pdf", "txt", "csv", "json", "js", "md", "css"].includes(ext)) {
         const obj_url = URL.createObjectURL(props.blob);
         iframeRef.current.setAttribute("src", obj_url);
         URL.revokeObjectURL(obj_url);
@@ -124,10 +124,10 @@ function ViewFile(props) {
           </button>
         )}
       </div>
-      {ext == "pdf" ? (
-        <div
+      {["pdf", "txt", "csv", "json", "js", "md", "css"].includes(ext) ? (
+        < div
           className="img-frame"
-          style={{ flexGrow: 1, background: "none" }}
+          style={{ flexGrow: 1, background: (ext == "pdf") ? "none" : "white" }}
         >
           <iframe
             ref={iframeRef}
@@ -154,8 +154,9 @@ function ViewFile(props) {
             }}
           ></img>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
 
