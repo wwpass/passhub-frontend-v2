@@ -66,7 +66,6 @@ function MainPage(props) {
   let activeFolder = getFolderById(props.safes, props.activeFolderId);
 
   if (activeFolder === null) {
-    console.log("recommended activeFolder not found");
     activeFolder = props.safes[0];
   }
 

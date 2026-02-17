@@ -78,7 +78,7 @@ function ImportModal(props) {
     const extension = theFile.name.split(".").pop().toLowerCase();
 
     if (!['csv', 'xml', 'json', '1pux'].includes(extension)) {
-      setErrorMsg("Unsupported file type, only XM, CSV, JSON, and 1PUX are allowed");
+      setErrorMsg("Unsupported file type, only XML, CSV, JSON, and 1PUX are allowed");
       return;
     }
 
@@ -93,18 +93,36 @@ function ImportModal(props) {
       setErrorMsg("Error loading file");
     };
 
+
+    function delay() {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, 3000);
+      });
+
+    }
+
     reader.onload = () => {
       const text = reader.result;
       let imported = {};
       try {
         if (extension === "1pux") {
-          import1PUX(text)
-            .then(imported => {
-              imported.name = theFile.name;
-              const importedSafe = createSafeFromFolder(imported);
-              uploadImportedData([importedSafe]);
+
+          return import1PUX(text, theFile.name).then((data) => {
+            console.log('import1PUX returns');
+            console.log(data);
+            if (data.startsWith("Error")) {
+              progress.unlock();
+              setErrorMsg(err);
+            } else {
+              queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
+              props.onClose(true);
+            }
+          })
+            .catch(err => {
+              progress.unlock();
+              setErrorMsg(err);
+              return;
             })
-          return;
         }
         if (extension === "xml") {
           imported = importXML(text);
@@ -129,8 +147,6 @@ function ImportModal(props) {
         return;
       }
 
-      console.log(imported);
-
       if (mode !== "restore") {
         let importedSafe;
         if ((imported.folders.length == 1) && (imported.folders[0].name == 'lastpass')) {
@@ -139,22 +155,19 @@ function ImportModal(props) {
         } else {
           importedSafe = createSafeFromFolder(imported);
         }
-        console.log(importedSafe);
         uploadImportedData([importedSafe]);
       } else {
         const safeArray = importMerge(imported.folders, props.safes);
         uploadImportedData(safeArray);
       }
     };
-    //    progress.lock();
+    progress.lock();
     if (extension === "1pux") {
       reader.readAsArrayBuffer(theFile);
     } else {
       reader.readAsText(theFile);
     }
   };
-
-  console.log("ImportModal start draw");
 
   return (
     <Modal
@@ -201,7 +214,6 @@ function ImportModal(props) {
           style={{
             fontSize: 13,
             lineHeight: "22px",
-            color: "rgba(27, 27, 38, 0.7)",
             marginBottom: 32,
           }}
         >

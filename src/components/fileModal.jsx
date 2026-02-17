@@ -29,16 +29,24 @@ import progress from "../lib/progress";
 
 function getMimeByExt(filename) {
   const mimeType = {
+    css: "text/css",
+    csv: "text/csv",
     doc: "application/msword",
     docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     gzip: "application/gzip",
     jpg: "image/jpeg",
     jpeg: "image/jpeg",
+    js: "text/javascript",
+    json: "application/json",
+
     gif: "image/gif",
+    md: "text/markdown",
     pdf: "application/pdf",
     png: "image/png",
     ppt: "application/vnd.ms-powerpoint",
     pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    svg: "image/svg+xml",
+
     tif: "image/tiff",
     tiff: "image/tiff",
     txt: "text/plain",
@@ -75,17 +83,7 @@ function isFileViewable(filename) {
       }
       return true;
     }
-    if (
-      ext == "jpeg" ||
-      ext == "jpg" ||
-      ext == "png" ||
-      ext == "gif" ||
-      ext == "bmp"
-
-      /* || (ext == 'tif')
-       || (ext == 'svg')  
-      */
-    ) {
+    if (["txt", "md", "css", "js", "json", "svg", "jpeg", "jpg", "png", "gif", "bmp", "webp"].includes(ext)) {
       return true;
     }
   }

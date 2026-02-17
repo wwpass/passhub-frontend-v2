@@ -202,10 +202,8 @@ function importCSV(text) {
 
     const path = "1Password";
 
-    console.log(data);
     data.forEach((e) => {
       if (e.length === 9) {  // skip empty lines
-        console.log(e.length, e);
 
         let notes = '';
         if (e[7].length > 0) {
