@@ -108,9 +108,21 @@ function ImportModal(props) {
         if (extension === "1pux") {
 
           return import1PUX(text, theFile.name).then((data) => {
-            queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
-            props.onClose(true);
+            console.log('import1PUX returns');
+            console.log(data);
+            if (data.startsWith("Error")) {
+              progress.unlock();
+              setErrorMsg(err);
+            } else {
+              queryClient.invalidateQueries({ queryKey: ["userData"], exact: true })
+              props.onClose(true);
+            }
           })
+            .catch(err => {
+              progress.unlock();
+              setErrorMsg(err);
+              return;
+            })
         }
         if (extension === "xml") {
           imported = importXML(text);
@@ -202,7 +214,6 @@ function ImportModal(props) {
           style={{
             fontSize: 13,
             lineHeight: "22px",
-            color: "rgba(27, 27, 38, 0.7)",
             marginBottom: 32,
           }}
         >
