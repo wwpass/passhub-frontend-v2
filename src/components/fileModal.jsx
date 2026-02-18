@@ -101,8 +101,7 @@ function FileModal(props) {
   // const [page, setPage] = useState("");
   const [title, setTitle] = useState(props.args.item ? props.args.item.cleartext[0] : "");
   const [edit, setEdit] = useState(props.args.item ? false : true);
-
-
+  const [sizeInBytesMode, setSizeInBytesMode] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -350,7 +349,9 @@ function FileModal(props) {
 
   let modalClass = edit ? "edit" : "view";
 
-  // const path = this.props.folder ? this.props.folder.path.join(" > ") : [];
+  const onSizeClick = () => {
+    setSizeInBytesMode(!sizeInBytesMode)
+  };
 
   return (
     <React.Fragment>
@@ -416,9 +417,9 @@ function FileModal(props) {
             <svg width="105" height="132" style={{ marginBottom: "32px" }}>
               <use href="#f-file-m"></use>
             </svg>
-            <div style={{ marginBottom: "24px" }}>
+            <div style={{ marginBottom: "24px", cursor: "pointer" }} onClick={onSizeClick} title={sizeInBytesMode ? 'click for human readable form' : 'click for size in bytes'}>
               <span style={{ color: "var(--body-color)", opacity: 0.7 }}>
-                {humanReadableFileSize(props.args.item.file.size)}
+                {sizeInBytesMode ? `${props.args.item.file.size} B` : humanReadableFileSize(props.args.item.file.size)}
               </span>
             </div>
             {!edit && (
