@@ -97,9 +97,11 @@ function AccountDropDown(props) {
                 fontSize: "13px",
                 lineHeight: "24px",
                 color: "#979797",
+                display: "flex",
+                gap: 20
               }}
             >
-              Free account{" "}
+              <span>Free account</span>
               <a className="link" href="#" onClick={onUpgrade}>
                 Upgrade
               </a>

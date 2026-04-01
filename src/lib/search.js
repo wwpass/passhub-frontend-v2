@@ -17,10 +17,12 @@ const paymentCards = () => {
       // key!= null => confirmed, better have a class
       for (const item of safe.rawItems) {
         if (item.version === 5 && item.cleartext[0] === "card") {
+          const cleartext = [...item.cleartext];
+          cleartext[3] = cleartext[3].replace(/\D/g, "");
           cards.push({
             safe: safe.name,
-            title: item.cleartext[1],
-            card: item.cleartext,
+            title: cleartext[1],
+            card: cleartext,
           });
         }
       }
