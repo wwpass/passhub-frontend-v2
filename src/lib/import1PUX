@@ -5,6 +5,7 @@ import { getApiUrl, getVerifier } from "../lib/utils";
 
 
 let fileIDs = [];
+let currentVault = 0; // we iterate over 1password vaults and link current vault with fileID
 
 
 function getTags(item) {
@@ -102,12 +103,12 @@ function fileToPasshub(item) {
     let title = ("title" in item.overview) ? item.overview.title : "unnamed";
 
     if ("documentAttributes" in item.details) {
-        for (const key in item.details.documentAttributes) {
-            if (key == "documentId") {
-                fileIDs.push(item.details.documentAttributes[key]);
+        for (const attr in item.details.documentAttributes) {
+            if (attr == "documentId") {
+                fileIDs.push({ documentId: item.details.documentAttributes[attr], currentVault });
             }
-            if (key == "fileName") {
-                title = item.details.documentAttributes[key];
+            if (attr == "fileName") {
+                title = item.details.documentAttributes[attr];
             }
         }
     }
@@ -167,11 +168,11 @@ function loginToPasshub(item) {
         }
 
         if (totp) {
-            return { cleartext: [title, username, password, urls.join('\x01'), note, totp] }
+            return { cleartext: [title, username, password, urls.join('\x01'), note, totp], options: {} }
         }
     }
 
-    return { cleartext: [title, username, password, urls.join('\x01'), note] }
+    return { cleartext: [title, username, password, urls.join('\x01'), note], options: {} }
 }
 
 
@@ -285,7 +286,9 @@ async function onePassToPasshub(onePass, fileName) {
     ) {
 
         const vaults = onePass.accounts[0].vaults;
-        for (const vault of vaults) {
+        for (currentVault = 0; currentVault < vaults.length; currentVault++) {
+            const vault = vaults[currentVault];
+
             const folder = {
                 folders: [],
                 items: []
@@ -307,7 +310,7 @@ async function onePassToPasshub(onePass, fileName) {
     return result;
 }
 
-const uploadImportedData = (safeArray) => {
+function uploadImportedData(safeArray) {
     if (safeArray.length === 0) {
         return;
     }
@@ -338,14 +341,14 @@ function uploadPuxFile(zip, filename, id, binaryAesKey, safeID) {
     return zip.file(filename).async("arraybuffer").then(pFileContent => {
         const { fileInfo, cFileContent } = passhubCrypto.encryptFile(
             pFileContent,
-            binaryAesKey
+            id.binaryKey
         );
 
         const data = new FormData();
-        data.append("vault", safeID);
+        data.append("vault", id.safeID);
         data.append("verifier", getVerifier());
 
-        data.append("puxId", id);
+        data.append("puxId", id.documentId);
         data.append("fileInfo", fileInfo);
         const ab = passhubCrypto.str2uint8(cFileContent);
         const bl = new Blob([ab]);
@@ -376,14 +379,14 @@ function uploadPuxFile(zip, filename, id, binaryAesKey, safeID) {
     })
 }
 
-async function uploadFiles(zip, filesToUpload, binaryKey, safeID) {
+async function uploadFiles(zip, filesToUpload) {
     for (const { filename, id } of filesToUpload) {
-        await uploadPuxFile(zip, filename, id, binaryKey, safeID);
+        await uploadPuxFile(zip, filename, id);
     }
     return "1PUX files uploaded";
 }
 
-async function import1PUX(zipFileContent, puxFilename) {
+async function import1PUX(zipFileContent, puxFilename, mode) {
 
     fileIDs = [];
     let aesKey;
@@ -397,28 +400,65 @@ async function import1PUX(zipFileContent, puxFilename) {
                 const filesToUpload = []
                 zip.folder("files").forEach((relativePath, file) => {
                     for (const fid of fileIDs) {
-                        if (file.name.includes(fid)) {
+                        if (file.name.includes(fid.documentId)) {
                             filesToUpload.push({ filename: file.name, id: fid })
                             continue;
                         }
                     }
                 })
 
+                if (mode === "restore") {
+                    const importedSafes = [];
+                    for (let currentVault = 0; currentVault < imported.folders.length; currentVault++) {
+                        const folder = imported.folders[currentVault];
+
+                        const { safe: importedSafe, binaryKey } = passhubCrypto.createSafeFromFolder(folder, true);
+                        importedSafes.push(importedSafe);
+                        for (const fileID of fileIDs) {
+                            if (fileID.currentVault == currentVault) {
+                                fileID.binaryKey = binaryKey;
+                            }
+                        }
+                    }
+                    return uploadImportedData(importedSafes).then(r => {
+                        for (let currentVault = 0; currentVault < imported.folders.length; currentVault++) {
+                            for (const fileID of fileIDs) {
+                                if (fileID.currentVault == currentVault) {
+                                    fileID.safeID = r.safeIDs[currentVault];
+                                }
+                            }
+
+                        }
+                        console.log(r.safeIDs);
+                        return uploadFiles(zip, filesToUpload);
+
+                    });
+                }
+
                 const { safe: importedSafe, binaryKey } = passhubCrypto.createSafeFromFolder(imported, true)
                 aesKey = binaryKey;
                 return uploadImportedData([importedSafe]).then((r) => {
                     if ((r.status == "Ok") && (r.safeIDs.length == 1)) {
                         const safeID = r.safeIDs[0];
-                        return uploadFiles(zip, filesToUpload, binaryKey, safeID);
+
+                        for (const file of filesToUpload) {
+                            file.id.binaryKey = binaryKey;
+                            file.id.safeID = safeID;
+                        }
+
+                        return uploadFiles(zip, filesToUpload);
                     }
                     return r;
                 })
             })
         })
+
         .catch(err => {
             console.log('error 280')
             console.log(err)
+            return err;
         });
+
 }
 
 export default import1PUX;
