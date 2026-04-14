@@ -107,7 +107,7 @@ function ImportModal(props) {
       try {
         if (extension === "1pux") {
 
-          return import1PUX(text, theFile.name).then((data) => {
+          return import1PUX(text, theFile.name, mode).then((data) => {
             console.log('import1PUX returns');
             console.log(data);
             if (data.startsWith("Error")) {
