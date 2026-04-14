@@ -158,14 +158,19 @@ const search = (what, searchType = '--All--') => {
             found = true;
           }
         } else {
-          if (item.cleartext[0].toLowerCase().indexOf(lcWhat) >= 0) {
-            found = true;
-          } else if (item.cleartext[1].toLowerCase().indexOf(lcWhat) >= 0) {
-            found = true;
-          } else if (item.cleartext[3].toLowerCase().indexOf(lcWhat) >= 0) {
-            found = true;
-          } else if (item.cleartext[4].toLowerCase().indexOf(lcWhat) >= 0) {
-            found = true;
+          try {
+            if (item.cleartext[0].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            } else if (item.cleartext[1].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            } else if (item.cleartext[3].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            } else if (item.cleartext[4].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            }
+          } catch (error) {
+            console.log(error);
+            console.log(item);
           }
         }
         if (found) {
