@@ -31,6 +31,17 @@ const paymentCards = () => {
   return { id: "payment", found: cards };
 };
 
+function wildcardHostMatch(pattern, hostname) {
+  const escapedPattern = pattern
+    .replace(/([.+^${}()|[\]\\])/g, "\\$1")
+    .replace(/\*/g, ".*")
+    .replace(/\?/g, ".");
+
+  const matcher = new RegExp(`^${escapedPattern}$`);
+  const result = matcher.test(hostname);
+  return result;
+}
+
 function hostInItem(hostname, item) {
   const urls = item.cleartext[3].split("\x01");
 
@@ -45,7 +56,8 @@ function hostInItem(hostname, item) {
       if (itemHost.substring(0, 4) === "www.") {
         itemHost = itemHost.substring(4);
       }
-      if (itemHost == hostname) {
+
+      if (wildcardHostMatch(decodeURI(itemHost), hostname)) {
         return true;
       }
     } catch (err) { }
