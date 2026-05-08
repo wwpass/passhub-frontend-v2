@@ -257,8 +257,32 @@ function createSafeFromFolder(folder, needBinaryKey = false) {
   return { safe: result, binaryKey: aesKey }
 }
 
+function convertFolderToSafe(folder, needBinaryKey = false) {
+  const aesKey = forge.random.getBytesSync(32);
+  const hexEncryptedAesKey = encryptAesKey(publicKeyPem, aesKey);
+  const result = {};
+  result.key = hexEncryptedAesKey;
+  //     result.name = folder.name;
+  result.eName = encryptSafeName(folder.name, aesKey);
+  result.version = 3;
+  result.items = [];
+  for (let e = 0; e < folder.items.length; e++) {
+    result.items.push(encryptItem(folder.items[e].cleartext, aesKey, folder.items[e].options));
+  }
+  result.folders = [];
+  if ('folders' in folder) {
+    for (let f = 0; f < folder.folders.length; f++) {
+      result.folders.push(encryptFolder(folder.folders[f], aesKey));
+    }
+  }
+  if (!needBinaryKey) {
+    return result;
+  }
+  return { safe: result, binaryKey: aesKey }
+}
+
 function decryptSafeName(safe, aesKey) {
-  if ("version" in safe) {
+  if (("version" in safe) && (safe.version == 3)) {   //
     const decipher = forge.cipher.createDecipher('AES-GCM', aesKey);
     decipher.start({ iv: atob(safe.eName.iv), tag: atob(safe.eName.tag) });
     decipher.update(forge.util.createBuffer(atob(safe.eName.data)));
@@ -377,7 +401,7 @@ function encryptItemGCM(cleartextItem, aesKey, options) {
     version: 3,
   };
 
-  if (options.version) {
+  if ((typeof (options) == "object") && ("version" in options)) {
     obj.version = options.version;
   } else if (cleartextItem.length === 6) {
     obj.version = 4;
@@ -551,6 +575,7 @@ export {
   encryptGroupName,
   createSafe,
   createSafeFromFolder,
+  convertFolderToSafe,
   encryptFolderName,
   encryptFolder,
   encryptItem,
