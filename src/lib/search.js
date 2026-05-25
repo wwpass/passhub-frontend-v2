@@ -6,6 +6,7 @@ import {
   isNoteItem,
 } from "./utils";
 
+
 import { getTOTP, getTOTP2 } from "./totp";
 
 
@@ -46,6 +47,10 @@ function hostInItem(hostname, item) {
   const urls = item.cleartext[3].split("\x01");
 
   for (let url of urls) {
+    if (url.length == 0) {
+      continue;
+    }
+
     try {
       url = url.toLowerCase();
       if (url.substring(0, 4) != "http") {
@@ -60,7 +65,9 @@ function hostInItem(hostname, item) {
       if (wildcardHostMatch(decodeURI(itemHost), hostname)) {
         return true;
       }
-    } catch (err) { }
+    } catch (err) {
+      console.log(err);
+    }
   }
   return false
 }
@@ -84,26 +91,28 @@ async function advise(what) {
           // key!= null => confirmed, better have a class
           const items = safe.rawItems;
           for (const item of items) {
-            if (hostInItem(hostname, item)) {
-              if ((item.cleartext.length > 5) && (item.cleartext[5].length > 0)) {
-                const secret = item.cleartext[5];
+            if (isPasswordItem(item)) {
+              if (hostInItem(hostname, item)) {
+                if ((item.cleartext.length > 5) && (item.cleartext[5].length > 0)) {
+                  const secret = item.cleartext[5];
 
-                let [totp, totp_next] = await getTOTP2(secret)
-                result.push({
-                  safe: safe.name,
-                  title: item.cleartext[0],
-                  username: item.cleartext[1],
-                  password: item.cleartext[2],
-                  totp,
-                  totp_next
-                });
-              } else {
-                result.push({
-                  safe: safe.name,
-                  title: item.cleartext[0],
-                  username: item.cleartext[1],
-                  password: item.cleartext[2],
-                })
+                  let [totp, totp_next] = await getTOTP2(secret)
+                  result.push({
+                    safe: safe.name,
+                    title: item.cleartext[0],
+                    username: item.cleartext[1],
+                    password: item.cleartext[2],
+                    totp,
+                    totp_next
+                  });
+                } else {
+                  result.push({
+                    safe: safe.name,
+                    title: item.cleartext[0],
+                    username: item.cleartext[1],
+                    password: item.cleartext[2],
+                  })
+                }
               }
             }
           }
