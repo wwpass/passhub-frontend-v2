@@ -1,5 +1,5 @@
 import * as WWPass from 'wwpass-frontend';
-import { serverLog } from './utils';
+import { lastModified, serverLog } from './utils';
 import forge from 'node-forge';
 
 let WebCryptoPrivateKey = null;
@@ -338,9 +338,27 @@ function decodeItemGCM(item, aesKey) {
   return decipher.output.toString('utf8').split('\0');
 }
 
+
+// in-place adds cleartext to the item
 function decodeItem(item, aesKey) {
+
+  if (item.history) {
+    if (item.history.length > 0) {
+      for (const i of item.history) {
+        //        i.cleartext = decodeItem(i, aesKey);
+        decodeItem(i, aesKey);
+
+      }
+      //history.unshift(props.args.item);
+    }
+  }
+
+
   if ((item.version === 3) || (item.version === 4) || (item.version === 5)) {
-    return decodeItemGCM(item, aesKey);
+    const cleartext = decodeItemGCM(item, aesKey);
+    item.cleartext = cleartext;
+    return;
+    //    return decodeItemGCM(item, aesKey);
   }
 
   const decipher = forge.cipher.createDecipher('AES-ECB', aesKey);
@@ -386,7 +404,76 @@ function encryptFolderName(cleartextName, aesKey) {
   });
 }
 
-function encryptItemGCM(cleartextItem, aesKey, options) {
+function encryptClearText(cleartext, aesKey) {
+  const cleartextData = cleartext.join('\0');
+  const cipher = forge.cipher.createCipher('AES-GCM', aesKey);
+  const iv = forge.random.getBytesSync(16);
+  cipher.start({ iv });
+  cipher.update(forge.util.createBuffer(cleartextData, 'utf8')); // already joined by encode_item (
+  const result = cipher.finish(); // check 'result' for true/false
+
+  const obj = {
+    iv: btoa(iv),
+    data: btoa(cipher.output.data),
+    tag: btoa(cipher.mode.tag.data),
+    version: 3,
+  };
+
+  return obj;
+
+}
+
+function encryptItemGCM(cleartext, aesKey, options, history) {
+
+  const obj = encryptClearText(cleartext, aesKey);
+
+  if ((typeof (options) == "object") && ("version" in options)) {
+    obj.version = options.version;
+  } else if (cleartext.length === 6) {
+    obj.version = 4;
+  }
+
+  const history_out = [];
+  if (history) {
+    for (const historyItem of history) {
+
+      // we decode history ad hoc: first, when in Item Modal; dialog, second, when drag&drop item to another
+      // but.. we need source safe key
+      // we could do it during decoding the user data, but the structure of the code is not suitable there.. 
+      if (!historyItem.cleartext) {
+
+      }
+
+      const obj = encryptClearText(historyItem.cleartext, aesKey);
+      if (historyItem.lastModified) {
+        obj["lastModified"] = historyItem.lastModified;
+      }
+      if ("version" in historyItem) {
+        obj.version = historyItem.version;
+      } else if (historyItem.cleartext.length === 6) {
+        obj.version = 4;
+      }
+      history_out.push(obj)
+    }
+
+  }
+  if (history_out.length > 0) {
+    obj["history"] = history_out;
+  }
+
+
+  if (typeof options !== 'undefined') {
+    // Object.assign "polifill"
+    for (let prop1 in options) {
+      obj[prop1] = options[prop1];
+    }
+  }
+
+  return JSON.stringify(obj);
+}
+
+
+function encryptItemGCMX(cleartextItem, aesKey, options, history) {
   const cleartextData = cleartextItem.join('\0');
   const cipher = forge.cipher.createCipher('AES-GCM', aesKey);
   const iv = forge.random.getBytesSync(16);
@@ -417,8 +504,8 @@ function encryptItemGCM(cleartextItem, aesKey, options) {
 }
 
 
-function encryptItem(item, aesKey, options) {
-  return encryptItemGCM(item, aesKey, options);
+function encryptItem(item, aesKey, options, history) {
+  return encryptItemGCM(item, aesKey, options, history);
 }
 
 function encryptFile(pFileContent, aesKey) {
