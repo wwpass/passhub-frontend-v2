@@ -59,7 +59,8 @@ function updateInactivityTimeout(newTimeout) {
 
 function decryptSafeData(safe, aesKey) {
   for (const item of safe.items) {
-    item.cleartext = passhubCrypto.decodeItem(item, aesKey);
+    //    item.cleartext = passhubCrypto.decodeItem(item, aesKey);
+    passhubCrypto.decodeItem(item, aesKey);
   }
 
   for (const folder of safe.folders) {

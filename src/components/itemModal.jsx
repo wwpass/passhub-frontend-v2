@@ -171,12 +171,18 @@ function ItemModal(props) {
     ? [...props.args.item.history]
     : [];
 
-  if (history.length > 0) {
-    for (const item of history) {
-      item.cleartext = decodeItem(item, props.args.safe.bstringKey);
-    }
-    history.unshift(props.args.item);
+  history.unshift(props.args.item);
+
+  /*
+if (history.length > 0) {
+  for (const item of history) {
+    item.cleartext = decodeItem(item, props.args.safe.bstringKey);
   }
+  history.unshift(props.args.item);
+}
+
+*/
+
 
   let path = [];
   let folderName = "";
@@ -232,11 +238,9 @@ function ItemModal(props) {
       setNote(history[index].cleartext[4]);
     }
 
-
     onHistoryItemChange(history[index]);
     setShowHistoryMenu(false);
 
-    console.log("historyMenuItem index:", index);
   };
 
 
