@@ -369,13 +369,20 @@ function decodeItem(item, aesKey) {
     decipher.update(forge.util.createBuffer(encryptedData));
     const result = decipher.finish(); // check 'result' for true/false
     const creds = decipher.output.toString('utf8').split('\0');
-    return [item.title, creds[0], creds[1], item.url, item.notes];
+    item.cleartext = [item.title, creds[0], creds[1], item.url, item.notes];
+    return;
+    //    return [item.title, creds[0], creds[1], item.url, item.notes];
+
   }
   if (item.version === 2) {
     const encryptedData = forge.util.hexToBytes(item.data);
     decipher.update(forge.util.createBuffer(encryptedData));
     const result = decipher.finish(); // check 'result' for true/false
-    return decipher.output.toString('utf8').split('\0');
+    let cleartext = decipher.output.toString('utf8').split('\0');
+    item.cleartext = cleartext;
+    return;
+    //     return decipher.output.toString('utf8').split('\0');
+
   }
   alert(`Error 450: cannot decode data version ${item.version}`); //  ??
   return null;
