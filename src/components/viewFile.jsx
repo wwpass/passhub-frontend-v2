@@ -70,7 +70,7 @@ function ViewFile(props) {
   ext = filename.substring(dot + 1).toLowerCase();
 
   return (
-    <div className="file-view-page"
+    <div className="file-view-page" style={{ position: "fixed", top: 0, left: 0, height: "100vh", width: "100vw" }}
     >
       <div className="view-file-cross" onClick={props.gotoMain}>
         <svg width="40" height="40">
