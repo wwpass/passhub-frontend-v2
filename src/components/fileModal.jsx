@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { saveAs } from "file-saver";
 
+import ViewFile from "./viewFile";
+
 import * as passhubCrypto from "../lib/crypto";
 import {
   getApiUrl,
@@ -103,6 +105,9 @@ function FileModal(props) {
   const [edit, setEdit] = useState(props.args.item ? false : true);
   const [sizeInBytesMode, setSizeInBytesMode] = useState(false);
 
+  // when viewFileMode.blob is not null, the viewFilePage is shown (this is also a flag)
+  const [viewFileMode, setViewFileMode] = useState({ blob: null, filename: null });
+
   const queryClient = useQueryClient();
 
   const fileAction = (args) => {
@@ -137,8 +142,8 @@ function FileModal(props) {
     },
   })
 
-  let filename = "";
-  let blob = null;
+  // let filename = "";
+  // let blob = null;
 
   /*
   constructor(props) {
@@ -217,8 +222,15 @@ function FileModal(props) {
     };
   */
 
+  function showFile(blob, filename) {
+    setViewFileMode({ blob, filename })
+  }
+
   const onView = () => {
-    download(props.inMemoryView);
+    //    download(props.inMemoryView);
+    download(showFile);
+
+
   };
 
   const onFileInputChange = (e) => {
@@ -354,92 +366,98 @@ function FileModal(props) {
   };
 
   return (
+
     <React.Fragment>
-      <ItemModal
-        show={props.show}
-        args={props.args}
-        onEdit={onEdit}
-        onClose={props.onClose}
-        onCloseSetFolder={props.onCloseSetFolder}
-        ref={wrapperComponent}
-        onSubmit={onSubmit}
-        edit={edit}
-        errorMsg={errorMsg}
-      >
-        {!props.args.item ? (
-          <div
-            className="itemModalField"
-            style={{
-              marginBottom: 62,
-              position: "relative",
-              background: "#E6F8EF",
-              overflow: "visible",
-            }}
-          >
+      {viewFileMode.blob && (
+        <ViewFile
+          show={viewFileMode.blob != null}
+          gotoMain={() => setViewFileMode({ blob: null, filename: "" })}
+          filename={viewFileMode.filename}
+          blob={viewFileMode.blob}
+        />
+      )}
+
+
+      {!viewFileMode.blob && (
+
+        <ItemModal
+          show={props.show}
+          args={props.args}
+          onEdit={onEdit}
+          onClose={props.onClose}
+          onCloseSetFolder={props.onCloseSetFolder}
+          ref={wrapperComponent}
+          onSubmit={onSubmit}
+          edit={edit}
+          errorMsg={errorMsg}
+        >
+          {!props.args.item ? (
             <div
+              className="itemModalField"
               style={{
-                margin: "12px auto",
-                color: "var(--link-color)",
-                display: "table",
+                marginBottom: 62,
+                position: "relative",
+                background: "#E6F8EF",
+                overflow: "visible",
               }}
             >
-              <svg width="24" height="24">
-                <use href="#f-add"></use>
+              <div
+                style={{
+                  margin: "12px auto",
+                  color: "var(--link-color)",
+                  display: "table",
+                }}
+              >
+                <svg width="24" height="24">
+                  <use href="#f-add"></use>
+                </svg>
+                <b>Upload file</b>
+                <div>or drag & drop it here</div>
+              </div>
+
+              <svg
+                width="151"
+                height="134"
+                style={{ position: "absolute", top: 16, left: 32 }}
+              >
+                <use href="#f-dragfile"></use>
               </svg>
-              <b>Upload file</b>
-              <div>or drag & drop it here</div>
-            </div>
 
-            <svg
-              width="151"
-              height="134"
-              style={{ position: "absolute", top: 16, left: 32 }}
+              <input
+                type="file"
+                id="inputFileModal"
+                onChange={onFileInputChange}
+                multiple={true}
+              ></input>
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "40px",
+              }}
             >
-              <use href="#f-dragfile"></use>
-            </svg>
-
-            <input
-              type="file"
-              id="inputFileModal"
-              onChange={onFileInputChange}
-              multiple={true}
-            ></input>
-          </div>
-        ) : (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "40px",
-            }}
-          >
-            <svg width="105" height="132" style={{ marginBottom: "32px" }}>
-              <use href="#f-file-m"></use>
-            </svg>
-            <div style={{ marginBottom: "24px", cursor: "pointer" }} onClick={onSizeClick} title={sizeInBytesMode ? 'click for human readable form' : 'click for size in bytes'}>
-              <span style={{ color: "var(--body-color)", opacity: 0.7 }}>
-                {sizeInBytesMode ? `${props.args.item.file.size} B` : humanReadableFileSize(props.args.item.file.size)}
-              </span>
+              <svg width="105" height="132" style={{ marginBottom: "32px" }}>
+                <use href="#f-file-m"></use>
+              </svg>
+              <div style={{ marginBottom: "24px", cursor: "pointer" }} onClick={onSizeClick} title={sizeInBytesMode ? 'click for human readable form' : 'click for size in bytes'}>
+                <span style={{ color: "var(--body-color)", opacity: 0.7 }}>
+                  {sizeInBytesMode ? `${props.args.item.file.size} B` : humanReadableFileSize(props.args.item.file.size)}
+                </span>
+              </div>
+              {!edit && (
+                <DownloadAndViewButtons
+                  onDownload={onDownload}
+                  view={isFileViewable(title)}
+                  onView={onView}
+                ></DownloadAndViewButtons>
+              )}
             </div>
-            {!edit && (
-              <DownloadAndViewButtons
-                onDownload={onDownload}
-                view={isFileViewable(title)}
-                onView={onView}
-              ></DownloadAndViewButtons>
-            )}
-          </div>
-        )}
-      </ItemModal>
-      {/*      
-      <ViewFile
-        show={page === "ViewFile"}
-        gotoMain={gotoMain}
-        filename={filename}
-        blob={blob}
-      />
-            */}
+          )}
+        </ItemModal>
+      )}
 
     </React.Fragment>
   );

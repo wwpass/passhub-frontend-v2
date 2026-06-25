@@ -44,6 +44,13 @@ function TablePane(props) {
         return null;
     }
 
+    /*
+        function onViewFile() {
+            // miinimalistic hack - save state for return from View Page
+            saveStateHomeBrew(itemModalArgs);
+        }
+    */
+
     const { folder } = props;
     const addButtonRef = React.createRef();
 
@@ -55,13 +62,13 @@ function TablePane(props) {
 
         if (ni) {
             setShowModal("")
-            console.log('table useEffect scrollIntoView');
+            //            console.log('table useEffect scrollIntoView');
             ni.scrollIntoView({
                 behavior: 'smooth'
             });
             newItemRef.current = null;
         } else {
-            console.log('no new-item found')
+            //            console.log('no new-item found')
         }
 
     }, [newItemRef.current]);
@@ -527,6 +534,7 @@ function TablePane(props) {
                         setShowModal("");
                         props.inMemoryView(blob, filename);
                     }}
+                    {/*     onView={onViewFile} */}
                 ></FileModal>
 
                 <CreateFileModal
