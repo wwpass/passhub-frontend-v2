@@ -27,7 +27,7 @@ import { downloadUserData } from "../lib/userData";
 
 import { advise } from "../lib/search";
 import * as extensionInterface from "../lib/extensionInterface";
-import { keepTicketAlive, enablePaste, serverLog, getApiUrl, getVerifier, getFolderById } from "../lib/utils";
+import { keepTicketAlive, enablePaste, serverLog, getApiUrl, getVerifier, getFolderById, logMeOut } from "../lib/utils";
 
 let firstTime = true;
 let idleM = null;
@@ -213,7 +213,7 @@ function Root(props) {
     promptBeforeIdle: 60 * 1000,
     onIdle: () => {
       console.log('onIdle timeout');
-      window.location = "logout.php";
+      logMeOut();
     },
     onPrompt: () => {
       console.log('onPropmt timeout');
