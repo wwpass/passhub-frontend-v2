@@ -310,13 +310,14 @@ function BankCardModal(props) {
 
   function onHistoryItemChange(item) {
 
-    const { _ccNumber, _ccName, _ccExpMonth, _ccExpYear, _ccCSC } = itemToState(item);
+    const { _ccNumber, _ccName, _ccExpMonth, _ccExpYear, _ccCSC, _zip } = itemToState(item);
     setCCNumber(_ccNumber);
     setCCName(_ccName);
 
     setCCExpMonth(_ccExpMonth);
     setCCExpYear(_ccExpYear);
     setCCCSC(_ccCSC);
+    setZip(_zip);
 
   }
 
@@ -522,7 +523,7 @@ function BankCardModal(props) {
         style={{ marginBottom: 32, position: "relative" }}
         onClick={() => {
           if (!edit) {
-            copyToClipboard(ccName);
+            copyToClipboard(zip);
             document.querySelector("#zip_copied").style.display = "flex";
             startCopiedTimer();
           }

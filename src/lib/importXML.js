@@ -71,7 +71,7 @@ function importEntry(entry) {
       (typeof result.Title === 'string') ? result.Title : 'unnamed',
       (typeof result.Notes === 'string') ? result.Notes : '',
       (typeof result.streetAddress1 === 'string') ? result.streetAddress1 : '',
-      (typeof result.streeAddress2 === 'string') ? result.streeAddress2 : '',
+      (typeof result.streetAddress2 === 'string') ? result.streetAddress2 : '',
       (typeof result.city === 'string') ? result.city : '',
       (typeof result.state === 'string') ? result.state : '',
       (typeof result.zip === 'string') ? result.zip : '',

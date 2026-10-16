@@ -19,7 +19,7 @@ function dump_item(item, indent) {
 
   let title, username, password, url, notes;
 
-  if (item.version != 5) {
+  if (item.version < 5) {
 
     title = item.cleartext[0];
     username = item.cleartext[1];
@@ -140,7 +140,7 @@ function dump_item(item, indent) {
     if (item.cleartext.length > 8) {
       xml += id1 + '<String>\r\n';
       xml += id2 + '<Key>zip</Key>';
-      xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[7]) + '</Value>\r\n';
+      xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[8]) + '</Value>\r\n';
       xml += id1 + '</String>\r\n';
     }
   }

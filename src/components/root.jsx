@@ -44,7 +44,9 @@ function userDataQuery() {
       return (data);
     })
     .catch(err => {
-      console.log('caught 31');
+      progress.unlock();
+      console.log('caught 31', err);
+      throw err;
     })
 }
 
@@ -168,7 +170,9 @@ function Root(props) {
       }
       return data;
     }),
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    // userData contains circular refs (folder.safe <-> safe.folders); structural sharing would recurse exponentially
+    structuralSharing: false,
     //    staleTime: 60 * 1000
   });
 
