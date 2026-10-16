@@ -203,7 +203,10 @@ function CreateFileModal(props) {
       onHide={onClose}
       animation={false}
       backdrop={"static"}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 35e773ae7909f57fd0da51255c624079d1820756
       centered
     >
       <ModalCross onClose={props.onClose}></ModalCross>

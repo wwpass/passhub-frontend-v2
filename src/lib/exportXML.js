@@ -19,7 +19,11 @@ function dump_item(item, indent) {
 
   let title, username, password, url, notes;
 
+<<<<<<< HEAD
   if (item.version < 5) {
+=======
+  if (item.version != 5) {
+>>>>>>> 35e773ae7909f57fd0da51255c624079d1820756
 
     title = item.cleartext[0];
     username = item.cleartext[1];

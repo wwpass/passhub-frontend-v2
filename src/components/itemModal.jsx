@@ -263,7 +263,11 @@ if (history.length > 0) {
       onShow={onShow}
       onHide={onClose}
       animation={false}
+<<<<<<< HEAD
       backdrop={(props.edit && !limitedView) ? "static" : true}
+=======
+      backdrop={props.edit ? "static" : true}
+>>>>>>> 35e773ae7909f57fd0da51255c624079d1820756
       centered
     >
       <ModalCross onClose={props.onClose}></ModalCross>

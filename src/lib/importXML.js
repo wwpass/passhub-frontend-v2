@@ -71,7 +71,11 @@ function importEntry(entry) {
       (typeof result.Title === 'string') ? result.Title : 'unnamed',
       (typeof result.Notes === 'string') ? result.Notes : '',
       (typeof result.streetAddress1 === 'string') ? result.streetAddress1 : '',
+<<<<<<< HEAD
       (typeof result.streetAddress2 === 'string') ? result.streetAddress2 : '',
+=======
+      (typeof result.streeAddress2 === 'string') ? result.streeAddress2 : '',
+>>>>>>> 35e773ae7909f57fd0da51255c624079d1820756
       (typeof result.city === 'string') ? result.city : '',
       (typeof result.state === 'string') ? result.state : '',
       (typeof result.zip === 'string') ? result.zip : '',
