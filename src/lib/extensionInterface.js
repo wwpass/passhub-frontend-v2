@@ -14,7 +14,7 @@ const mobileDevice = isIOS || isAndroid;
 const chromeExtensionId = 'bamjbfhfacpdkenilcibkmpdahkgfejh';
 const devChromeExtensionId = 'mjcejgifimlbgmdckhdlopkjhehombpi';
 const edgeExtensionId = 'epmmbjnnghpopnhkilkoomaahpinjpkc';
-const devEdgeExtensionId = 'mpclodkiedkokmddfcooapahedfealjj';
+const devEdgeExtensionId = 'jenodcpajebkfpbdahmdbcagbikjkica';
 
 const safariExtensionId = "com.wwpass.passhub.Extension (7U4QXAP4SL)";
 const devSafariExtensionId = "com.wwpass.PassHub-net.Extension (UNSIGNED)";
@@ -49,7 +49,7 @@ async function sendAdvise(message) {
     if (message.id === 'not a payment page') { // legacy
         message.id = 'advise request';
     }
-    if ((message.id === 'advise request') || (message.id === 'payment page')) {
+    if ((message.id === 'advise request') || (message.id === 'payment page') || (message.id === 'address page')) {
         if (restartIdleTimer) {
             restartIdleTimer();
         }

@@ -57,7 +57,13 @@ function moveFolder(safes, targetNode, folderID) {
       dstSafe,
       dstFolder
     })
-    .then(response => response.data.status);
+    .then(response => {
+      const result = response.data;
+      if (result.status === "Ok") {
+        return result.status;
+      }
+      throw new Error(result.status);
+    });
 }
 
 
@@ -80,6 +86,53 @@ function doMove(safes, targetNode, item, operation) {
 
   /// --->> if src == dst, do nothing
 
+
+  if ("file" in item) {
+    const srcSafe = getFolderById(safes, item.SafeID);
+
+    let eItem = passhubCrypto.moveFile(
+      item,
+      srcSafe.bstringKey,
+      dstBinaryKey
+    );
+    return moveItemFinalize(
+      item._id,
+      src_safe,
+      dst_safe,
+      dstFolder,
+      eItem,
+      operation
+    );
+  }
+  let options = {};
+  if (item.note) {
+    options["note"] = item.note;
+  } else if (item.version === 5) {
+    options["version"] = item.version;
+  }
+  let eItem = passhubCrypto.encryptItem(
+    item.cleartext,
+    dstBinaryKey,
+    options,
+    item.history
+  );
+
+  return moveItemFinalize(
+    item._id,
+    src_safe,
+    dst_safe,
+    dstFolder,
+    eItem,
+    operation
+  );
+}
+
+// throw new Error(result.status);
+
+
+
+/*
+
   return axios
     .post(`${getApiUrl()}move.php`, {
       verifier: getVerifier(),
@@ -92,6 +145,11 @@ function doMove(safes, targetNode, item, operation) {
     .then(response => {
       const result = response.data;
       if (result.status === "Ok") {
+
+
+
+
+
         if ("file" in item) {
           const srcSafe = getFolderById(safes, item.SafeID);
 
@@ -135,5 +193,6 @@ function doMove(safes, targetNode, item, operation) {
       throw new Error(result.status);
     })
 };
+*/
 
 export { doMove, moveFolder };

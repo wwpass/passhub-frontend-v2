@@ -231,7 +231,8 @@ function _decryptUserData1(data) {
         totalRecords,
         totalStorage,
         idleTimeout: data.idleTimeout,
-        desktop_inactivity: data.desktop_inactivity
+        desktop_inactivity: data.desktop_inactivity,
+        paymentProcessor: data.paymentProcessor,
       }
 
       data.totalRecords = totalRecords;
@@ -295,6 +296,17 @@ async function downloadUserData() {
       });
   */
 };
+
+
+/*
+// For debug in the DevTools
+if (typeof window !== 'undefined') {
+  window.getUserData = getUserData;
+  window.getAccountData = getAccountData;
+}
+
+*/
+
 
 export {
   downloadUserData,
@@ -367,7 +379,8 @@ export {
               totalRecords,
               totalStorage,
               idleTimeout: data.idleTimeout,
-              desktop_inactivity: data.desktop_inactivity
+              desktop_inactivity: data.desktop_inactivity,
+              paymentProcessor: data.paymentProcessor
             }
  
             data.totalRecords = totalRecords;

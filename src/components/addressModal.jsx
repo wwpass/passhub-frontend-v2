@@ -19,6 +19,7 @@ import { ButtonGroup } from "react-bootstrap";
 const maxStreetAddress1Length = 240;
 const maxStreetAddress2Length = 240;
 const maxStateLength = 240;
+const maxCityLength = 240;
 const maxZipLength = 240;
 const maxCountryLength = 240;
 
@@ -137,6 +138,13 @@ function AddressModal(props) {
     setErrorMsg("");
   };
 
+
+  const onCityChange = (e) => {
+    const value = e.target.value.substring(0, maxCityLength);
+    setCity(value);
+    setErrorMsg("");
+  };
+
   const onStateChange = (e) => {
     const value = e.target.value.substring(0, maxStateLength);
     setState(value);
@@ -238,6 +246,15 @@ function AddressModal(props) {
         value={streetAddress2}
         onChange={onStreetAddress2Change}
       />
+
+      <ItemModalField
+        name="City"
+        idName="city"
+        edit={edit}
+        value={city}
+        onChange={onCityChange}
+      />
+
 
       <ItemModalField
         name="State"

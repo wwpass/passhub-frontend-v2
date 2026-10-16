@@ -17,7 +17,7 @@ import ExportFolderModal from "./exportFolderModal";
 import EmailModal from "./emailModal";
 import VerifyEmailModal from "./verifyEmailModal";
 import ContactUsModal from "./contactUsModal";
-import BindKeyModal from "./bindKeyModal";
+// import BindKeyModal from "./bindKeyModal";
 import MessageModal from "./messageModal";
 import UpgradeModal from "./upgradeModal";
 
@@ -315,13 +315,14 @@ function Header(props) {
                         setShowModal(next ? next : "");
                     }}
                 ></ContactUsModal>
-
+                {/*
                 <BindKeyModal
                     show={showModal === "Bind key"}
                     onClose={(dummy, next) => {
                         setShowModal(next ? next : "");
                     }}
                 ></BindKeyModal>
+*/}
 
             </>
         </>
