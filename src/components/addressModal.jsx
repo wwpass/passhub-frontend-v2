@@ -140,11 +140,7 @@ function AddressModal(props) {
 
 
   const onCityChange = (e) => {
-<<<<<<< HEAD
     const value = e.target.value.substring(0, maxCityLength);
-=======
-    const value = e.target.value.substring(0, maxStateLength);
->>>>>>> 35e773ae7909f57fd0da51255c624079d1820756
     setCity(value);
     setErrorMsg("");
   };

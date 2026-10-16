@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 // import { useState } from "react";
-=======
-import { useState } from "react";
->>>>>>> 35e773ae7909f57fd0da51255c624079d1820756
 
 import FolderMenu from "./folderMenu";
 

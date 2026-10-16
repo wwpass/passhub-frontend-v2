@@ -523,11 +523,7 @@ function BankCardModal(props) {
         style={{ marginBottom: 32, position: "relative" }}
         onClick={() => {
           if (!edit) {
-<<<<<<< HEAD
             copyToClipboard(zip);
-=======
-            copyToClipboard(ccName);
->>>>>>> 35e773ae7909f57fd0da51255c624079d1820756
             document.querySelector("#zip_copied").style.display = "flex";
             startCopiedTimer();
           }
