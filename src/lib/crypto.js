@@ -89,6 +89,31 @@ const encryptPrivateKey = (cPrivateKey, ticket) => {
 }
 //end create user
 
+// bind another WWPass key: the private key is encrypted with the client key of
+// the current WWPass key, re-encrypt it with the client key of the new one
+const reEncryptPrivateKey = (ePrivateKey, currentTicket, newTicket) => {
+  const iv = new Uint8Array([176, 178, 97, 142, 156, 31, 45, 30, 81, 210, 85, 14, 202, 203, 86, 240]);
+  return WWPass.cryptoPromise.getWWPassCrypto(currentTicket, 'AES-CBC')
+    .then((currentCrypto) => getSubtle().decrypt(
+      {
+        name: 'AES-CBC',
+        iv,
+      },
+      currentCrypto.clientKey,
+      b64ToAb(ePrivateKey)
+    ))
+    .then((pemAb) => WWPass.cryptoPromise.getWWPassCrypto(newTicket, 'AES-CBC')
+      .then((newCrypto) => getSubtle().encrypt(
+        {
+          name: 'AES-CBC',
+          iv,
+        },
+        newCrypto.clientKey,
+        pemAb
+      )))
+    .then(abToB64);
+}
+
 
 function getPrivateKey(data) {
   publicKeyPem = data.publicKeyPem;
@@ -658,6 +683,7 @@ function setPublicKey(aKey) {
 export {
   encryptPrivateKey, // create user
   setPublicKey,  // crteate user
+  reEncryptPrivateKey, // bind another WWPass key
   getPrivateKey,
   decryptAesKey,
   encryptAesKey,
