@@ -1,110 +1,153 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 import * as WWPass from 'wwpass-frontend';
 
+import axios from "axios";
 
 import ModalCross from "./modalCross";
 
-import axios from "axios";
 import { getApiUrl, getVerifier } from "../lib/utils";
-
-import InputField from "./inputField";
-import TextAreaField from "./textAreaField";
-
-import TextareaAutosize from "react-textarea-autosize";
-
+import { reEncryptPrivateKey } from "../lib/crypto";
 import progress from "../lib/progress";
 
+const bindKeyRequest = (data) =>
+  axios
+    .post(`${getApiUrl()}bind_key.php`, { verifier: getVerifier(), ...data })
+    .then((reply) => {
+      const result = reply.data;
+      if (result.status === "login") {
+        window.location.href = "expired.php";
+      }
+      return result;
+    });
 
+// callbackURL function gets "?wwp_version=..&wwp_ticket=..&wwp_status=..&wwp_reason=.."
+const parseCallback = (url) => {
+  const params = new URLSearchParams(url.slice(url.indexOf("?")));
+  return {
+    ticket: params.get("wwp_ticket"),
+    status: params.get("wwp_status"),
+    reason: params.get("wwp_reason"),
+  };
+};
 
 function BindKeyModal(props) {
-
-  const scanCallback = (...args) => {
-    console.log(`scanCallback argument count: ${args.length}`);
-    args.forEach((arg, index) => {
-      console.log(`scanCallback arg[${index}] type: ${typeof arg}, value:`, arg);
-    });
-  };
-
-  let isShown = false;
-
-  if (props.show) {
-    if (!isShown) {
-      isShown = true;
-    }
-  } else {
-    isShown = false;
-    return null;
-  }
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [keys, setKeys] = useState([]);
+  const [stage, setStage] = useState("list"); // list | scan | binding
   const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [scanAttempt, setScanAttempt] = useState(0);
+  const qrcodeRef = useRef(null);
 
-  useEffect(() => {   // when mount
-
-    WWPass.authInit({
-      qrcode: '#qrcode',
-      //      mobileLoginExtraButtons: document.querySelectorAll(".signin-mobile"),
-      //      passkey: document.querySelector('#button--login'),
-      ticketURL: `${getApiUrl()}getticket.php`,
-      callbackURL: scanCallback,
-      //      uiCallback,
-      //      forcePasskeyButton: false,
-      universal: true,
-      fastForward: true,
-    });
-  }, []);
-
-  const onNameChange = (e) => {
-    setName(e.target.value);
-    setErrorMsg("");
-  };
-
-  const onEmailChange = (e) => {
-    setEmail(e.target.value);
-    setErrorMsg("");
-  };
-
-  const onMessageChange = (e) => {
-    setMessage(e.target.value);
-    setErrorMsg("");
-  };
-
-  const onSubmit = () => {
-    if (message.trim().length == 0) {
-      setErrorMsg("please fill in the message field");
-      return;
-    }
-    progress.lock();
-    axios
-      .post(`${getApiUrl()}contact_us.php`, {
-        verifier: getVerifier(),
-        name: name,
-        email: email,
-        message: message,
-      })
-      .then((reply) => {
-        progress.unlock();
-        const result = reply.data;
+  const loadKeys = () => {
+    bindKeyRequest({ operation: "list" })
+      .then((result) => {
         if (result.status === "Ok") {
-          props.onClose(1, "success");
-          return;
-        }
-        if (result.status === "login") {
-          window.location.href = "expired.php";
+          setKeys(result.keys);
           return;
         }
         setErrorMsg(result.status);
       })
+      .catch(() => setErrorMsg("Server error. Please try again later"));
+  };
+
+  useEffect(() => {
+    if (props.show) {
+      setStage("list");
+      setErrorMsg("");
+      setSuccessMsg("");
+      loadKeys();
+    }
+  }, [props.show]);
+
+  const bindKey = (newTicket) => {
+    setStage("binding");
+    progress.lock();
+    bindKeyRequest({ operation: "ticket", ticket: newTicket })
+      .then((result) => {
+        if (result.status !== "Ok") {
+          throw new Error(result.status);
+        }
+        return reEncryptPrivateKey(result.ePrivateKey, result.currentTicket, result.ticket)
+          .catch((err) => {
+            console.log(err);
+            throw new Error("Cannot encrypt data with the new WWPass key. Please try again");
+          });
+      })
+      .then((ePrivateKey) => bindKeyRequest({ operation: "bind", ePrivateKey }))
+      .then((result) => {
+        progress.unlock();
+        if (result.status !== "Ok") {
+          throw new Error(result.status);
+        }
+        setKeys(result.keys);
+        setSuccessMsg("The WWPass key has been bound to your account. Now you can log in with either key.");
+        setStage("list");
+      })
       .catch((err) => {
         progress.unlock();
-        setErrorMsg("Error sending email. Please try again later");
+        setErrorMsg(err.message);
+        setStage("list");
       });
   };
+
+  const authCallback = (url) => {
+    const { ticket, status, reason } = parseCallback(url);
+    if (status !== "200" || !ticket) {
+      setErrorMsg(`WWPass authentication failed: ${reason}`);
+      setStage("list");
+      return;
+    }
+    bindKey(ticket);
+  };
+
+  useEffect(() => {
+    // authInit keeps waiting for a key until the qrcode element is removed from DOM
+    if (stage !== "scan" || !qrcodeRef.current) {
+      return;
+    }
+    WWPass.authInit({
+      qrcode: qrcodeRef.current,
+      ticketURL: `${getApiUrl()}getticket.php`,
+      callbackURL: authCallback,
+      universal: true,
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, [stage, scanAttempt]);
+
+  const onAddKey = () => {
+    setErrorMsg("");
+    setSuccessMsg("");
+    setScanAttempt(scanAttempt + 1);
+    setStage("scan");
+  };
+
+  const onRemoveKey = (id) => {
+    setErrorMsg("");
+    setSuccessMsg("");
+    progress.lock();
+    bindKeyRequest({ operation: "unbind", id })
+      .then((result) => {
+        progress.unlock();
+        if (result.status === "Ok") {
+          setKeys(result.keys);
+          setSuccessMsg("The WWPass key has been removed from your account");
+          return;
+        }
+        setErrorMsg(result.status);
+      })
+      .catch(() => {
+        progress.unlock();
+        setErrorMsg("Server error. Please try again later");
+      });
+  };
+
+  if (!props.show) {
+    return null;
+  }
 
   return (
     <Modal
@@ -115,10 +158,10 @@ function BindKeyModal(props) {
     >
       <ModalCross onClose={props.onClose}></ModalCross>
       <div className="modalTitle">
-        <div className="h2">Bind another WWPass Key</div>
+        <div className="h2">WWPass keys</div>
       </div>
       <Modal.Body className="edit" style={{ marginBottom: "24px" }}>
-        {errorMsg.length > 0 ? (
+        {errorMsg.length > 0 && (
           <div style={{ color: "red", margin: "0 16px 16px" }}>
             <svg
               style={{
@@ -132,44 +175,95 @@ function BindKeyModal(props) {
             </svg>
             {errorMsg}
           </div>
-        ) : (
-          ""
+        )}
+        {successMsg.length > 0 && (
+          <div style={{ color: "var(--success-color, #00BC62)", margin: "0 16px 16px" }}>
+            {successMsg}
+          </div>
         )}
 
-        <div id="qrcode" style={{ width: 256, margin: "32px auto" }}>
+        {stage === "list" && (
+          <>
+            <div style={{ margin: "0 16px 16px" }}>
+              Bind another WWPass key to your account to be able to log in with it,
+              e.g. as a backup in case your main key is lost.
+            </div>
+            {keys.map((key) => (
+              <div
+                key={key.id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  margin: "0 16px",
+                  padding: "8px 0",
+                  borderBottom: "1px solid var(--border-color, #E7E7EE)",
+                }}
+              >
+                <div>
+                  {key.primary ? "Original key" : "Additional key"}
+                  {key.current && (
+                    <span style={{ color: "#979797", marginLeft: 8 }}>(current session)</span>
+                  )}
+                  {key.created && (
+                    <div style={{ fontSize: "13px", color: "#979797" }}>
+                      added {new Date(key.created).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+                {!key.primary && !key.current && (
+                  <a
+                    className="link"
+                    href="#"
+                    style={{ color: "var(--danger-color)" }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onRemoveKey(key.id);
+                    }}
+                  >
+                    Remove
+                  </a>
+                )}
+              </div>
+            ))}
+          </>
+        )}
 
-        </div>
-        <InputField
-          value={name}
-          id="contact-us-name"
-          label="Name"
-          onChange={onNameChange}
-          edit
-        ></InputField>
-        <InputField
-          value={email}
-          id="contact-us-email"
-          label="Email"
-          onChange={onEmailChange}
-          edit
-        ></InputField>
+        {stage === "scan" && (
+          <>
+            <div style={{ margin: "0 16px 16px" }}>
+              Log in with the WWPass key you want to add: scan the QR code with
+              the WWPass Key {/*app or use your hardware WWPass key*/}.
+            </div>
+            <div
+              key={scanAttempt}
+              ref={qrcodeRef}
+              style={{ width: 256, margin: "32px auto" }}
+            ></div>
+          </>
+        )}
 
-        <div className="itemNoteModalField">
-          <TextareaAutosize
-            id="contact-us-message"
-            value={message}
-            onChange={onMessageChange}
-            placeholder="Type message here"
-          />
-        </div>
+        {stage === "binding" && (
+          <div style={{ margin: "32px 16px", textAlign: "center" }}>
+            Binding the key...
+          </div>
+        )}
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="outline-secondary" onClick={props.onClose}>
-          Cancel
-        </Button>
-        <Button variant="primary" type="button" onClick={onSubmit}>
-          Send
-        </Button>
+        {stage === "scan" ? (
+          <Button variant="outline-secondary" onClick={() => setStage("list")}>
+            Back
+          </Button>
+        ) : (
+          <Button variant="outline-secondary" onClick={props.onClose}>
+            Close
+          </Button>
+        )}
+        {stage === "list" && (
+          <Button variant="primary" type="button" onClick={onAddKey}>
+            Bind another key
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );
